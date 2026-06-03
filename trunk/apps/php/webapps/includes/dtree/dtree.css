@@ -1,0 +1,40 @@
+/* .bodymenu {
+	background-color: #e9edf0;
+	background-image:url(../imagenes/Back_menu_lat.gif);
+	background-repeat: no-repeat;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+} */
+
+.dtree {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 15px;
+	color: #8e825a;
+	white-space: nowrap;
+}
+
+.dtree img {
+	border: 0px;
+	vertical-align: middle;
+}
+.dtree a {
+	color: #8e825a;
+	text-decoration: none;}
+
+.dtree a.node, .dtree a.nodeSel {
+	white-space: nowrap;
+	padding: 1px 2px 1px 2px;
+}
+.dtree a.node:hover
+.dtree a.nodeSel:hover {
+	color: #8e825a;
+	text-decoration: underline;
+}
+.dtree a.nodeSel {
+	background-color:#F8F0D1;
+}
+.dtree .clip {
+	overflow: auto;
+}
