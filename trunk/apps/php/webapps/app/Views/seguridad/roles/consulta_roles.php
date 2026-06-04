@@ -56,23 +56,26 @@
 				</div>
 			</div>
 		</div>
-		<div class="table-responsive-sm">
-         <table class="table table-striped table-hover" id="tblRoles" width="100%">
-            <thead class="table-dark">
-               <tr class="p-font-msg-09">
-                  <th width="20%" class="text-start">Nombre</th>
-                  <th width="20%" class="text-start">Descripci&oacute;n</th>
-                  <th width="10%" class="text-center">Estatus</th>
-                  <th width="10%" class="text-center">Configuraci&oacute;n</th>
-                  <th width="5%" class="text-center">Editar</th>
-               </tr>
-            </thead>
-            <tbody></tbody>
-         </table>
+		<div class="card">
+			<div class="card-body">
+				<div class="table-responsive-sm">
+					<table class="table table-striped table-hover" id="tblRoles" width="100%">
+						<thead class="table-dark">
+							<tr class="p-font-msg-09">
+								<th width="20%" class="text-start">Nombre</th>
+								<th width="20%" class="text-start">Descripci&oacute;n</th>
+								<th width="10%" class="text-center">Estatus</th>
+								<th width="10%" class="text-center">Configuraci&oacute;n</th>
+								<th width="5%" class="text-center">Editar</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
+			</div>
 		</div>
 	</div>	
 </div>
-<div id="overlay" class="overlay"></div>
 <?=$this->endSection()?>
 <?=$this->section("css")?>
    <link href="<?php echo base_url(); ?>includes/dtree/tree.css?version=<?php echo time();?>" rel="stylesheet" type="text/css"/>

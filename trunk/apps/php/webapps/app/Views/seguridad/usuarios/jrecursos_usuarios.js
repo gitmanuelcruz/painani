@@ -27,9 +27,9 @@ function asignarRecurso(reg) {
             '<hr>';
    html +=  '<div class="row">'+
             '  <div class="col-sm-5">'+
-            '     <div class="card w-100 card-light-primary">'+
+            '     <div class="card w-100">'+
             '        <div class="card-header h-50 bg-secondary fw-bold f-s-16 text-white">Recursos Disponibles</div>'+
-            '        <div class="card-body overflow-auto" style="height:500px; max-height:500px">'+
+            '        <div class="card-body overflow-auto" style="height:700px; max-height:700px; background-color:#f9f4f4">'+
             '           <div class="row">'+
             '              <div class="col-sm-12">'+
             '                 <div class="form-floating mb-3">'+
@@ -107,9 +107,9 @@ function asignarRecurso(reg) {
             '  </div>';
 
    html +=  '  <div class="col-sm-6">'+
-            '     <div class="card w-100 card-light-primary">'+
+            '     <div class="card w-100">'+
             '        <div class="card-header h-50 bg-secondary fw-bold f-s-16 text-white">Recursos Asignados</div>'+
-            '        <div class="card-body overflow-auto" style="height:500px; max-height:500px">'+
+            '        <div class="card-body overflow-auto" style="height:700px; max-height:700px; background-color:#f9f4f4">'+
             '           <div class="row">'+
             '              <div class="col-sm-12">'+
             '                 <div class="form-floating mb-3">'+
@@ -160,14 +160,14 @@ function asignarRecurso(reg) {
 function cargaCombosTiposRecurso() {
    $.ajax({
       type: 'post',
-      url: contexto+'/Usuarios/getComboRecursos',
+      url: contexto+'Usuarios/getComboRecursos',
       async: true,
       dataType: 'json',
       beforeSend(xhr){
          $('button[btn="btn"]').prop('disabled',true);
-         $("#overlay").show();
-         target = document.getElementById('fusuario');
-         spinner = new Spinner().spin(target);
+         $("#overlayprincipal").show();
+         targetPrincipal = document.getElementById('fusuario');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
          $("#vm_id_tipo_recurso").html('<option value="">[Seleccione una opci&oacute;n]</option>');
@@ -177,8 +177,8 @@ function cargaCombosTiposRecurso() {
       },
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled',false);
-         spinner.stop();
-         $("#overlay").hide();
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }
@@ -196,7 +196,7 @@ function getRecursosDisponible() {
    const idUsuario = $('#pidUsuarioARE').val();
    let idTipoRecurso = $("#vm_id_tipo_recurso").val();
    tableRecursosDisponible.setTablaHTML("tblAsigRecursoDisponibles");
-   tableRecursosDisponible.setUrl(contexto+"/Usuarios/getConsultaRecursos");
+   tableRecursosDisponible.setUrl(contexto+"Usuarios/getConsultaRecursos");
    tableRecursosDisponible.setRegistrosPagina(10);
    tableRecursosDisponible.setColumnas("id,descripcion");
    tableRecursosDisponible.setColTipos("checkbox,text");
@@ -210,7 +210,7 @@ function getRecursosAsignados() {
    const idUsuario = $('#pidUsuarioARE').val();
    let idTipoRecurso = $("#vm_id_tipo_recurso").val();
    tableRecursosAsignados.setTablaHTML("tblAsigRecursosAsignados");
-   tableRecursosAsignados.setUrl(contexto+"/Usuarios/getConsultaRecursos");
+   tableRecursosAsignados.setUrl(contexto+"Usuarios/getConsultaRecursos");
    tableRecursosAsignados.setRegistrosPagina(10);
    tableRecursosAsignados.setColumnas("id,descripcion,fecha_vigencia");
    tableRecursosAsignados.setColTipos("checkbox,text,link");
@@ -236,9 +236,9 @@ function cerrarVMRecurso() {
 }
 //!
 function keyEventARE(event, tipo) {
-   let tecla = (event.all) ? window.event : event.which;
-   if (tecla === 13) {
-      if(tipo === 'ARD') {
+   let tecla = (event.all) ? event.keyCode : event.which;
+   if (tecla == 13) {
+      if(tipo == 'ARD') {
          getRecursosDisponible();
       }
       else {
@@ -257,7 +257,7 @@ function confirmacionAsignarRecursos(tipo_asginacion) {
    let titulo = 'Asignaci&oacute;n de Fecha de Vigencia';
    let filasTblRecursosDisp = tableRecursosDisponible.countMarcados(0);
 
-   if(tipo_asginacion === 'INDIVIDUAL') {
+   if(tipo_asginacion == 'INDIVIDUAL') {
       if(parseInt(filasTblRecursosDisp) === 0) {
          msg += "<li>Seleccionar un rol</li>";
       }
@@ -265,8 +265,8 @@ function confirmacionAsignarRecursos(tipo_asginacion) {
       if (msg.length > 0) {
          Swal.fire({
             title: 'Dato Requerido',
-            html: "<ul>"+msg+"</ul>",
-            icon: 'error',
+            html: "<ul class='p-font-msg-1-2 text-dark'>"+msg+"</ul>",
+            icon: 'warning',
             showDenyButton: true,
             denyButtonText: "ok",
             showConfirmButton: false
@@ -278,43 +278,45 @@ function confirmacionAsignarRecursos(tipo_asginacion) {
       filasTblRecursosDisp = $('#tblAsigRecursoDisponibles').find('tbody tr').length;
    }
 
-   if (msg.length === 0 && parseInt(filasTblRecursosDisp) > 0) {
+   if (msg.length == 0 && parseInt(filasTblRecursosDisp) > 0) {
       $("#overlay2").show();
-      html +=  '<form method="post" class="form-horizontal frm-fecha-vg_rec" id="frmfecha_rec" name="frmfecha_rec" novalidate onsubmit="return false;">';         
-      html +=  '  <div class="row">' +
-               '     <div class="col-sm-6">' +
-               '		   <div class="form-floating mb-3">'+
-               '           <input type="date" class="form-control" id="vm_fecha_vig_inicio_recurso" name="vm_fecha_vig_inicio_recurso" '+
-               '                  onchange="validFechaVigenciaRecurso()" placeholder="Fecha Inicio Vigencia" required>'+
-               '           <label>'+
-               '              <span class="border-start border-light-secondary ps-3">Fecha Inicio Vigencia</span>'+
-               '           </label>'+
-               '           <div class="invalid-feedback">Fecha inicio vigencia requerido</div>'+
-               '        </div>'+
-               '		</div>'+
-               '     <div class="col-sm-6">' +
-               '		   <div class="form-floating mb-3">'+
-               '           <input type="date" class="form-control" id="vm_fecha_vig_termino_recurso" name="vm_fecha_vig_termino_recurso" '+
-               '                 placeholder="Fecha T&eacute;rmino Vigencia">'+
-               '           <label>'+
-               '              <span class="border-start border-light-secondary ps-3">Fecha T&eacute;rmino Vigencia</span>'+
-               '           </label>'+
-               '        </div>'+
-               '		</div>'+
-               '  </div>';
-      html +=  '</form>';
+      html +=  `<form method="post" class="form-horizontal frm-fecha-vg_rec" id="frmfecha_rec" name="frmfecha_rec" novalidate onsubmit="return false;">
+                  <div class="row">
+                     <div class="col-sm-6">
+               		   <div class="form-floating mb-3">
+                           <input type="date" class="form-control" id="vm_fecha_vig_inicio_recurso" name="vm_fecha_vig_inicio_recurso"
+                              onchange="validFechaVigenciaRecurso()" placeholder="Fecha Inicio Vigencia" required>
+                           <label>
+                              <span class="border-start border-light-secondary ps-3">Fecha Inicio Vigencia</span>
+                           </label>
+                           <div class="invalid-feedback">Fecha inicio vigencia requerido</div>
+                        </div>
+               		</div>
+                     <div class="col-sm-6">
+               		   <div class="form-floating mb-3">
+                           <input type="date" class="form-control" id="vm_fecha_vig_termino_recurso" name="vm_fecha_vig_termino_recurso"
+                              placeholder="Fecha T&eacute;rmino Vigencia">
+                           <label>
+                              <span class="border-start border-light-secondary ps-3">Fecha T&eacute;rmino Vigencia</span>
+                           </label>
+                        </div>
+               		</div>
+                  </div>
+               </form>`;
 
-      botones +=  '<button type="button" id="bt_asig_recruso" class="btn btn-info" btn="btn" onclick="validacionAsignacionRecurso('+"'"+tipo_asginacion+"'"+')">'+
-                  '  <i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Aplicar asignaci&oacute;n de recurso (s)</button>&nbsp;';
-      botones +=  '<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" onclick="cerrarmodalRol()">'+
-                  '  <i class="fa-solid fa-xmark me-2"></i>Cerrar</button>';
+      botones +=  `<button type="button" class="btn btn-info me-1" btn="btn" id="bt_asig_recruso" onclick="validacionAsignacionRecurso('${tipo_asginacion}')">
+                     <i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Aplicar asignaci&oacute;n de recurso (s)
+                  </button>`;
+      botones +=  `<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" onclick="cerrarmodalRol()">
+                     <i class="fa-solid fa-xmark me-2"></i>Cerrar
+                  </button>`;
       modal('fusuario', titulo, html, 'formdefault-center', botones, 'cerrarmodalRol()');
    }
    else {
       Swal.fire({
          title: 'Asignación de Recursos',
-         html: '<p class="p-font-msg">No hay recursos <span class="p-font-weight">disponible</span></p>',
-         icon: 'error',
+         html: '<p class="p-font-msg-1-2 text-dark">No hay recursos <span class="fw-bold">disponible</span></p>',
+         icon: 'warning',
          showDenyButton: true,
          denyButtonText: "Aceptar",
          showConfirmButton: false
@@ -340,7 +342,7 @@ function validacionAsignacionRecurso(tipo_asginacion) {
       form.classList.add('was-validated');
    });
    
-   if(contador === 0){
+   if(contador == 0){
       agregarRecurso(tipo_asginacion);
    }
 }
@@ -357,24 +359,24 @@ function agregarRecurso(tipo_asginacion) {
    formData.append("tipo_asginacion", tipo_asginacion);
    $.ajax({
       type: 'post',
-      url: contexto+'/Usuarios/agregarRecursosUsuario',
+      url: contexto+'Usuarios/agregarRecursosUsuario',
       async: true,
       processData: false,
       contentType: false,
       dataType:"JSON",
       data: formData,
       beforeSend(xhr) {
-         $('#overlay').show();
-         $('#bt_asig_recruso').html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Aplicar asignaci&oacute;n de recurso (s)');
          $('button[btn="btn"]').prop('disabled', false);
-         target = document.getElementById('fusuario');
-         spinner = new Spinner().spin(target);
+         $("#overlayprincipal").show();
+         $("#bt_asig_recruso").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Aplicar asignaci&oacute;n de recurso (s)');
+         targetPrincipal = document.getElementById('fusuario');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
          if (data.respuesta === false) {
             Swal.fire({
                title: 'HA OCURRIDO UN ERROR!',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-danger">'+data.mensaje+'</p>',
                icon: 'error',
                showDenyButton: true,
                denyButtonText: 'Aceptar',
@@ -384,7 +386,7 @@ function agregarRecurso(tipo_asginacion) {
          else {
             Swal.fire({
                title: '¡ P r o c e s o &nbsp;&nbsp; E x i t o s o !',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-dark">'+data.mensaje+'</p>',
                icon: 'success',
                showCancelButton: false,
                allowOutsideClick: false,
@@ -403,7 +405,7 @@ function agregarRecurso(tipo_asginacion) {
       error: function (xhr, ajaxOptions, thrownError) {
          Swal.fire({
             title: 'HA OCURRIDO UN ERROR!',
-            html: '<p class="p-font-msg">'+thrownError+'</p>',
+            html: '<p class="p-font-msg text-danger">'+thrownError+'</p>',
             icon: 'error',
             showDenyButton: true,
             showConfirmButton: false,
@@ -412,27 +414,27 @@ function agregarRecurso(tipo_asginacion) {
       },
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled',false);
-         $('#bt_asig_recruso').html('<i class="fa-solid fa-arrow-right-arrow-left"></i>&nbsp;Aplicar asignaci&oacute;n de recurso (s)');
-         spinner.stop();
-         $("#overlay").hide();
+         $("#bt_asig_recruso").html('<i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Aplicar asignaci&oacute;n de recurso (s)');
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }
-//! Función de confirmación de eliminar Roles al usuario
+//!
 function confirmacionQuitarRecursos(tipo_remove) {
    let msg = "";
    let filasTblRecursoAsig = tableRecursosAsignados.countMarcados(0);
 
    if(tipo_remove === 'INDIVIDUAL') {
-      if(parseInt(filasTblRecursoAsig) === 0) {
+      if(parseInt(filasTblRecursoAsig) == 0) {
          msg += "<li>Seleccionar un recurso</li>";
       }
 
       if (msg.length > 0) {
          Swal.fire({
             title: 'Dato Requerido',
-            html: "<ul>"+msg+"</ul>",
-            icon: 'error',
+            html: "<ul class='p-font-msg-1-2 text-dark'>"+msg+"</ul>",
+            icon: 'warning',
             showDenyButton: true,
             denyButtonText: "ok",
             showConfirmButton: false
@@ -445,14 +447,14 @@ function confirmacionQuitarRecursos(tipo_remove) {
       filasTblRecursoAsig = $('#tblAsigRecursosAsignados').find('tbody tr').length;
    }
 
-   if (msg.length === 0 && parseInt(filasTblRecursoAsig) > 0) {
+   if (msg.length == 0 && parseInt(filasTblRecursoAsig) > 0) {
       eliminarRecurso(tipo_remove);
    }
    else {
       Swal.fire({
          title: 'Eliminación de Recursos',
-         html: '<p class="p-font-msg">No hay recursos <span class="p-font-weight">asignados</span></p>',
-         icon: 'error',
+         html: '<p class="p-font-msg-1-2 text-dark">No hay recursos <span class="fw-bold">asignados</span></p>',
+         icon: 'warning',
          showDenyButton: true,
          denyButtonText: "Aceptar",
          showConfirmButton: false
@@ -471,23 +473,23 @@ function eliminarRecurso(tipo_remove) {
    
    $.ajax({
       type: 'post',
-      url: contexto+'/Usuarios/quitarRecursosUsuario',
+      url: contexto+'Usuarios/quitarRecursosUsuario',
       async: true,
       processData: false,
       contentType: false,
       dataType:"JSON",
       data: formData,
       beforeSend(xhr) {
-         $('#overlay').show();
          $('button[btn="btn"]').prop('disabled', false);
-         target = document.getElementById('fusuario');
-         spinner = new Spinner().spin(target);
+         $("#overlayprincipal").show();
+         targetPrincipal = document.getElementById('fusuario');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
          if (data.respuesta === false) {
             Swal.fire({
                title: 'HA OCURRIDO UN ERROR!',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-danger">'+data.mensaje+'</p>',
                icon: 'error',
                showDenyButton: true,
                denyButtonText: 'Aceptar',
@@ -497,7 +499,7 @@ function eliminarRecurso(tipo_remove) {
          else {            
             Swal.fire({
                title: '¡ P r o c e s o &nbsp;&nbsp; E x i t o s o !',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-dark">'+data.mensaje+'</p>',
                icon: 'success',
                showCancelButton: false,
                allowOutsideClick: false,
@@ -518,7 +520,7 @@ function eliminarRecurso(tipo_remove) {
       error: function (xhr, ajaxOptions, thrownError) {
          Swal.fire({
             title: 'HA OCURRIDO UN ERROR!',
-            html: '<p class="p-font-msg">'+thrownError+'</p>',
+            html: '<p class="p-font-msg text-danger">'+thrownError+'</p>',
             icon: 'error',
             showDenyButton: true,
             showConfirmButton: false,
@@ -527,55 +529,59 @@ function eliminarRecurso(tipo_remove) {
       },
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled',false);
-         spinner.stop();
-         $("#overlay").hide();
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }
 //!
 function actualizaVigenciaRecurso(reg) {
-   let html = "";
-   let botones = "";
+   let html = '';
+   let botones = '';
    let titulo = 'Actulizaci&oacute;n de Vigencia del Rol Asignado';
    $("#overlay2").show();
+   //
+   html +=  `<form method="post" class="frm-act-fecha_vig-rec" id="frmActFVRecurso" name="frmActFVRecurso" novalidate onSubmit="return false;">
+               <div class="row">
+                  <div class="col-sm-12">
+            		   <div style="margin-left:15px;">
+            			   <figure>
+                           <blockquote class="blockquote"><p class="p-font-weight-500 p-font-msg-09">${reg.descripcion}</p></blockquote>
+            			      <figcaption class="blockquote-footer fw-bold">Nombre del Recurso</figcaption>
+                        </figure>
+            			   <hr style="margin-top:-10px">
+            		   </div>
+            	   </div>
+               </div>
+               <div class="row">
+                  <div class="col-sm-6">
+            		   <div class="form-floating mb-3">
+                        <input type="date" class="form-control" id="fecha_vigencia_inicio_rec" name="fecha_vigencia_inicio_rec"
+                           onchange="validActFechaVigenciaRec()" placeholder="Fecha Inicio Vigencia" required>
+                        <label>
+                           <span class="border-start border-light-secondary ps-3">Fecha Inicio Vigencia</span>
+                        </label>
+                        <div class="invalid-feedback">Fecha inicio vigencia requerido</div>
+                     </div>
+            		</div>
+                  <div class="col-sm-6">
+            		   <div class="form-floating mb-3">
+                        <input type="date" class="form-control" id="fecha_vigencia_termino_rec" name="fecha_vigencia_termino_rec"
+                           placeholder="Fecha T&eacute;rmino Vigencia">
+                        <label>
+                           <span class="border-start border-light-secondary ps-3">Fecha T&eacute;rmino Vigencia</span>
+                        </label>
+                     </div>
+            		</div>
+               </div>
+            </form>`;
 
-   html +=  '<form method="post" class="frm-act-fecha_vig-rec" id="frmActFVRecurso" name="frmActFVRecurso" novalidate onSubmit="return false;">'+
-            '  <div class="row">'+
-            '     <div class="col-sm-12">'+
-            '		   <div style="margin-left:15px;">'+
-            '			   <figure><blockquote class="blockquote"><p class="p-font-weight-500 p-font-msg-09">'+reg.descripcion+'</p></blockquote>'+
-            '			   <figcaption class="blockquote-footer">Nombre del Recurso</figcaption></figure>'+
-            '			   <hr style="margin-top:-10px">'+
-            '		   </div>'+
-            '	   </div>'+
-            '  </div>';
-   html +=  '  <div class="row">' +
-            '     <div class="col-sm-6">' +
-            '		   <div class="form-floating mb-3">'+
-            '           <input type="date" class="form-control" id="fecha_vigencia_inicio_rec" name="fecha_vigencia_inicio_rec" '+
-            '                  onchange="validActFechaVigenciaRec()" placeholder="Fecha Inicio Vigencia" required>'+
-            '           <label>'+
-            '              <span class="border-start border-light-secondary ps-3">Fecha Inicio Vigencia</span>'+
-            '           </label>'+
-            '           <div class="invalid-feedback">Fecha inicio vigencia requerido</div>'+
-            '        </div>'+
-            '		</div>'+
-            '     <div class="col-sm-6">' +
-            '		   <div class="form-floating mb-3">'+
-            '           <input type="date" class="form-control" id="fecha_vigencia_termino_rec" name="fecha_vigencia_termino_rec" '+
-            '                  placeholder="Fecha T&eacute;rmino Vigencia">'+
-            '           <label>'+
-            '              <span class="border-start border-light-secondary ps-3">Fecha T&eacute;rmino Vigencia</span>'+
-            '           </label>'+
-            '        </div>'+
-            '		</div>'+
-            '  </div>';
-   html +=  '</form>';
-
-   botones +=  '<button type="button" id="bt_act_fv_rec" class="btn btn-info" btn="btn" onclick="validacionActFechaVigRec('+reg.id_usuario_recurso_asignado+')">'+
-               '  <i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Aplicar cambio de Fecha vigencia</button>&nbsp;';
-   botones +=  '<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" onclick="cerrarmodalRecurso()">'+
-               '  <i class="fa-solid fa-xmark me-2"></i>Cerrar</button>';
+   botones +=  `<button type="button" class="btn btn-info me-1" btn="btn" id="bt_act_fv_rec" onclick="validacionActFechaVigRec(${reg.id_usuario_recurso_asignado})">
+                  <i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Aplicar Cambio
+               </button>`;
+   botones +=  `<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" onclick="cerrarmodalRecurso()">
+                  <i class="fa-solid fa-xmark me-2"></i>Cerrar
+               </button>`;
 
    modal('fusuario', titulo, html, 'formdefault_scrollable_center', botones, 'cerrarmodalRecurso()');
    $("#fecha_vigencia_inicio_rec").val(reg.fvigencia_inicio);
@@ -601,7 +607,7 @@ function validacionActFechaVigRec(id_usuario_rec_asig) {
       form.classList.add('was-validated');
    });
    
-   if(contador === 0){
+   if(contador == 0){
       actFechaVigRecursosAsig(id_usuario_rec_asig);
    }
 }
@@ -613,24 +619,24 @@ function actFechaVigRecursosAsig(id_usuario_rec_asig) {
    formData.append("fecha_vigencia_termino", $("#fecha_vigencia_termino_rec").val());
    $.ajax({
       type: 'post',
-      url: contexto+'/Usuarios/updateFechaVigenciaUserRecurso',
+      url: contexto+'Usuarios/updateFechaVigenciaUserRecurso',
       async: true,
       processData: false,
       contentType: false,
       dataType:"JSON",
       data: formData,
       beforeSend(xhr) {
-         $('#overlay').show();
-         $('#bt_act_fv_rec').html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Aplicar cambio de Fecha vigencia');
          $('button[btn="btn"]').prop('disabled', false);
-         target = document.getElementById('fusuario');
-         spinner = new Spinner().spin(target);
+         $("#overlayprincipal").show();
+         $("#bt_act_fv_rec").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Aplicar Cambio');
+         targetPrincipal = document.getElementById('fusuario');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
          if (data.respuesta === false) {
             Swal.fire({
                title: 'HA OCURRIDO UN ERROR!',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-danger">'+data.mensaje+'</p>',
                icon: 'error',
                showDenyButton: true,
                denyButtonText: 'Aceptar',
@@ -640,7 +646,7 @@ function actFechaVigRecursosAsig(id_usuario_rec_asig) {
          else {
             Swal.fire({
                title: '¡ P r o c e s o &nbsp;&nbsp; E x i t o s o !',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-dark">'+data.mensaje+'</p>',
                icon: 'success',
                showCancelButton: false,
                allowOutsideClick: false,
@@ -659,7 +665,7 @@ function actFechaVigRecursosAsig(id_usuario_rec_asig) {
       error: function (xhr, ajaxOptions, thrownError) {
          Swal.fire({
             title: 'HA OCURRIDO UN ERROR!',
-            html: '<p class="p-font-msg">'+thrownError+'</p>',
+            html: '<p class="p-font-msg text-danger">'+thrownError+'</p>',
             icon: 'error',
             showDenyButton: true,
             showConfirmButton: false,
@@ -668,9 +674,9 @@ function actFechaVigRecursosAsig(id_usuario_rec_asig) {
       },
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled',false);
-         $('#bt_act_fv_rec').html('<i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Aplicar cambio de Fecha vigencia');
-         spinner.stop();
-         $("#overlay").hide();
+         $("#bt_act_fv_rec").html('<i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Aplicar Cambio');
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }

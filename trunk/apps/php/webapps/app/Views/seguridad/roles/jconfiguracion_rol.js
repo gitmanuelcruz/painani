@@ -100,9 +100,9 @@ function treeMenuRolesPriv(id_rol,nombre_sistema) {
       data: 'id_rol='+id_rol,
       beforeSend(xhr) {
          $('button[btn="btn"]').prop('disabled',true);
-         $('#overlay').show();
-         target = document.getElementById('froles');
-         spinner = new Spinner().spin(target);         
+         $("#overlayprincipal").show();
+         targetPrincipal = document.getElementById('froles');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success:function(data) {
          contador = 0;
@@ -135,14 +135,14 @@ function treeMenuRolesPriv(id_rol,nombre_sistema) {
             html += tree;
          }
          else {
-            $('#divradio').hide();
-            $('#bt_guardar_rol_priv').hide();
-            $('#divmsg').removeClass("col-sm-8").addClass('col-sm-12');
-            html +=  '<div class="light-border-warning text-center" role="alert" style="font-size:1.1rem">'+
-                     '<i class="fas fa-exclamation-triangle fa-lg"></i>&nbsp;'+
-                     'Sin datos para mostrar de plataforma <br><span class="p-font-weight">'+nombre_sistema+'</span></div>';
+            $("#divradio").hide();
+            $("#bt_guardar_rol_priv").hide();
+            $("#divmsg").removeClass('col-sm-8').addClass('col-sm-12');
+            html +=  `<div class="alert alert-light-border-warning text-center" role="alert" style="font-size:1.1rem">
+                     <i class="fas fa-exclamation-triangle fa-lg"></i>&nbsp;
+                     Sin datos para mostrar de plataforma <br><span class="fw-bold">${nombre_sistema}</span></div>`;
          }
-         $('#divtree').html(html);
+         $("#divtree").html(html);
       },
       error: function (xhr, ajaxOptions, thrownError) {
          Swal.fire({
@@ -156,8 +156,8 @@ function treeMenuRolesPriv(id_rol,nombre_sistema) {
       },
       complete(xhr,status){
          $('button[btn="btn"]').prop('disabled',false);
-         spinner.stop();
-         $("#overlay").hide();
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }
@@ -175,7 +175,9 @@ function validacionRolPriv() {
       form.classList.add('was-validated');
    });
    
-   confirmarcionConfigRolPrivilegios();
+   if(parseInt(contador) == 0) {
+      confirmarcionConfigRolPrivilegios();
+   }
 }
 //! función de validación de selección de check - menu
 function validCheckRol() {
@@ -245,10 +247,10 @@ function guardarConfiguracioRolPrivilegios() {
       data: $("#frmRolesPriv").serialize(),
       beforeSend(xhr) {
          $('button[btn="btn"]').prop('disabled', false);
-         $("#overlay").show();
+         $("#overlayprincipal").show();
          $("#bt_guardar_rol_priv").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Guardar Configuraci&oacute;n');
-         target = document.getElementById('froles');
-         spinner = new Spinner().spin(target);
+         targetPrincipal = document.getElementById('froles');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
          if (data.respuesta == false) {
@@ -293,8 +295,8 @@ function guardarConfiguracioRolPrivilegios() {
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled',false);
          $("#bt_guardar_rol_priv").html('<i class="fa-solid fa-floppy-disk me-2"></i>Guardar Configuraci&oacute;n');
-         spinner.stop();
-         $("#overlay").hide();
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }

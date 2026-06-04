@@ -1,7 +1,4 @@
-let target;
-let spinner;
 let table = new MTable();
-
 $(document).ready(function () {
    getRoles();
 
@@ -111,7 +108,7 @@ function ventanaNuevo(id_rol,titulo,tipo) {
 //!
 function limpiar_vm() {
    let tipo = $("#vm_tipo").val();
-   if (tipo === 'N') {
+   if (tipo == 'N') {
       $("#vm_id_rol").val('');
    }
    else {
@@ -153,7 +150,7 @@ function validacionRol() {
          form.classList.add('was-validated');
       });
 
-   if (contador === 0) {
+   if (contador == 0) {
       $("#divEstatus").removeClass('has-error').addClass('has-valid');
       Swal.fire({
          title: 'Confirmaci&oacute;n',
@@ -193,10 +190,10 @@ function guardarRol() {
       data: formData,
       beforeSend(xhr) {
          $('button[btn="btn"]').prop('disabled', false);
-         $("#overlay").show();
+         $("#overlayprincipal").show();
          $("#bt_guardar").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Guardar');
-         target = document.getElementById('froles');
-         spinner = new Spinner().spin(target);
+         targetPrincipal = document.getElementById('froles');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
          if (data.respuesta == false) {
@@ -246,15 +243,15 @@ function guardarRol() {
       },
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled', false);
-         $('#bt_guardar').html('<i class="fa-solid fa-floppy-disk"></i>&nbsp;Guardar');
-         spinner.stop();
-         $("#overlay").hide();
+         $("#bt_guardar").html('<i class="fa-solid fa-floppy-disk"></i>&nbsp;Guardar');
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }
 //!
 function keyEvent(event) {
-   let tecla = (event.all) ? window.event : event.which;
+   let tecla = (event.all) ? event.keyCode : event.which;
    if (tecla == 13) {
       getRoles();
    }

@@ -6,7 +6,7 @@
             <div class="col-md-12">
                <div class="mt-5 text-center">
                   <img src="<?php echo base_url(); ?>includes/imagenes/logo/3.png" alt="" />
-                  <h1 class="mt-3 fw-bold text-primary">H A A B</h1>
+                  <h1 class="mt-3 fw-bold text-primary">P A I NA N I</h1>
                </div>
             </div>
          </div>

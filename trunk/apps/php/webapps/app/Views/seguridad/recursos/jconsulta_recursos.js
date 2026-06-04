@@ -1,6 +1,4 @@
-let target,spinner;
 let table = new MTable();
-
 $(document).ready(function () {
    getRecursos();
 
@@ -44,7 +42,7 @@ function recargaPaginadoPrincipal() {
 }
 //!
 function keyEvent(event) {
-   var tecla = (event.all) ? window.event : event.which;
+   let tecla = (event.all) ? event.keyCode : event.which;
    if (tecla == 13) {
       getRecursos();
    }
@@ -179,9 +177,9 @@ function cargaCombosRecurso(async,tipo,id_tabla,id_campo,id_campo_visualiza,id_e
       data: 'tipo='+tipo+'&id_tabla='+id_tabla,
       beforeSend(xhr) {
          $('button[btn="btn"]').prop('disabled', true);
-         $("#overlay").show();
-         target = document.getElementById('frecursos');
-         spinner = new Spinner().spin(target);
+         $("#overlayprincipal").show();
+         targetPrincipal = document.getElementById('frecursos');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
          if(parseInt(tipo) == 1) {
@@ -232,8 +230,8 @@ function cargaCombosRecurso(async,tipo,id_tabla,id_campo,id_campo_visualiza,id_e
       },
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled', false);
-         spinner.stop();
-         $("#overlay").hide();
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }
@@ -351,10 +349,10 @@ function guardarRecurso() {
       data: formData,
       beforeSend(xhr) {
          $('button[btn="btn"]').prop('disabled', false);
-         $("#overlay").show();
+         $("#overlayprincipal").show();
          $("#bt_guardar").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Guardar');
-         target = document.getElementById('frecursos');
-         spinner = new Spinner().spin(target);
+         targetPrincipal = document.getElementById('frecursos');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
          if (data.respuesta == false) {
@@ -404,8 +402,8 @@ function guardarRecurso() {
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled', false);
          $("#bt_guardar").html('<i class="fa-solid fa-floppy-disk me-2"></i>Guardar');
-         spinner.stop();
-         $("#overlay").hide();
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }

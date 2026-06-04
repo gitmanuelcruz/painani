@@ -103,26 +103,26 @@ function privilegiosUser(reg) {
 function treeMenuUserPriv() {
    let html = "";
    let id_usuario_priv = $('#vm_id_user').val();
-   let sistema = "PRYSE";
+   let sistema = "PAINANI";
    $("#divtree").empty();
       
    $.ajax({
       method: 'post',
-      url: contexto+'/Usuarios/getTreeMenuUsuarioPrivilegio',
+      url: contexto+'Usuarios/getTreeMenuUsuarioPrivilegio',
       async: true,
       dataType: 'json',
       data: 'id_usuario='+id_usuario_priv,
       beforeSend(xhr) {
          $('button[btn="btn"]').prop('disabled',true);
-         $('#overlay').show();
-         target = document.getElementById('fusuario');
-         spinner = new Spinner().spin(target);         
+         $("#overlayprincipal").show();
+         targetPrincipal = document.getElementById('fusuario');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success:function(data) {
          contador = 0;
-         tree = new dTree("tree",contexto+"/includes/imagenes/","frmPrivUser");
+         tree = new dTree("tree",contexto+"includes/imagenes/","frmPrivUser");
          tree.closeAll();
-         tree.add(0, -1, '<img src="'+contexto+'/includes/imagenes/dtree_checkbox/img/globe.gif"/><span class="p-font-weight">'+sistema+'</span>');
+         tree.add(0, -1, '<img src="'+contexto+'includes/imagenes/dtree_checkbox/img/globe.gif"/><span class="fw-bold">'+sistema+'</span>');
          $(data).each(function(i, v) {
             contador++;
             let band = false;
@@ -141,16 +141,16 @@ function treeMenuUserPriv() {
             getConsultaUsuariosPrivilegios();
          }
          else {
-            html +=  '<div class="alert customize-alert alert-dismissible text-danger alert-light-danger text-center" role="alert" style="font-size:1.1rem">'+
-                     '<i class="fas fa-exclamation-triangle fa-lg"></i>&nbsp;'+
-                     'Sin datos para mostrar de la plataforma de <br><span class="p-font-weight">'+sistema+'</span></div>';
+            html +=  `<div class="alert alert-light-border-danger text-center" role="alert" style="font-size:1.1rem">
+                     <i class="fas fa-exclamation-triangle fa-lg"></i>&nbsp;
+                     Sin datos para mostrar de la plataforma de <br><span class="fw-bold">${sistema}</span></div>`;
          }
          $('#divtree').html(html);
       },
       error: function (xhr, ajaxOptions, thrownError) {
          Swal.fire({
             title: 'HA OCURRIDO UN ERROR!',
-            html: '<p class="p-font-msg">'+thrownError+'</p>',
+            html: '<p class="p-font-msg text-danger">'+thrownError+'</p>',
             icon: 'error',
             showDenyButton: true,
             showConfirmButton: false,
@@ -159,8 +159,8 @@ function treeMenuUserPriv() {
       },
       complete(xhr,status){
          $('button[btn="btn"]').prop('disabled',false);
-         spinner.stop();
-         $("#overlay").hide();
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }
@@ -168,7 +168,7 @@ function treeMenuUserPriv() {
 function getConsultaUsuariosPrivilegios() {
    let idUsuario = $("#vm_id_user").val();
    tablePrivilegiosUser.setTablaHTML("tblUserPriv");
-   tablePrivilegiosUser.setUrl(contexto+"/Usuarios/getUsuariosPrivilegiosPag");
+   tablePrivilegiosUser.setUrl(contexto+"Usuarios/getUsuariosPrivilegiosPag");
    tablePrivilegiosUser.setRegistrosPagina(10);
    tablePrivilegiosUser.setColumnas("nombre_menu,fecha_vigencia,solo_lectura,lectura_escritura,eliminar");
    tablePrivilegiosUser.setColTipos("text,link,icon,icon,icon");
@@ -226,7 +226,7 @@ function validacionUserPriv() {
       form.classList.add('was-validated');
    });
    
-   if(contador === 0){
+   if(contador == 0){
       confirmarcionConfigPrivilegios();
    }
 }
@@ -241,7 +241,7 @@ function validCheck() {
       }
    }); 
 
-   if(contador === 0) {
+   if(contador == 0) {
       msj += '<li>Seleccionar una opci&oacute;n del men&uacute;</li>';
    }
    
@@ -253,8 +253,8 @@ function confirmarcionConfigPrivilegios() {
    if (msg.length > 0) {
       Swal.fire({
          title: 'Datos Requeridos',
-         html: "<ul>"+msg+"</ul>",
-         icon: 'error',
+         html: "<ul class='p-font-msg-1-2 text-dark'>"+msg+"</ul>",
+         icon: 'warning',
          showDenyButton: true,
          denyButtonText: 'Aceptar',
          showConfirmButton: false
@@ -263,7 +263,7 @@ function confirmarcionConfigPrivilegios() {
    else {
       Swal.fire({
          title: 'Confirmaci&oacute;n',
-         html: '<p class="p-font-msg">\u{BF}Confirma que los datos son correctos?</p>',
+         html: '<p class="p-font-msg-1-2 text-dark">\u{BF}Confirma que los datos son correctos?</p>',
          icon: 'warning',
          showCancelButton: true,
          cancelButtonText: 'Cancelar',
@@ -281,22 +281,22 @@ function confirmarcionConfigPrivilegios() {
 function guardarConfiguracioPrivilegio() {
    $.ajax({
       type: 'post',
-      url: contexto+'/Usuarios/guardaConfigUserPrivilegios',
+      url: contexto+'Usuarios/guardaConfigUserPrivilegios',
       async: true,
       dataType:"json",
       data: $("#frmPrivUser").serialize(),
       beforeSend(xhr) {
-         $('#overlay').show();
-         $('#bt_guardar_user_priv').html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Guardar Configuraci&oacute;n');
          $('button[btn="btn"]').prop('disabled', false);
-         target = document.getElementById('fusuario');
-         spinner = new Spinner().spin(target);
+         $("#overlayprincipal").show();
+         $("#bt_guardar_user_priv").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Guardar Configuraci&oacute;n');
+         targetPrincipal = document.getElementById('fusuario');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
-         if (data.respuesta === false) {
+         if (data.respuesta == false) {
             Swal.fire({
                title: 'HA OCURRIDO UN ERROR!',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-danger">'+data.mensaje+'</p>',
                icon: 'error',
                showDenyButton: true,
                denyButtonText: 'Aceptar',
@@ -306,7 +306,7 @@ function guardarConfiguracioPrivilegio() {
          else {
             Swal.fire({
                title: '¡ P r o c e s o &nbsp;&nbsp; E x i t o s o !',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-dark">'+data.mensaje+'</p>',
                icon: 'success',
                showCancelButton: false,
                allowOutsideClick: false,
@@ -317,7 +317,7 @@ function guardarConfiguracioPrivilegio() {
             }).then((result) => {
                if (result.isConfirmed) {
                   treeMenuUserPriv();
-                  $("#frmPrivUser").removeClass("frm-modal-up was-validated").addClass('frm-modal-up');
+                  $("#frmPrivUser").removeClass('frm-modal-up was-validated').addClass('frm-modal-up');
                   $("#radio_l").prop('checked', false);
                   $("#radio_le").prop('checked', false);
                   $("#vm_fecha_vig_priv_ini").val('');
@@ -329,18 +329,18 @@ function guardarConfiguracioPrivilegio() {
       error: function (xhr, ajaxOptions, thrownError) {
          Swal.fire({
             title: 'HA OCURRIDO UN ERROR!',
-            html: '<p class="p-font-msg">'+thrownError+'</p>',
+            html: '<p class="p-font-msg text-danger">'+thrownError+'</p>',
             icon: 'error',
             showDenyButton: true,
             showConfirmButton: false,
             denyButtonText: "Aceptar"
-        });
+         });
       },
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled',false);
          $('#bt_guardar_user_priv').html('<i class="fa-solid fa-floppy-disk me-2"></i>Guardar Configuraci&oacute;n');
-         spinner.stop();
-         $("#overlay").hide();
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }
@@ -348,7 +348,7 @@ function guardarConfiguracioPrivilegio() {
 function eliminar_user_priv(reg) {
    Swal.fire({
       title: 'Confirmaci&oacute;n',
-      html: '<p class="p-font-msg">\u{BF}Confirma eliminar el registro de <span class="p-font-weight">'+reg.nombre_menu+'</span>?</p>',
+      html: '<p class="p-font-msg-1-2 text-dark">\u{BF}Confirma eliminar el registro de <span class="fw-bold">'+reg.nombre_menu+'</span>?</p>',
       icon: 'warning',
       showCancelButton: true,
       cancelButtonText: 'Cancelar',
@@ -365,21 +365,21 @@ function eliminar_user_priv(reg) {
 function eliminarConfiguracioPrivilegio(id_usuario_privilegio,id_menu,id_usuario) {
    $.ajax({
       type: 'post',
-      url: contexto+'/Usuarios/eliminaraConfigUserPrivilegios',
+      url: contexto+'Usuarios/eliminaraConfigUserPrivilegios',
       async: true,
       dataType:"json",
       data: 'id_usuario_privilegio='+id_usuario_privilegio+'&id_menu='+id_menu+'&id_usuario='+id_usuario,
       beforeSend(xhr) {
-         $('#overlay').show();
          $('button[btn="btn"]').prop('disabled', false);
-         target = document.getElementById('fusuario');
-         spinner = new Spinner().spin(target);
+         $("#overlayprincipal").show();
+         targetPrincipal = document.getElementById('fusuario');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
-         if (data.respuesta === false) {
+         if (data.respuesta == false) {
             Swal.fire({
                title: 'HA OCURRIDO UN ERROR!',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-danger">'+data.mensaje+'</p>',
                icon: 'error',
                showDenyButton: true,
                denyButtonText: 'Aceptar',
@@ -389,7 +389,7 @@ function eliminarConfiguracioPrivilegio(id_usuario_privilegio,id_menu,id_usuario
          else {
             Swal.fire({
                title: '¡ P r o c e s o &nbsp;&nbsp; E x i t o s o !',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-dark">'+data.mensaje+'</p>',
                icon: 'success',
                showCancelButton: false,
                allowOutsideClick: false,
@@ -407,7 +407,7 @@ function eliminarConfiguracioPrivilegio(id_usuario_privilegio,id_menu,id_usuario
       error: function (xhr, ajaxOptions, thrownError) {
          Swal.fire({
             title: 'HA OCURRIDO UN ERROR!',
-            html: '<p class="p-font-msg">'+thrownError+'</p>',
+            html: '<p class="p-font-msg text-danger">'+thrownError+'</p>',
             icon: 'error',
             showDenyButton: true,
             showConfirmButton: false,
@@ -416,8 +416,8 @@ function eliminarConfiguracioPrivilegio(id_usuario_privilegio,id_menu,id_usuario
       },
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled',false);
-         spinner.stop();
-         $("#overlay").hide();
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }
@@ -427,44 +427,48 @@ function actualizaVigenciaPriv(reg) {
    let botones = "";
    let titulo = 'Actulizaci&oacute;n de Vigencia del Rol Asignado';
    $("#overlay2").show();
+   //
+   html +=  `<form method="post" class="frm-act-fecha-vig-priv" id="fecha_vig_priv" name="fecha_vig_priv" novalidate onSubmit="return false;">
+               <div class="row">
+                  <div class="col-sm-12">
+            		   <div style="margin-left:15px;">
+            			   <figure>
+                           <blockquote class="blockquote"><p class="p-font-weight-500">${reg.nombre_menu}</p></blockquote>
+            			      <figcaption class="blockquote-footer fw-bold">Nombre del registro</figcaption>
+                        </figure>
+            			   <hr style="margin-top:-10px">
+            		   </div>
+            	   </div>
+               </div>
+               <div class="row">
+                  <div class="col-sm-6">
+            		   <div class="form-floating mb-3">
+                        <input type="date" class="form-control" id="vm_fecha_vig_priv_ini_act" name="vm_fecha_vig_priv_ini_act"
+                           onchange="validFechaVigenciaPrivilegiosAct()" placeholder="Fecha Inicio Vigencia" required>
+                        <label>
+                           <span class="border-start border-light-secondary ps-3">Fecha Inicio Vigencia</span>
+                        </label>
+                        <div class="invalid-feedback">Fecha inicio vigencia requerido</div>
+                     </div>
+                  </div>
+                  <div class="col-sm-6">
+            		   <div class="form-floating mb-3">
+                        <input type="date" class="form-control" id="vm_fecha_vig_priv_fin_act" name="vm_fecha_vig_priv_fin_act"
+                           placeholder="Fecha Término Vigencia">
+                        <label>
+                           <span class="border-start border-light-secondary ps-3">Fecha T&eacute;rmino Vigencia</span>
+                        </label>
+                     </div>
+                  </div>
+               </div>
+            </form>`;
 
-   html +=  '<form method="post" class="frm-act-fecha-vig-priv" id="fecha_vig_priv" name="fecha_vig_priv" novalidate onSubmit="return false;">'+
-            '  <div class="row">'+
-            '     <div class="col-sm-12">'+
-            '		   <div style="margin-left:15px;">'+
-            '			   <figure><blockquote class="blockquote"><p class="p-font-weight-500">'+reg.nombre_menu+'</p></blockquote>'+
-            '			   <figcaption class="blockquote-footer">Nombre del registro</figcaption></figure>'+
-            '			   <hr style="margin-top:-10px">'+
-            '		   </div>'+
-            '	   </div>'+
-            '  </div>';
-   html +=  '  <div class="row">'+
-            '     <div class="col-sm-6">'+
-            '		   <div class="form-floating mb-3">'+
-            '           <input type="date" class="form-control" id="vm_fecha_vig_priv_ini_act" name="vm_fecha_vig_priv_ini_act" '+
-            '                  onchange="validFechaVigenciaPrivilegiosAct()" placeholder="Fecha Inicio Vigencia" required>'+
-            '           <label>'+
-            '              <span class="border-start border-light-secondary ps-3">Fecha Inicio Vigencia</span>'+
-            '           </label>'+
-            '           <div class="invalid-feedback">Fecha inicio vigencia requerido</div>'+
-            '        </div>'+
-            '     </div>'+
-            '     <div class="col-sm-6">'+
-            '		   <div class="form-floating mb-3">'+
-            '           <input type="date" class="form-control" id="vm_fecha_vig_priv_fin_act" name="vm_fecha_vig_priv_fin_act" '+
-            '                  placeholder="Fecha Término Vigencia">'+
-            '           <label>'+
-            '              <span class="border-start border-light-secondary ps-3">Fecha T&eacute;rmino Vigencia</span>'+
-            '           </label>'+
-            '        </div>'+
-            '     </div>'+
-            '  </div>';
-   html +=  '</form>';
-
-   botones +=  '<button type="button" id="bt_act_fv_priv" class="btn btn-info" btn="btn" onclick="validacionActFechaVigPriv('+reg.id_usuario_privilegio+')">'+
-               '  <i class="fa-solid fa-arrow-right-arrow-left me-3"></i>Aplicar cambio de Fecha vigencia</button>&nbsp;';
-   botones +=  '<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" onclick="cerrarmodalPrivi()">'+
-               '  <i class="fa-solid fa-xmark me-2"></i>Cerrar</button>';
+   botones +=  `<button type="button" class="btn btn-info me-1" btn="btn" id="bt_act_fv_priv" onclick="validacionActFechaVigPriv(${reg.id_usuario_privilegio})">
+                  <i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Aplicar cambio de Fecha Vigencia
+               </button>`;
+   botones +=  `<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" onclick="cerrarmodalPrivi()">
+                  <i class="fa-solid fa-xmark me-2"></i>Cerrar
+               </button>`;
 
    modal('fusuario', titulo, html, 'formdefault_scrollable', botones, 'cerrarmodalPrivi()');
    $("#vm_fecha_vig_priv_ini_act").val(reg.fvigencia_inicio);
@@ -490,7 +494,7 @@ function validacionActFechaVigPriv(id_usuario_privilegio) {
       form.classList.add('was-validated');
    });
    
-   if(contador === 0){
+   if(contador == 0){
       actuaizarFechaVigenciaPrivilegios(id_usuario_privilegio);
    }
 }
@@ -502,24 +506,24 @@ function actuaizarFechaVigenciaPrivilegios(id_usuario_privilegio) {
    formData.append("fecha_vigencia_termino", $("#vm_fecha_vig_priv_fin_act").val());
    $.ajax({
       type: 'post',
-      url: contexto+'/Usuarios/updateFechaVigUserPrivilegios',
+      url: contexto+'Usuarios/updateFechaVigUserPrivilegios',
       async: true,
       processData: false,
       contentType: false,
       dataType:"JSON",
       data: formData,
       beforeSend(xhr) {
-         $('#overlay').show();
-         $('#bt_act_fv_priv').html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Aplicar cambio de Fecha vigencia');
          $('button[btn="btn"]').prop('disabled', false);
-         target = document.getElementById('fusuario');
-         spinner = new Spinner().spin(target);
+         $("#overlayprincipal").show();
+         $("#bt_act_fv_priv").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Aplicar cambio de Fecha Vigencia');
+         targetPrincipal = document.getElementById('fusuario');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
-         if (data.respuesta === false) {
+         if (data.respuesta == false) {
             Swal.fire({
                title: 'HA OCURRIDO UN ERROR!',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-danger">'+data.mensaje+'</p>',
                icon: 'error',
                showDenyButton: true,
                denyButtonText: 'Aceptar',
@@ -529,7 +533,7 @@ function actuaizarFechaVigenciaPrivilegios(id_usuario_privilegio) {
          else {
             Swal.fire({
                title: '¡ P r o c e s o &nbsp;&nbsp; E x i t o s o !',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-dark">'+data.mensaje+'</p>',
                icon: 'success',
                showCancelButton: false,
                allowOutsideClick: false,
@@ -548,7 +552,7 @@ function actuaizarFechaVigenciaPrivilegios(id_usuario_privilegio) {
       error: function (xhr, ajaxOptions, thrownError) {
          Swal.fire({
             title: 'HA OCURRIDO UN ERROR!',
-            html: '<p class="p-font-msg">'+thrownError+'</p>',
+            html: '<p class="p-font-msg text-danger">'+thrownError+'</p>',
             icon: 'error',
             showDenyButton: true,
             showConfirmButton: false,
@@ -557,9 +561,9 @@ function actuaizarFechaVigenciaPrivilegios(id_usuario_privilegio) {
       },
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled',false);
-         $('#bt_act_fv_priv').html('<i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Aplicar cambio de Fecha vigencia');
-         spinner.stop();
-         $("#overlay").hide();
+         $("#bt_act_fv_priv").html('<i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Aplicar cambio de Fecha vigencia');
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }

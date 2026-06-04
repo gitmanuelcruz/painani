@@ -13,9 +13,9 @@ function adminRecurso(reg) {
             '</form>';        
    html +=  '<div class="row">'+
             '  <div class="col-sm-5">'+
-            '     <div class="card w-100 card-light-primary">'+
+            '     <div class="card w-100">'+
             '        <div class="card-header h-50 bg-secondary fw-bold f-s-16 text-white">Recursos Disponibles</div>'+
-            '        <div class="card-body overflow-auto" style="height:500px; max-height:500px">'+
+            '        <div class="card-body overflow-auto" style="height:700px; max-height:700px; background-color:#f9f4f4">'+
             '           <div class="row">'+
             '              <div class="col-sm-12">'+
             '                 <div class="form-floating mb-3">'+
@@ -30,16 +30,20 @@ function adminRecurso(reg) {
             '           </div>'+
             '           <div class="row">'+
             '              <div class="col-sm-12">'+
-            '                 <div class="table-responsive-sm">'+
-            '                    <table class="table table-sm table-hover" id="tblRecursoAdminDisponibles" width="100%">'+
-            '                       <thead class="table-dark">'+
-            '                          <tr class="p-font-msg-09">'+
-            '                             <th width="5%" class="text-center text-white"></th>'+
-            '                             <th width="95%" class="text-start text-white">Descripci&oacute;n</th>'+
-            '                          </tr>'+
-            '                       </thead>'+
-            '                       <tbody></tbody>'+
-            '                    </table>'+
+            '                 <div class="card">'+
+            '                    <div class="card-body">'+
+            '                       <div class="table-responsive-sm">'+
+            '                          <table class="table table-sm table-hover" id="tblRecursoAdminDisponibles" width="100%">'+
+            '                             <thead class="table-dark">'+
+            '                                <tr class="p-font-msg-09">'+
+            '                                   <th width="5%" class="text-center text-white"></th>'+
+            '                                   <th width="95%" class="text-start text-white">Descripci&oacute;n</th>'+
+            '                                </tr>'+
+            '                             </thead>'+
+            '                             <tbody></tbody>'+
+            '                          </table>'+
+            '                       </div>'+
+            '                    </div>'+
             '                 </div>'+
             '              </div>'+
             '           </div>'+
@@ -88,9 +92,9 @@ function adminRecurso(reg) {
    html +=  '     </div>'+
             '  </div>';
    html +=  '  <div class="col-sm-6">'+
-            '     <div class="card w-100 card-light-primary">'+
+            '     <div class="card w-100">'+
             '        <div class="card-header h-50 bg-secondary fw-bold f-s-16 text-white">Recursos Asignados</div>'+
-            '        <div class="card-body overflow-auto" style="height:500px; max-height:500px">'+
+            '        <div class="card-body overflow-auto" style="height:700px; max-height:700px; background-color:#f9f4f4">'+
             '           <div class="row">'+
             '              <div class="col-sm-12">'+
             '                 <div class="form-floating mb-3">'+
@@ -105,16 +109,20 @@ function adminRecurso(reg) {
             '           </div>'+
             '           <div class="row">'+
             '              <div class="col-sm-12">'+
-            '                 <div class="table-responsive-sm">'+
-            '                    <table class="table table-sm table-hover" id="tblRecursosAdminAsignados" width="100%">'+
-            '                       <thead class="table-dark">'+
-            '                          <tr class="p-font-msg-09">'+
-            '                             <th width="5%" class="text-center text-white"></th>'+
-            '                             <th width="95%" class="text-start text-white">Descripci&oacute;n</th>'+
-            '                          </tr>'+
-            '                       </thead>'+
-            '                       <tbody></tbody>'+
-            '                    </table>'+
+            '                 <div class="card">'+
+            '                    <div class="card-body">'+
+            '                       <div class="table-responsive-sm">'+
+            '                          <table class="table table-sm table-hover" id="tblRecursosAdminAsignados" width="100%">'+
+            '                             <thead class="table-dark">'+
+            '                                <tr class="p-font-msg-09">'+
+            '                                   <th width="5%" class="text-center text-white"></th>'+
+            '                                   <th width="95%" class="text-start text-white">Descripci&oacute;n</th>'+
+            '                                </tr>'+
+            '                             </thead>'+
+            '                             <tbody></tbody>'+
+            '                          </table>'+
+            '                       </div>'+
+            '                    </div>'+
             '                 </div>'+
             '              </div>'+
             '           </div>'+
@@ -141,7 +149,7 @@ function cargaTablaRecursosAdmin() {
 function getAdminRecursosDisponible() {
    let idUsuario = $("#pidUsuarioAR").val();
    tableAdminRecursosDisponible.setTablaHTML("tblRecursoAdminDisponibles");
-   tableAdminRecursosDisponible.setUrl(contexto+"/Usuarios/getConsultaAdminRecurso");
+   tableAdminRecursosDisponible.setUrl(contexto+"Usuarios/getConsultaAdminRecurso");
    tableAdminRecursosDisponible.setRegistrosPagina(15);
    tableAdminRecursosDisponible.setColumnas("id_recurso,nombre_recurso");
    tableAdminRecursosDisponible.setColTipos("checkbox,text");
@@ -154,7 +162,7 @@ function getAdminRecursosDisponible() {
 function getAdminRecursosAsignado() {
    let idUsuario = $("#pidUsuarioAR").val();
    tableAdminRecursosAsignados.setTablaHTML("tblRecursosAdminAsignados");
-   tableAdminRecursosAsignados.setUrl(contexto+"/Usuarios/getConsultaAdminRecurso");
+   tableAdminRecursosAsignados.setUrl(contexto+"Usuarios/getConsultaAdminRecurso");
    tableAdminRecursosAsignados.setRegistrosPagina(15);
    tableAdminRecursosAsignados.setColumnas("id_usuario_recurso_admin,nombre_recurso");
    tableAdminRecursosAsignados.setColTipos("checkbox,text");
@@ -171,9 +179,9 @@ function cerrarVMRecursoAdmin() {
 }
 //!
 function keyEventAR(event, tipo) {
-   let tecla = (event.all) ? window.event : event.which;
-   if (tecla === 13) {
-      if(tipo === 'ARD') {
+   let tecla = (event.all) ? event.keyCode : event.which;
+   if (tecla == 13) {
+      if(tipo == 'ARD') {
          getAdminRecursosDisponible();
       }
       else {
@@ -189,16 +197,16 @@ function confirmacionAsignarAdminRecursos(tipo_asginacion) {
    let msg = "";
    let filasTblAdminRecdisp = tableAdminRecursosDisponible.countMarcados(0);
 
-   if(tipo_asginacion === 'INDIVIDUAL') {
-      if(parseInt(filasTblAdminRecdisp) === 0) {
+   if(tipo_asginacion == 'INDIVIDUAL') {
+      if(parseInt(filasTblAdminRecdisp) == 0) {
          msg += "<li>Seleccionar un recurso</li>";
       }
 
       if (msg.length > 0) {
          Swal.fire({
             title: 'Dato Requerido',
-            html: "<ul>"+msg+"</ul>",
-            icon: 'error',
+            html: "<ul class='p-font-msg-1-2 text-dark'>"+msg+"</ul>",
+            icon: 'warning',
             showDenyButton: true,
             denyButtonText: "Aceptar",
             showConfirmButton: false
@@ -216,8 +224,8 @@ function confirmacionAsignarAdminRecursos(tipo_asginacion) {
    else {
       Swal.fire({
          title: 'Asignación de Recursos',
-         html: '<p class="p-font-msg">No hay recursos <span class="p-font-weight">disponible</span></p>',
-         icon: 'error',
+         html: '<p class="p-font-msg-1-2 text-dark">No hay recursos <span class="fw-bold">disponible</span></p>',
+         icon: 'warning',
          showDenyButton: true,
          denyButtonText: "Aceptar",
          showConfirmButton: false
@@ -233,23 +241,23 @@ function agregarAdminRecursos(tipo_asginacion) {
    formData.append("id_recurso", tableAdminRecursosDisponible.getCheckMarcados(0));
    $.ajax({
       type: 'post',
-      url: contexto+'/Usuarios/getAgregarAdminRecursos',
+      url: contexto+'Usuarios/getAgregarAdminRecursos',
       async: true,
       processData: false,
       contentType: false,
       dataType:"JSON",
       data: formData,
       beforeSend(xhr) {
-         $('#overlay').show();
          $('button[btn="btn"]').prop('disabled', false);
-         target = document.getElementById('fusuario');
-         spinner = new Spinner().spin(target);
+         $("#overlayprincipal").show();
+         targetPrincipal = document.getElementById('fusuario');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
          if (data.respuesta === false) {
             Swal.fire({
                title: 'HA OCURRIDO UN ERROR!',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-danger">'+data.mensaje+'</p>',
                icon: 'error',
                showDenyButton: true,
                denyButtonText: 'Aceptar',
@@ -259,7 +267,7 @@ function agregarAdminRecursos(tipo_asginacion) {
          else {
             Swal.fire({
                title: '¡ P r o c e s o &nbsp;&nbsp; E x i t o s o !',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-dark">'+data.mensaje+'</p>',
                icon: 'success',
                showCancelButton: false,
                allowOutsideClick: false,
@@ -277,7 +285,7 @@ function agregarAdminRecursos(tipo_asginacion) {
       error: function (xhr, ajaxOptions, thrownError) {
          Swal.fire({
             title: 'HA OCURRIDO UN ERROR!',
-            html: '<p class="p-font-msg">'+thrownError+'</p>',
+            html: '<p class="p-font-msg text-danger">'+thrownError+'</p>',
             icon: 'error',
             showDenyButton: true,
             showConfirmButton: false,
@@ -286,8 +294,8 @@ function agregarAdminRecursos(tipo_asginacion) {
       },
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled',false);
-         spinner.stop();
-         $("#overlay").hide();
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }
@@ -296,16 +304,16 @@ function confirmacionQuitarRecursosAdmin(tipo_remove) {
    let msg = "";
    let filasTblAdminRecAsig = tableAdminRecursosAsignados.countMarcados(0);
 
-   if(tipo_remove === 'INDIVIDUAL') {
-      if(parseInt(filasTblAdminRecAsig) === 0) {
+   if(tipo_remove == 'INDIVIDUAL') {
+      if(parseInt(filasTblAdminRecAsig) == 0) {
          msg += "<li>Seleccionar un rol</li>";
       }
 
       if (msg.length > 0) {
          Swal.fire({
             title: 'Dato Requerido',
-            html: "<ul>"+msg+"</ul>",
-            icon: 'error',
+            html: "<ul class='p-font-msg-1-2 text-dark'>"+msg+"</ul>",
+            icon: 'warning',
             showDenyButton: true,
             denyButtonText: "ok",
             showConfirmButton: false
@@ -324,8 +332,8 @@ function confirmacionQuitarRecursosAdmin(tipo_remove) {
    else {
       Swal.fire({
          title: 'Eliminación de Recursos',
-         html: '<p class="p-font-msg">No hay recursos <span class="p-font-weight">asignados</span></p>',
-         icon: 'error',
+         html: '<p class="p-font-msg-1-2 text-dark">No hay recursos <span class="p-font-weight">asignados</span></p>',
+         icon: 'warning',
          showDenyButton: true,
          denyButtonText: "Aceptar",
          showConfirmButton: false
@@ -341,23 +349,23 @@ function eliminarAdminRecursos(tipo_remove) {
    formData.append("tipo_remove", tipo_remove);
    $.ajax({
       type: 'post',
-      url: contexto+'/Usuarios/getEliminarAdminRecursos',
+      url: contexto+'Usuarios/getEliminarAdminRecursos',
       async: true,
       processData: false,
       contentType: false,
       dataType:"JSON",
       data: formData,
       beforeSend(xhr) {
-         $('#overlay').show();
          $('button[btn="btn"]').prop('disabled', false);
-         target = document.getElementById('fusuario');
-         spinner = new Spinner().spin(target);
+         $("#overlayprincipal").show();
+         targetPrincipal = document.getElementById('fusuario');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
-         if (data.respuesta === false) {
+         if (data.respuesta == false) {
             Swal.fire({
                title: 'HA OCURRIDO UN ERROR!',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-danger">'+data.mensaje+'</p>',
                icon: 'error',
                showDenyButton: true,
                denyButtonText: 'Aceptar',
@@ -367,7 +375,7 @@ function eliminarAdminRecursos(tipo_remove) {
          else {
             Swal.fire({
                title: '¡ P r o c e s o &nbsp;&nbsp; E x i t o s o !',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-dark">'+data.mensaje+'</p>',
                icon: 'success',
                showCancelButton: false,
                allowOutsideClick: false,
@@ -388,7 +396,7 @@ function eliminarAdminRecursos(tipo_remove) {
       error: function (xhr, ajaxOptions, thrownError) {
          Swal.fire({
             title: 'HA OCURRIDO UN ERROR!',
-            html: '<p class="p-font-msg">'+thrownError+'</p>',
+            html: '<p class="p-font-msg text-danger">'+thrownError+'</p>',
             icon: 'error',
             showDenyButton: true,
             showConfirmButton: false,
@@ -397,8 +405,8 @@ function eliminarAdminRecursos(tipo_remove) {
       },
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled',false);
-         spinner.stop();
-         $("#overlay").hide();
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }

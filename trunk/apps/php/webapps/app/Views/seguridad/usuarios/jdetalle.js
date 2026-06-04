@@ -10,9 +10,9 @@ function detalleUser(reg) {
       data: 'usuario='+reg.usuario,
       beforeSend(xhr){
          $('button[btn="btn"]').prop('disabled',true);
-         $("#overlay").show();
-         target = document.getElementById('fusuario');
-         spinner = new Spinner().spin(target);
+         $("#overlayprincipal").show();
+         targetPrincipal = document.getElementById('fusuario');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
          let color_estatus = (data.duser.estatus.toUpperCase() == 'ACTIVO') ? '#66bb6a':'#ea4335';
@@ -85,15 +85,15 @@ function detalleUser(reg) {
                                        </div>
                                     </div>
                                  </li>`;
-         if(data.duser.id_supervisor != null || data.duser.id_supervisor != null) {
+         if(parseInt(data.duser.es_notificador) > 0) {
             html +=  `<li>
                         <div class="share-menu-item mb-2">
                            <span class="share-menu-img text-outline-primary h-45 w-45 d-flex-center b-r-10">
-                              <i class="fa-solid fa-user-secret f-s-30"></i>
+                              <i class="fa-solid fa-person-chalkboard f-s-30"></i>
                            </span>
                            <div class="share-menu-content">
-                              <h6 class="mb-0 txt-ellipsis-1">${parseNull(data.duser.nombre_supervisor)}</h6>
-                              <p class="mb-0 txt-ellipsis-1 text-secondary">Supervisor</p>
+                              <h6 class="mb-0 txt-ellipsis-1">${parseNull(data.duser.desc_es_notificador)}</h6>
+                              <p class="mb-0 txt-ellipsis-1 text-secondary">Es Notificador</p>
                            </div>
                         </div>
                      </li>`;
@@ -153,8 +153,8 @@ function detalleUser(reg) {
       },
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled',false);
-         $("#overlay").hide();
-         spinner.stop();
+         $("#overlayprincipal").hide();
+         spinnerPrincipal.stop();
          botones +=  `<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn">
                         <i class="fa-solid fa-xmark me-2"></i>Cerrar
                      </button>`;

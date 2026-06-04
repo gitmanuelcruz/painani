@@ -12,9 +12,9 @@ function rolesUser(reg) {
             '</form>';         
    html +=  '<div class="row">'+
             '  <div class="col-sm-5">'+
-            '     <div class="card w-100 card-light-primary">'+
+            '     <div class="card w-100">'+
             '        <div class="card-header h-50 bg-secondary fw-bold f-s-16 text-white">Roles Disponibles</div>'+
-            '        <div class="card-body overflow-auto" style="height:600px; max-height:600px">'+
+            '        <div class="card-body overflow-auto" style="height:700px; max-height:700px; background-color:#f9f4f4">'+
             '           <div class="row">'+
             '              <div class="col-sm-12">'+
             '                 <div class="form-floating mb-3">'+
@@ -29,18 +29,22 @@ function rolesUser(reg) {
             '           </div>'+
             '           <div class="row">'+
             '              <div class="col-sm-12">'+
-            '                 <div class="table-responsive-sm">'+
-            '                    <table class="table table-sm table-hover" id="tblRolesDisponibles" width="100%">'+
-            '                       <thead class="table-dark">'+
-            '                          <tr class="p-font-msg-08">'+
-            '                             <th width="1%" class="text-center"></th>'+
-            '                             <th width="20%">Nombre Rol</th>'+
-            '                             <th width="25%">Descripci&oacute;n Rol</th>'+
-            '                             <th width="5%" class="text-center"></th>'+
-            '                          </tr>'+
-            '                       </thead>'+
-            '                       <tbody></tbody>'+
-            '                    </table>'+
+            '                 <div class="card">'+
+            '                    <div class="card-body">'+
+            '                       <div class="table-responsive-sm">'+
+            '                          <table class="table table-sm table-striped table-hover" id="tblRolesDisponibles" width="100%">'+
+            '                             <thead class="table-dark">'+
+            '                                <tr class="p-font-msg-08">'+
+            '                                   <th width="1%"  class="text-center"></th>'+
+            '                                   <th width="20%" class="text-start text-white">Nombre Rol</th>'+
+            '                                   <th width="25%" class="text-start text-white">Descripci&oacute;n Rol</th>'+
+            '                                   <th width="5%"  class="text-center"></th>'+
+            '                                   </tr>'+
+            '                             </thead>'+
+            '                             <tbody></tbody>'+
+            '                          </table>'+
+            '                       </div>'+
+            '                    </div>'+
             '                 </div>'+
             '              </div>'+
             '           </div>'+
@@ -90,9 +94,9 @@ function rolesUser(reg) {
             '  </div>';
 
    html +=  '  <div class="col-sm-6">'+
-            '     <div class="card w-100 card-light-primary">'+
+            '     <div class="card w-100">'+
             '        <div class="card-header h-50 bg-secondary fw-bold f-s-16 text-white">Roles Asignados</div>'+
-            '        <div class="card-body overflow-auto" style="height:600px; max-height:600px">'+
+            '        <div class="card-body overflow-auto" style="height:700px; max-height:700px; background-color:#f9f4f4">'+
             '           <div class="row">'+
             '              <div class="col-sm-12">'+
             '                 <div class="form-floating mb-3">'+
@@ -107,19 +111,23 @@ function rolesUser(reg) {
             '           </div>'+
             '           <div class="row">'+
             '              <div class="col-sm-12">'+
-            '                 <div class="table-responsive-sm">'+
-            '                    <table class="table table-sm table-hover" id="tblRolesAsignados" width="100%">'+
-            '                       <thead class="table-dark">'+
-            '                          <tr class="p-font-msg-08">'+
-            '                             <th width="1%" class="text-center"></th>'+
-            '                             <th width="15%">Nombre Rol</th>'+
-            '                             <th width="20%">Descripci&oacute;n Rol</th>'+
-            '                             <th width="15%" class="text-center">Fecha Vigencia</th>'+
-            '                             <th width="3%" class="text-center"></th>'+
-            '                          </tr>'+
-            '                       </thead>'+
-            '                       <tbody></tbody>'+
-            '                    </table>'+
+            '                 <div class="card">'+
+            '                    <div class="card-body">'+
+            '                       <div class="table-responsive-sm">'+
+            '                          <table class="table table-sm table-hover" id="tblRolesAsignados" width="100%">'+
+            '                             <thead class="table-dark">'+
+            '                                <tr class="p-font-msg-08">'+
+            '                                   <th width="1%"  class="text-center"></th>'+
+            '                                   <th width="15%" class="text-start text-white">Nombre Rol</th>'+
+            '                                   <th width="20%" class="text-start text-white">Descripci&oacute;n Rol</th>'+
+            '                                   <th width="15%" class="text-center text-white">Fecha Vigencia</th>'+
+            '                                   <th width="3%"  class="text-center"></th>'+
+            '                                </tr>'+
+            '                             </thead>'+
+            '                             <tbody></tbody>'+
+            '                          </table>'+
+            '                       </div>'+
+            '                    </div>'+
             '                 </div>'+
             '              </div>'+
             '           </div>'+
@@ -129,10 +137,12 @@ function rolesUser(reg) {
             '</div>'+
             '<div id="overlay2" class="overlay"></div>';
 
-   botones +=  '<button type="button" class="btn btn-info" btn="btn" onclick="cargartableRol()">'+
-               '<i class="fa-solid fa-arrows-rotate me-2"></i>Actualizar Consultas</button>&nbsp;';
+   botones +=  '<button type="button" class="btn btn-info me-1" btn="btn" onclick="cargartableRol()">'+
+               '  <i class="fa-solid fa-arrows-rotate me-2"></i>Actualizar Consultas'+
+               '</button>';
    botones +=  '<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" onclick="cerrarVMRoles()">'+
-               '<i class="fa-solid fa-xmark me-2"></i>Cerrar</button>';
+               '  <i class="fa-solid fa-xmark me-2"></i>Cerrar'+
+               '</button>';
    modalFullScreen('fusuario', titulo, html, 'formxxl_scrollable', botones, 'cerrarVMRoles()');
    $(".tooltip_icon_roles").tooltip();
    cargartableRol();
@@ -148,7 +158,7 @@ function cargartableRol() {
 function getRolesDisponible() {
    let idUsuario = $("#pidUsuario").val();
    tableRolesDisponible.setTablaHTML("tblRolesDisponibles");
-   tableRolesDisponible.setUrl(contexto+"/Usuarios/getConsultaRolesUsuarios");
+   tableRolesDisponible.setUrl(contexto+"Usuarios/getConsultaRolesUsuarios");
    tableRolesDisponible.setRegistrosPagina(10);
    tableRolesDisponible.setColumnas("id_rol,nombre_rol,descripcion,detalle");
    tableRolesDisponible.setColTipos("checkbox,text,text,icon");
@@ -169,7 +179,7 @@ function getRolesDisponible() {
 function getRolesAsignados() {
    let idUsuario = $("#pidUsuario").val();
    tableRolesAsignados.setTablaHTML("tblRolesAsignados");
-   tableRolesAsignados.setUrl(contexto+"/Usuarios/getConsultaRolesUsuarios");
+   tableRolesAsignados.setUrl(contexto+"Usuarios/getConsultaRolesUsuarios");
    tableRolesAsignados.setRegistrosPagina(10);
    tableRolesAsignados.setColumnas("id_usuario_rol,nombre_rol,descripcion,fecha_vigencia,detalle");
    tableRolesAsignados.setColTipos("checkbox,text,text,link,icon");
@@ -214,8 +224,8 @@ function confirmacionAsignarRoles(tipo_asginacion) {
       if (msg.length > 0) {
          Swal.fire({
             title: 'Dato Requerido',
-            html: "<ul>"+msg+"</ul>",
-            icon: 'error',
+            html: "<ul class='p-font-msg-1-2 text-dark'>"+msg+"</ul>",
+            icon: 'warning',
             showDenyButton: true,
             denyButtonText: "Aceptar",
             showConfirmButton: false
@@ -229,42 +239,44 @@ function confirmacionAsignarRoles(tipo_asginacion) {
 
    if (msg.length === 0 && parseInt(filasTblRoldisp) > 0) {
       $("#overlay2").show();
-      html +=  '<form method="post" class="form-horizontal frm-fecha-vg" id="frmfecha" name="frmfecha" novalidate onsubmit="return false;">';         
-      html +=  '  <div class="row">' +
-               '     <div class="col-sm-6">' +
-               '		   <div class="form-floating mb-3">'+
-               '           <input type="date" class="form-control" id="vm_fecha_vig_inicio_rol" name="vm_fecha_vig_inicio_rol" '+
-               '                  onchange="validRangoFechaVigenciaRol()" placeholder="Fecha Inicio Vigencia" required>'+
-               '           <label>'+
-               '              <span class="border-start border-light-secondary ps-3">Fecha Inicio Vigencia</span>'+
-               '           </label>'+
-               '           <div class="invalid-feedback">Fecha inicio vigencia requerido</div>'+
-               '        </div>'+
-               '		</div>'+
-               '     <div class="col-sm-6">' +
-               '		   <div class="form-floating mb-3">'+
-               '           <input type="date" class="form-control" id="vm_fecha_vig_termino_rol" name="vm_fecha_vig_termino_rol" '+
-               '                 placeholder="Fecha T&eacute;rmino Vigencia">'+
-               '           <label>'+
-               '              <span class="border-start border-light-secondary ps-3">Fecha T&eacute;rmino Vigencia</span>'+
-               '           </label>'+
-               '        </div>'+
-               '		</div>'+
-               '  </div>';
-      html +=  '</form>';
+      html +=  `<form method="post" class="form-horizontal frm-fecha-vg" id="frmfecha" name="frmfecha" novalidate onsubmit="return false;">
+                  <div class="row">
+                     <div class="col-sm-6">
+               		   <div class="form-floating mb-3">
+                           <input type="date" class="form-control" id="vm_fecha_vig_inicio_rol" name="vm_fecha_vig_inicio_rol"
+                              onchange="validRangoFechaVigenciaRol()" placeholder="Fecha Inicio Vigencia" required>
+                           <label>
+                             <span class="border-start border-light-secondary ps-3">Fecha Inicio Vigencia</span>
+                           </label>
+                           <div class="invalid-feedback">Fecha inicio vigencia requerido</div>
+                        </div>
+               		</div>
+                     <div class="col-sm-6">
+               		   <div class="form-floating mb-3">
+                           <input type="date" class="form-control" id="vm_fecha_vig_termino_rol" name="vm_fecha_vig_termino_rol"
+                              placeholder="Fecha T&eacute;rmino Vigencia">
+                           <label>
+                              <span class="border-start border-light-secondary ps-3">Fecha T&eacute;rmino Vigencia</span>
+                           </label>
+                        </div>
+               		</div>
+                  </div>
+               </form>`;
 
-      botones +=  '<button type="button" id="bt_asig_rol" class="btn btn-info" btn="btn" onclick="validacionAsignacionRol('+"'"+tipo_asginacion+"'"+')">'+
-                  '  <i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Aplicar asignaci&oacute;n de role (s)</button>&nbsp;';
-      botones +=  '<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" onclick="cerrarmodalRol()">'+
-                  '  <i class="fa-solid fa-xmark me-2"></i>Cerrar</button>';
+      botones +=  `<button type="button" class="btn btn-info me-1" btn="btn" id="bt_asig_rol" onclick="validacionAsignacionRol('${tipo_asginacion}')">
+                     <i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Aplicar asignaci&oacute;n de role (s)
+                  </button>`;
+      botones +=  `<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" onclick="cerrarmodalRol()">
+                     <i class="fa-solid fa-xmark me-2"></i>Cerrar
+                  </button>`;
 
       modal('fusuario', titulo, html, 'formdefault-center', botones, 'cerrarmodalRol()');
    }
    else {
       Swal.fire({
          title: 'Asignación de Roles',
-         html: '<p class="p-font-msg">No hay roles <span class="p-font-weight">disponible</span></p>',
-         icon: 'error',
+         html: '<p class="p-font-msg-1-2">No hay roles <span class="fw-bold">disponible</span></p>',
+         icon: 'warning',
          showDenyButton: true,
          denyButtonText: "Aceptar",
          showConfirmButton: false
@@ -290,7 +302,7 @@ function validacionAsignacionRol(tipo_asginacion) {
       form.classList.add('was-validated');
    });
    
-   if(contador === 0){
+   if(contador == 0){
       agregarRoles(tipo_asginacion);
    }
 }
@@ -305,24 +317,24 @@ function agregarRoles(tipo_asginacion) {
    formData.append("fecha_vigencia_termino", $("#vm_fecha_vig_termino_rol").val());
    $.ajax({
       type: 'post',
-      url: contexto+'/Usuarios/getAgregarRolesUsuarios',
+      url: contexto+'Usuarios/getAgregarRolesUsuarios',
       async: true,
       processData: false,
       contentType: false,
       dataType:"JSON",
       data: formData,
       beforeSend(xhr) {
-         $('#overlay').show();
-         $('#bt_asig_rol').html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Aplicar asignaci&oacute;n de role (s)');
          $('button[btn="btn"]').prop('disabled', false);
-         target = document.getElementById('fusuario');
-         spinner = new Spinner().spin(target);
+         $("#overlayprincipal").show();
+         $("#bt_asig_rol").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Aplicar asignaci&oacute;n de role (s)');
+         targetPrincipal = document.getElementById('fusuario');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
-         if (data.respuesta === false) {
+         if (data.respuesta == false) {
             Swal.fire({
                title: 'HA OCURRIDO UN ERROR!',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-danger">'+data.mensaje+'</p>',
                icon: 'error',
                showDenyButton: true,
                denyButtonText: 'Aceptar',
@@ -332,7 +344,7 @@ function agregarRoles(tipo_asginacion) {
          else {
             Swal.fire({
                title: '¡ P r o c e s o &nbsp;&nbsp; E x i t o s o !',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-dark">'+data.mensaje+'</p>',
                icon: 'success',
                showCancelButton: false,
                allowOutsideClick: false,
@@ -351,7 +363,7 @@ function agregarRoles(tipo_asginacion) {
       error: function (xhr, ajaxOptions, thrownError) {
          Swal.fire({
             title: 'HA OCURRIDO UN ERROR!',
-            html: '<p class="p-font-msg">'+thrownError+'</p>',
+            html: '<p class="p-font-msg text-danger">'+thrownError+'</p>',
             icon: 'error',
             showDenyButton: true,
             showConfirmButton: false,
@@ -360,9 +372,9 @@ function agregarRoles(tipo_asginacion) {
       },
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled',false);
-         $('#bt_asig_rol').html('<i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Aplicar asignaci&oacute;n de role (s)');
-         spinner.stop();
-         $("#overlay").hide();
+         $("#bt_asig_rol").html('<i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Aplicar asignaci&oacute;n de role (s)');
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }
@@ -371,7 +383,7 @@ function confirmacionQuitarRoles(tipo_remove) {
    let msg = "";
    let filasTblRolasig = tableRolesAsignados.countMarcados(0);
 
-   if(tipo_remove === 'INDIVIDUAL') {
+   if(tipo_remove == 'INDIVIDUAL') {
       if(parseInt(filasTblRolasig) === 0) {
          msg += "<li>Seleccionar un rol</li>";
       }
@@ -379,10 +391,10 @@ function confirmacionQuitarRoles(tipo_remove) {
       if (msg.length > 0) {
          Swal.fire({
             title: 'Dato Requerido',
-            html: "<ul>"+msg+"</ul>",
-            icon: 'error',
+            html: "<ul class='p-font-msg-1-2 text-dark'>"+msg+"</ul>",
+            icon: 'warning',
             showDenyButton: true,
-            denyButtonText: "ok",
+            denyButtonText: "Aceptar",
             showConfirmButton: false
          });
          
@@ -399,8 +411,8 @@ function confirmacionQuitarRoles(tipo_remove) {
    else {
       Swal.fire({
          title: 'Eliminación de Roles',
-         html: '<p class="p-font-msg">No hay roles <span class="p-font-weight">asignados</span></p>',
-         icon: 'error',
+         html: '<p class="p-font-msg-1-2 text-dark">No hay roles <span class="fw-bold">asignados</span></p>',
+         icon: 'warning',
          showDenyButton: true,
          denyButtonText: "Aceptar",
          showConfirmButton: false
@@ -416,23 +428,23 @@ function eliminarRoles(tipo_remove) {
    formData.append("id_usuario_roles", tableRolesAsignados.getCheckMarcados(0));
    $.ajax({
       type: 'post',
-      url: contexto+'/Usuarios/getEliminarRoles',
+      url: contexto+'Usuarios/getEliminarRoles',
       async: true,
       processData: false,
       contentType: false,
       dataType:"JSON",
       data: formData,
       beforeSend(xhr) {
-         $('#overlay').show();
          $('button[btn="btn"]').prop('disabled', false);
-         target = document.getElementById('fusuario');
-         spinner = new Spinner().spin(target);
+         $("#overlayprincipal").show();
+         targetPrincipal = document.getElementById('fusuario');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
          if (data.respuesta === false) {
             Swal.fire({
                title: 'HA OCURRIDO UN ERROR!',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-danger">'+data.mensaje+'</p>',
                icon: 'error',
                showDenyButton: true,
                denyButtonText: 'Aceptar',
@@ -442,7 +454,7 @@ function eliminarRoles(tipo_remove) {
          else {            
             Swal.fire({
                title: '¡ P r o c e s o &nbsp;&nbsp; E x i t o s o !',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-dark">'+data.mensaje+'</p>',
                icon: 'success',
                showCancelButton: false,
                allowOutsideClick: false,
@@ -463,7 +475,7 @@ function eliminarRoles(tipo_remove) {
       error: function (xhr, ajaxOptions, thrownError) {
          Swal.fire({
             title: 'HA OCURRIDO UN ERROR!',
-            html: '<p class="p-font-msg">'+thrownError+'</p>',
+            html: '<p class="p-font-msg text-danger">'+thrownError+'</p>',
             icon: 'error',
             showDenyButton: true,
             showConfirmButton: false,
@@ -472,55 +484,59 @@ function eliminarRoles(tipo_remove) {
       },
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled',false);
-         spinner.stop();
-         $("#overlay").hide();
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }
 //!
 function actualizaVigencia(reg) {
-   let html = "";
-   let botones = "";
+   let html = '';
+   let botones = '';
    let titulo = 'Actulizaci&oacute;n de Vigencia del Rol Asignado';
    $("#overlay2").show();
+   //
+   html +=  `<form method="post" class="frm-act-fecha_vig" id="frmActFVRol" name="frmActFVRol" novalidate onSubmit="return false;">
+               <div class="row">
+                  <div class="col-sm-12">
+            		   <div style="margin-left:15px;">
+            			   <figure>
+                           <blockquote class="blockquote"><p class="p-font-weight-500 p-font-msg-09">${reg.nombre_rol}</p></blockquote>
+            			      <figcaption class="blockquote-footer fw-bold">Nombre del Rol</figcaption>
+                        </figure>
+            			   <hr style="margin-top:-10px">
+            		   </div>
+            	   </div>
+               </div>
+               <div class="row">
+                  <div class="col-sm-6">
+            		   <div class="form-floating mb-3">
+                        <input type="date" class="form-control" id="fecha_vigencia_inicio_rol" name="fecha_vigencia_inicio_rol"
+                           onchange="validActFechaVigenciaRol()" placeholder="Fecha Inicio Vigencia" required>
+                        <label>
+                           <span class="border-start border-light-secondary ps-3">Fecha Inicio Vigencia</span>
+                        </label>
+                       <div class="invalid-feedback">Fecha inicio vigencia requerido</div>
+                    </div>
+            		</div>
+                  <div class="col-sm-6">
+            		   <div class="form-floating mb-3">
+                        <input type="date" class="form-control" id="fecha_vigencia_termino_rol" name="fecha_vigencia_termino_rol"
+                           placeholder="Fecha T&eacute;rmino Vigencia">
+                        <label>
+                           <span class="border-start border-light-secondary ps-3">Fecha T&eacute;rmino Vigencia</span>
+                        </label>
+                    </div>
+            		</div>
+               </div>
+            </form>`;
 
-   html +=  '<form method="post" class="frm-act-fecha_vig" id="frmActFVRol" name="frmActFVRol" novalidate onSubmit="return false;">'+
-            '  <div class="row">'+
-            '     <div class="col-sm-12">'+
-            '		   <div style="margin-left:15px;">'+
-            '			   <figure><blockquote class="blockquote"><p class="p-font-weight-500 p-font-msg-09">'+reg.nombre_rol+'</p></blockquote>'+
-            '			   <figcaption class="blockquote-footer">Nombre del Rol</figcaption></figure>'+
-            '			   <hr style="margin-top:-10px">'+
-            '		   </div>'+
-            '	   </div>'+
-            '  </div>';
-   html +=  '  <div class="row">' +
-            '     <div class="col-sm-6">' +
-            '		   <div class="form-floating mb-3">'+
-            '           <input type="date" class="form-control" id="fecha_vigencia_inicio_rol" name="fecha_vigencia_inicio_rol" '+
-            '                  onchange="validActFechaVigenciaRol()" placeholder="Fecha Inicio Vigencia" required>'+
-            '           <label>'+
-            '              <span class="border-start border-light-secondary ps-3">Fecha Inicio Vigencia</span>'+
-            '           </label>'+
-            '           <div class="invalid-feedback">Fecha inicio vigencia requerido</div>'+
-            '        </div>'+
-            '		</div>'+
-            '     <div class="col-sm-6">' +
-            '		   <div class="form-floating mb-3">'+
-            '           <input type="date" class="form-control" id="fecha_vigencia_termino_rol" name="fecha_vigencia_termino_rol" '+
-            '                  placeholder="Fecha T&eacute;rmino Vigencia">'+
-            '           <label>'+
-            '              <span class="border-start border-light-secondary ps-3">Fecha T&eacute;rmino Vigencia</span>'+
-            '           </label>'+
-            '        </div>'+
-            '		</div>'+
-            '  </div>';
-   html +=  '</form>';
-
-   botones +=  '<button type="button" id="bt_act_fv_rol" class="btn btn-info" btn="btn" onclick="validacionActFechaVigRol('+reg.id_usuario_rol+')">'+
-               '  <i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Aplicar cambio de Fecha vigencia</button>&nbsp;';
-   botones +=  '<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" onclick="cerrarmodalRol()">'+
-               '  <i class="fa-solid fa-xmark me-2"></i>Cerrar</button>';
+   botones +=  `<button type="button" id="bt_act_fv_rol" class="btn btn-info me-1" btn="btn" onclick="validacionActFechaVigRol(${reg.id_usuario_rol})">
+                  <i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Aplicar Cambio
+               </button>`;
+   botones +=  `<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" onclick="cerrarmodalRol()">
+                  <i class="fa-solid fa-xmark me-2"></i>Cerrar
+               </button>`;
 
    modal('fusuario', titulo, html, 'formdefault_scrollable_center', botones, 'cerrarmodalRol()');
    $("#fecha_vigencia_inicio_rol").val(reg.fvigencia_inicio);
@@ -530,7 +546,7 @@ function actualizaVigencia(reg) {
 //!
 function validActFechaVigenciaRol() {
    $("#fecha_vigencia_termino_rol").val('');
-   $("#fecha_vigencia_termino_rol").prop("min",$("#fecha_vigencia_inicio_rol").val());
+   $("#fecha_vigencia_termino_rol").prop('min',$("#fecha_vigencia_inicio_rol").val());
 }
 //! Función de validacion de cambio de fecha de vigencia de roles asginados
 function validacionActFechaVigRol(id_usuario_rol) {
@@ -546,7 +562,7 @@ function validacionActFechaVigRol(id_usuario_rol) {
       form.classList.add('was-validated');
    });
    
-   if(contador === 0){
+   if(contador == 0){
       actuaizarFechaVigenciaRolesAsignados(id_usuario_rol);
    }
 }
@@ -558,24 +574,24 @@ function actuaizarFechaVigenciaRolesAsignados(id_usuario_rol) {
    formData.append("fecha_vigencia_termino", $("#fecha_vigencia_termino_rol").val());
    $.ajax({
       type: 'post',
-      url: contexto+'/Usuarios/updateFechaVigenciaUsuarioRol',
+      url: contexto+'Usuarios/updateFechaVigenciaUsuarioRol',
       async: true,
       processData: false,
       contentType: false,
       dataType:"JSON",
       data: formData,
       beforeSend(xhr) {
-         $('#overlay').show();
-         $('#bt_act_fv_rol').html('<i class="fa-solid fa-circle-notch fa-spin"></i>&nbsp;Aplicar cambio de Fecha vigencia');
          $('button[btn="btn"]').prop('disabled', false);
-         target = document.getElementById('fusuario');
-         spinner = new Spinner().spin(target);
+         $("#overlayprincipal").show();
+         $("#bt_act_fv_rol").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Aplicar Cambio');
+         targetPrincipal = document.getElementById('fusuario');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
-         if (data.respuesta === false) {
+         if (data.respuesta == false) {
             Swal.fire({
                title: 'HA OCURRIDO UN ERROR!',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-danger">'+data.mensaje+'</p>',
                icon: 'error',
                showDenyButton: true,
                denyButtonText: 'Aceptar',
@@ -585,7 +601,7 @@ function actuaizarFechaVigenciaRolesAsignados(id_usuario_rol) {
          else {
             Swal.fire({
                title: '¡ P r o c e s o &nbsp;&nbsp; E x i t o s o !',
-               html: '<p class="p-font-msg">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2 text-dark">'+data.mensaje+'</p>',
                icon: 'success',
                showCancelButton: false,
                allowOutsideClick: false,
@@ -604,7 +620,7 @@ function actuaizarFechaVigenciaRolesAsignados(id_usuario_rol) {
       error: function (xhr, ajaxOptions, thrownError) {
          Swal.fire({
             title: 'HA OCURRIDO UN ERROR!',
-            html: '<p class="p-font-msg">'+thrownError+'</p>',
+            html: '<p class="p-font-msg text-danger">'+thrownError+'</p>',
             icon: 'error',
             showDenyButton: true,
             showConfirmButton: false,
@@ -613,20 +629,20 @@ function actuaizarFechaVigenciaRolesAsignados(id_usuario_rol) {
       },
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled',false);
-         $('#bt_act_fv_rol').html('<i class="fa-solid fa-arrow-right-arrow-left"></i>&nbsp;Aplicar cambio de Fecha vigencia');
-         spinner.stop();
-         $("#overlay").hide();
+         $("#bt_act_fv_rol").html('<i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Aplicar Cambio');
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }
-//! get tree del modulo
+//!
 function getTreeRoles(idRol) {
    let json = "";
    let formData = new FormData();
    formData.append("id_rol", idRol);
    $.ajax({
       method: 'post',
-      url: contexto+'/Usuarios/getDetalleRol',
+      url: contexto+'Usuarios/getDetalleRol',
       async: false,
       processData: false,
       contentType: false,
@@ -634,64 +650,65 @@ function getTreeRoles(idRol) {
       data: formData,
       beforeSend(xhr){
          $('button[btn="btn"]').prop('disabled',true);
-         $("#overlay").show();
-         target = document.getElementById('fusuario');
-         spinner = new Spinner().spin(target);
+         $("#overlayprincipal").show();
+         targetPrincipal = document.getElementById('fusuario');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success:function(data){
          json = data;
       },
       error: function (xhr, ajaxOptions, thrownError) {
          Swal.fire({
-              title: 'HA OCURRIDO UN ERROR!',
-              html: '<p class="p-font-msg">'+thrownError+'</p>',
-              icon: 'error',
-              showDenyButton: true,
-             showConfirmButton: false,
-             denyButtonText: "Aceptar"
+            title: 'HA OCURRIDO UN ERROR!',
+            html: '<p class="p-font-msg text-danger">'+thrownError+'</p>',
+            icon: 'error',
+            showDenyButton: true,
+            showConfirmButton: false,
+            denyButtonText: "Aceptar"
          });
       },
       complete(xhr,status){
          $('button[btn="btn"]').prop('disabled',false);
-         spinner.stop();
-         $("#overlay").hide();
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
    
    return json;
 }
-//! funcion donde visualiza el detalle del rol
+//!
 function detalleRol(reg) {
-   let html = "";
-   let botones = "";
+   let html = '';
+   let botones = '';
    let titulo = 'Configuraci&oacute;n del Rol';
-   let nombreSistema = "PRYSE";
+   let nombreSistema = 'PAINANI';
    $("#overlay2").show();
-
-   html +=  '<form method="post" name="frmDetRol" id="frmDetRol" onSubmit="return false;">'+
-            '<div class="row">'+
-            '  <div class="col-sm-12">'+
-            '		<div style="margin-left:15px;">'+
-            '			<figure><blockquote class="blockquote">'+
-            '				<p class="p-font-weight-500 p-font-msg-09">'+reg.nombre_rol+'</p>'+
-            '			</blockquote>'+
-            '			<figcaption class="blockquote-footer">Nombre del Rol</figcaption></figure>'+
-            '		</div>'+
-            '	</div>'+
-            '</div>'+
-            '<hr style="margin-top:0">'+
-            '<div class="row">'+
-            '  <div class="col-sm-12">'+
-            '     <div style="margin-left:10px;" id="tree"></div>'+
-            '  </div>'+
-            '</div>'+
-            '</form>';
+   //
+   html +=  `<form method="post" name="frmDetRol" id="frmDetRol" onSubmit="return false;">
+               <div class="row">
+                  <div class="col-sm-12">
+            		   <div style="margin-left:15px;">
+            			   <figure><blockquote class="blockquote">
+            				   <p class="p-font-weight-500 p-font-msg-09">${reg.nombre_rol}</p>
+            			   </blockquote>
+            			   <figcaption class="blockquote-footer fw-bold">Nombre del Rol</figcaption></figure>
+            		   </div>
+            	   </div>
+               </div>
+               <hr style="margin-top:-5px">
+               <div class="row">
+                  <div class="col-sm-12">
+                     <div style="margin-left:10px;" id="tree"></div>
+                  </div>
+               </div>
+            </form>`;
    
-   botones +=  '<button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="cerrarmodalRol()">'+
-               '<i class="fa-solid fa-xmark me-2"></i>Cerrar</button>';
+   botones +=  `<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" onclick="cerrarmodalRol()">
+                  <i class="fa-solid fa-xmark me-2"></i>Cerrar
+               </button>`;
    modal('fusuario',titulo,html,'formdefault_scrollable_center',botones,'cerrarmodalRol()');
    
-   $('#tree').html('<span class="p-font-weight">'+nombreSistema+'</span>');
+   $('#tree').html(`<span class="fw-bold">${nombreSistema}</span>`);
    const tree = new dhx.Tree("tree", {
       css: "custom-class",
       template: ({ value }, isFolder) => {
@@ -707,9 +724,9 @@ function detalleRol(reg) {
       tree.collapseAll();
    }
    else{
-      $("#tree").html('<div class="alert customize-alert alert-dismissible text-danger alert-light-danger text-center" role="alert" style="font-size:1.2rem">'+
-                      '<i class="fas fa-exclamation-triangle fa-lg"></i>&nbsp;'+
-                      'El rol no tiene configuraci&oacute;n registrada en <span class="p-font-weight">'+nombreSistema+'</span></div>');
+      $("#tree").html(`<div class="alert alert-light-border-danger text-center" role="alert" style="font-size:1.2rem">
+                     <i class="fas fa-exclamation-triangle fa-lg"></i>&nbsp;
+                     El rol no tiene configuraci&oacute;n registrada en <span class="fw-bold">${nombreSistema}</span></div>`);
    }
 }
 //!
@@ -719,8 +736,8 @@ function cerrarmodalRol() {
 }
 //!
 function keyEventRolDisp(event) {
-   let tecla = (event.all) ? window.event : event.which;
-   if (tecla === 13) {
+   let tecla = (event.all) ? event.keyCode : event.which;
+   if (tecla == 13) {
       getRolesDisponible();
    }
    else {
@@ -729,8 +746,8 @@ function keyEventRolDisp(event) {
 }
 //!
 function keyEventRolAsig(event) {
-   let tecla = (event.all) ? window.event : event.which;
-   if (tecla === 13) {
+   let tecla = (event.all) ? event.keyCode : event.which;
+   if (tecla == 13) {
       getRolesAsignados();
    }
    else {
