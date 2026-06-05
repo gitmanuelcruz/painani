@@ -1,5 +1,5 @@
 const Pool = require('pg').Pool
-require('dotenv').config();
+//require('dotenv').config({ quiet: true });
 
 const pool = new Pool({
    host:process.env.HOSTDB,
@@ -7,7 +7,7 @@ const pool = new Pool({
    port: process.env.PORTDB,
    user:process.env.USERDB,
    password: process.env.CONTRASENIA,
-   options: '-c search_path=painani'
+   options: process.env.OPTIONS
 });
 
 module.exports = pool

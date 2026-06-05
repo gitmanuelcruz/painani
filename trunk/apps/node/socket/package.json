@@ -1,25 +1,24 @@
 {
-  "name": "socket",
+  "name": "painani",
   "version": "1.0.0",
-  "description": "socket_seydi",
-  "main": "seydi-index.js",
+  "description": "Mensajeria",
+  "license": "ISC",
+  "author": "Manuel Cruz",
+  "type": "commonjs",
+  "main": "painani-index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon seydi-index.js",
-    "start": "node seydi-index.js"
+    "dev": "nodemon painani-index.js"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.2",
-    "multer": "^1.4.5-lts.1",
-    "nodemon": "^3.1.10",
-    "pg": "^8.11.3",
-    "socket.io": "^4.7.2",
-    "uuid": "^10.0.0"
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "nodemon": "^3.1.14",
+    "pg": "^8.21.0",
+    "socket.io": "^4.8.3",
+    "uuid": "^14.0.0"
   }
 }

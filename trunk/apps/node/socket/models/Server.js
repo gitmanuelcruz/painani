@@ -10,7 +10,7 @@ const SocketsNotificaciones = require('./SocketsNotificaciones');
 class Server {
    constructor() {
       this.app = express();
-      this.port = process.env.PORT || 8890;
+      this.port = process.env.PORT || 3039;
       // Conectar a DB
       //dbConecta();
       // Http server
@@ -44,7 +44,7 @@ class Server {
       this.app.get('/mensaje', function(req, res) {
          res.json({ mensaje: 'Método GET test' })
       });
-      
+
 	   //this.app.use("/api/guardias",require('../router/guardias'));
    }
    // Esta configuración se puede tener aquí o como propieda de clase
