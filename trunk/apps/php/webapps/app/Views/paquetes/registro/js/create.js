@@ -1,5 +1,4 @@
 const vmRegistro = (id_notificacion,tipo) => {
-   $('.tooltip_icon_pag').tooltip('hide');
 	let html = '';
    let botones = '';
    const titulo = (id_notificacion == '') ? 'Registro de Notificaci&oacute;n':'Edici&oacute;n de Notificaci&oacute;n';
@@ -49,7 +48,7 @@ const vmRegistro = (id_notificacion,tipo) => {
                   <i class="fa-solid fa-xmark me-2"></i>Cerrar
                </button>`;
 
-   modalLG('frmNotificaciones', titulo, html, 'formlg_scrollable', botones, 'cerrar_vm_registro()');
+   modalLG('frmfrmPaquetes', titulo, html, 'formlg_scrollable', botones, 'cerrar_vm_registro()');
    $(".selectpicker").select2({dropdownParent: $("#vModalLG")});
    //
    $("#bt_guardar").on("click", function () {
@@ -160,7 +159,7 @@ const guardarRegistro = () => {
          $('button[btn="btn"]').prop('disabled', true);
          $("#overlayprincipal").show();
          $("#bt_guardar").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Guardar');
-         targetPrincipal = document.getElementById('frmNotificaciones');
+         targetPrincipal = document.getElementById('frmfrmPaquetes');
          spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {

@@ -1,4 +1,5 @@
 function configuracionRol(reg) {
+   $('.tooltip_icon_pag').tooltip('hide');
    let html = '';
    let botones = '';
    let titulo = 'Configuraci&oacute;n de Privilegios del Rol';

@@ -1,5 +1,4 @@
 const detalle = (reg) => {
-   $('.tooltip_icon_pag').tooltip('hide');
    let html = '';
    let botones = '';
    const titulo = 'Detalle de la Notificaci&oacute;n';
@@ -35,7 +34,7 @@ const detalle = (reg) => {
    botones +=  `<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" id="bt_cerrar_detalle">
                   <i class="fa-solid fa-xmark me-2"></i>Cerrar
                </button>`;
-   modalLG('frmNotificaciones', titulo, html, 'formlg_scrollable', botones, 'cerrarVMDetalle()');
+   modalLG('frmfrmPaquetes', titulo, html, 'formlg_scrollable', botones, 'cerrarVMDetalle()');
    //
    $("#bt_cerrar_detalle").on("click", function () {
       cerrarVMDetalle();

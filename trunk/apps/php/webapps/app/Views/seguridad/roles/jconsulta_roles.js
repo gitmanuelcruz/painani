@@ -48,6 +48,7 @@ function recargaPaginadoPrincipal() {
 }
 
 function editarRol(reg) {
+   $('.tooltip_icon_pag').tooltip('hide');
    ventanaNuevo(reg.id_rol,'Edici&oacute;n del Rol','E');
    $("#vm_nombre_rol").val(reg.nombre_rol);
    $("#vm_descripcion_rol").val(reg.descripcion);
@@ -55,6 +56,7 @@ function editarRol(reg) {
 }
 
 function ventanaNuevo(id_rol,titulo,tipo) {
+   $('.tooltip_icon_pag').tooltip('hide');
    let html = '';
    let botones = '';
 

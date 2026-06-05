@@ -1,5 +1,5 @@
 let table = new MTable();
-const nameController = 'NotificacionesRegistro';
+const nameController = 'PaquetesRegistro';
 const Toast = Swal.mixin({
    toast: true,
    position: 'top-right',
@@ -13,10 +13,10 @@ const Toast = Swal.mixin({
 
 $(document).ready(function() {
 	$(".preloader").fadeOut();
-	loadNotificacionesPag();
+	//loadPaquetesPag();
 
 	$("#btnBuscar").on("click", function () {
-		loadNotificacionesPag();
+		loadPaquetesPag();
 	});
 
 	$("#btnNuevo").on("click", function () {
@@ -28,8 +28,8 @@ $(document).ready(function() {
    });
 });
 
-const loadNotificacionesPag = () => {
-	table.setTablaHTML("gridNotificaciones");
+const loadPaquetesPag = () => {
+	table.setTablaHTML("gridPaquetes");
 	table.setUrl(contexto+nameController+"/notificacionesPag");
 	table.setRegistrosPagina(10);
 	table.setColumnas("desc_num_oficio,foficio,domicilio,referencia_ubicacion,desc_estatus,band");
@@ -49,19 +49,19 @@ const loadNotificacionesPag = () => {
       }
    }
 	table.setDropDown(dropdown);
-	table.setParametros($("#frmNotificaciones").serialize());
+	table.setParametros($("#frmfrmPaquetes").serialize());
 	table.loadJSON();
 }
 //!
 const recargaPaginadoPrincipal = () => {
-   table.parametros = $("#frmNotificaciones").serialize();
+   table.parametros = $("#frmfrmPaquetes").serialize();
    table.loadJSON(table.pagina);
 }
 //!
 const keyEvent = (event) => {
    let tecla = (event.all) ? event.keyCode : event.which;
    if (tecla == 13) {
-      loadNotificacionesPag();
+      loadPaquetesPag();
    }
    else {
       return false;
@@ -89,7 +89,6 @@ const editarNotificacion = (reg) =>{
 }
 // TODO: Proceso de cancelacion
 const cancelarNotificacion = (reg) => {
-   $('.tooltip_icon_pag').tooltip('hide');
    let titulo =   `Confirma <span class="fw-bold text-danger">CANCELAR</span> la notificaci&oacute;n con el Num. Oficio
                   <span class="fw-bold">${reg.num_oficio}</span>`;
    Swal.fire({
@@ -122,7 +121,7 @@ const updateCancelar = (id_notificacion) => {
       beforeSend(xhr) {
          $('button[btn="btn"]').prop('disabled', true);
          $("#overlayprincipal").show();
-         targetPrincipal = document.getElementById('frmNotificaciones');
+         targetPrincipal = document.getElementById('frmfrmPaquetes');
          spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
