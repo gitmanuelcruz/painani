@@ -34,45 +34,14 @@ class MServicios extends Model
       return $this->db->query($sql);
    }
 
-   public function getEstados() {
+   public function getEstatusNotificacion() {
       $sql ="SELECT
-               id_estado AS id,
-               codigo_estado AS codigo,
-               nombre_estado AS nombre,
-               codigo_estado||' - '||nombre_estado AS descripcion,
-               abreviatura AS abreviatura_estado
-            FROM estados
-            ORDER BY codigo_estado";
+               id_estatus_notificacion AS id,
+               nombre_estatus_notificacion AS descripcion
+            FROM estatus_notificacion
+            ORDER BY num_orden";
 
       return $this->db->query($sql);
-   }
-
-   public function getMunicipios($id_estado){
-      $sql ="SELECT
-               id_municipio AS id,
-               codigo_municipio AS codigo,
-               codigo_municipio||' - '||nombre_municipio AS descripcion,
-               nombre_municipio AS nombre
-            FROM municipios
-            WHERE id_estado = ?
-            ORDER BY codigo_municipio";
-
-      return $this->db->query($sql,[$id_estado]);
-   }
-
-   public function getLocalidades($id_municipio){
-      $sql ="SELECT
-               id_localidad AS id,
-               codigo_localidad AS codigo,
-               codigo_localidad||' - '||nombre_localidad AS descripcion,
-               nombre_localidad AS nombre,
-               latitud_decimal AS latitud,
-               longitud_decimal AS longitud
-            FROM localidades
-            WHERE id_municipio = ?
-            ORDER BY codigo_localidad";
-
-      return $this->db->query($sql,[$id_municipio]);
    }
 }
 ?>

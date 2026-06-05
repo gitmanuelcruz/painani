@@ -1,13 +1,13 @@
 <?php
 namespace App\Controllers;
+use App\Models\MNotificacionesRegistro;
 use App\Models\MServicios;
-use App\Models\MCambios;
 
-class Cambios extends BaseController
+class NotificacionesRegistro extends BaseController
 {
 	function __construct() {
+		$this->Modelo = new MNotificacionesRegistro();
 		$this->MServicios = new MServicios();
-		$this->MCambios = new MCambios();
       helper('date');
 	}
    //
@@ -17,322 +17,144 @@ class Cambios extends BaseController
 		}
 		else {
 			$usuario = $this->session->get("usuario");
-         $validarModulo = $this->utilerias->getValidaPrivilegio($usuario, 'REG_CAMBIOS_EMPLEADOS', 'MODULO');
+         $validarModulo = $this->utilerias->getValidaPrivilegio($usuario,"REG_NOTIFICACION","MODULO");
          if($validarModulo > 0) {
             $data['usuario'] = $usuario;
 				$data['data_user'] = $this->utilerias->getDatosSession();
-            $data['titulo'] = "Mvts. Empleados";
-            $data['titulo2'] = "Movimientos de Empleados";
-            $data['btn_nuevo'] = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_NEW_CAMBIO","PRIVILEGIO");
-            $data['tiposCambio'] = $this->MServicios->getTiposCambios()->getResult();
-            $data['estatusCambio'] = $this->MServicios->getEstatusCambios()->getResult();
-				return view('cambios/list', $data);
+            $data['titulo'] = "Registro";
+            $data['titulo2'] = "Registro de Notificaciones";
+            $data['btn_nuevo'] = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_NVO_NOTIFICACION","PRIVILEGIO");
+            $data['estatus'] = $this->MServicios->getEstatusNotificacion()->getResult();
+				return view('notificaciones/registro/list', $data);
          }
          else {
             $message = array(
                'data_user' => $this->utilerias->getDatosSession(),
                'title' => 'VALIDACI&Oacute;N DE PRIVILEGIO DE M&Oacute;DULO',
-               'detalle' => 'SIN PRIVILEGIOS PARA ACCEDER AL M&Oacute;DULO DE <b>CAMBIOS</b>');
+               'detalle' => 'SIN PRIVILEGIOS PARA ACCEDER AL M&Oacute;DULO DE <b>REGISTRO DE NOTIFICACIONES</b>');
 				return view('errors/message_error', $message);
          }
 		}
 	}
 	//
-	public function cambiosEmpleadosPag() {
-      $nombre_rfc_curp   = $this->request->getPost("txt_nombre_rfc_curp");
-		$id_tipo_cambio    = $this->request->getPost("id_tipo_cambio");
-		$fecha_cambio      = $this->request->getPost("txt_fecha_cambio");
-		$id_estatus_cambio = $this->request->getPost("id_estatus_cambio");
-		$usuario 		= $this->session->get("usuario");
-		$icon_editar 	= $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_EDITA_CAMBIO_EMP","PRIVILEGIO");
-		$icon_enviar 	= $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_ENVIA_CAMBIO_EMP","PRIVILEGIO");
-		$icon_regresar = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_REGRESA_CAMBIO_EMP","PRIVILEGIO");
-		$icon_aplicar 	= $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_APLICA_CAMBIO_EMP","PRIVILEGIO");
-		$icon_cancelar = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_CANCELA_CAMBIO_EMP","PRIVILEGIO");
-		$pagina        = 0;
-		$resultados    = 0;
+	public function notificacionesPag() {
+      $idNumOficio  = $this->request->getPost("txt_id_num_oficio");
+		$fechaOficio  = $this->request->getPost("txt_fecha_oficio");
+		$idEstatus    = $this->request->getPost("id_estatus");
+		$usuario 	  = $this->session->get("usuario");
+		$iconEditar   = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_EDI_NOTIFICACION","PRIVILEGIO");
+		$iconCancelar = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_CANL_NOTIFICACION","PRIVILEGIO");
+		$pagina       = 0;
+		$resultados   = 0;
 
 		if (!empty($this->request->getPost("pagina")))
 			$pagina = $this->request->getPost("pagina");
 		if (!empty($this->request->getPost("resultados")))
 			$resultados = $this->request->getPost("resultados");
 
-		$sql = $this->MCambios->getCambiosEmpleadosPag(
-         $nombre_rfc_curp,$id_tipo_cambio,$fecha_cambio,$id_estatus_cambio,$icon_editar,$icon_enviar,$icon_regresar,
-         $icon_aplicar, $icon_cancelar);
+		$sql = $this->Modelo->getNotificacionesPag(
+         $idNumOficio,$fechaOficio,$idEstatus,$iconEditar,$iconCancelar);
 		$results = $this->utilerias->loadJSON($sql, $pagina, $resultados);
 
 		return $this->response->setJSON($results);
 	}
-   
-	// TODO: Proceso de registrar dia inhabil
-   public function getComboTipoCambio() {
-      $result = array(
-         's_tcambio'=> $this->MServicios->getTiposCambios()->getResult()
-      );
-      return $this->response->setJSON($result);    
-   }  
-   // TODO: Proceso de registrar dia inhabil
-   public function getComboCampos() {
-      $result = array(
-         's_bancos'=> $this->MServicios->getBancos('ACTIVOS','','')->getResult()
-      );
-      return $this->response->setJSON($result);    
-   }  
-   //TODO: Consultar Empleados
-   public function consultarEmpleados() {
-      $parametro = $this->request->getPost("vm_buscar_empleado");
-      $parametro2 = $this->request->getPost("vm_id_grupo_busq");
-      $pagina = (!empty($this->request->getPost("pagina"))) ? $this->request->getPost("pagina") : 0;
-      $resultados = (!empty($this->request->getPost("resultados"))) ? $this->request->getPost("resultados") : 0;
-
-      $sql = $this->MCambios->consultarEmpleados($parametro,$parametro2);
-      $results = $this->utilerias->loadJSON($sql, $pagina, $resultados);
-      return $this->response->setJSON($results);
-   }
-	//
-   public function getCombosGrupos() {
-      $data = array(
-         'grupos' => $this->MServicios->getGruposEmpleados('X')->getResult(),
-      );
-
-      return $this->response->setJSON($data);
-   }
-   // TODO: Proceso de registrar dia inhabil
-   public function getCampos() {
-      $id_tipo_cambio = $this->request->getPost("pid_tipo_cambio");
-
-      $result = array(
-         'dataCampos'=> $this->MServicios->getCamposCambioEmpleado($id_tipo_cambio)->getResult()
-      );
-      return $this->response->setJSON($result);    
-   }  
-   //
-	public function existeRegistroCambio() {
-		$tipoCambio   = $this->request->getPost("pTipoCambio");
-		$idEmpleado   = $this->request->getPost("pIdEmpleado");
-
-		$total  = $this->MCambios->getExisteCambio($tipoCambio, $idEmpleado)->getRow()->total;		
+	// TODO: Proceso de registro o edicion
+	public function existeOficio() {
+		$numOficio   = $this->request->getPost("num_oficio");
+		$total  = $this->Modelo->getExisteOficio($numOficio)->getRow()->total;
 		$result = array("total" => $total);
 		
 	  return $this->response->setJSON($result);
-	}  
-   // TODO: Proceso de registrar dia inhabil
-   public function getCamposValor() {
-      $id_cambio = $this->request->getPost("pid_cambio");
-
-      $result = array(
-         'dataCamposValores'=> $this->MCambios->getCamposValor($id_cambio)->getResult()
-      );
-      return $this->response->setJSON($result);    
-   }  
+	} 
 	//
-   public function guardarCambioEmpleado() {
+   public function guardarNotificacion() {
       set_time_limit(0);
       if ($this->session->get("logueado") != true) {
          $response = array('respuesta' => false, 'mensaje' => 'Se terminó la sesión, vuelva a iniciar nuevamente');
       }
       else {
-         $tipo           = $this->request->getPost("vm_tipo");
-         $id_cambio      = $this->request->getPost("vm_id_cambio");
-         $id_empleado    = $this->request->getPost("vm_id_empleado");
-         $id_empleado_plaza = $this->request->getPost("vm_id_empleado_plaza");
-         $id_tipo_cambio = $this->request->getPost("vm_id_tipo_cambio");
-         $fecha_cambio   = $this->request->getPost("vm_fecha_cambio");
-         $motivo         = $this->request->getPost("vm_motivo");
-         $usuario        = $this->session->get("usuario");
-         $ip             = $this->session->get("ip");
-         $this->db->transBegin();
-
-         if($tipo == 'N'){
-            $result = $this->MCambios->insertCambios(
-               $id_empleado,$id_empleado_plaza,$id_tipo_cambio,$fecha_cambio,$motivo,$usuario,$ip);
-         }
-         else{
-            $result = $this->MCambios->updateCambio(
-               $id_cambio,$id_empleado,$id_empleado_plaza,$id_tipo_cambio,$fecha_cambio,$motivo,$usuario,$ip);
-            if ($result[0]) {
-               $result = $this->MCambios->deleteCambiosCampos($id_cambio);
+         $idNotificacion = $this->request->getPost("vm_id_notificacion");
+         $numOficio   = $this->request->getPost("vm_num_oficio");
+         $fechaOficio = $this->request->getPost("vm_fecha_oficio");
+         $domicilio   = $this->request->getPost("vm_domicilio");
+         $referenciaUbicacion = $this->request->getPost("vm_referencia_ubicacion");
+         $usuario = $this->session->get("usuario");
+         $ip      = $this->session->get("ip");
+         $idEstatus = "POR_NOTIFICAR";
+         $bandEstatus = 0;
+         $exist = $this->Modelo->getExisteOficio($numOficio)->getRow()->total;
+         if(!empty($idNotificacion)){
+            $datos = $this->Modelo->getDatosNotificacion($idNotificacion)->getRow();
+            if(mb_strtoupper(trim($datos->num_oficio),'UTF-8') == mb_strtoupper(trim($numOficio),'UTF-8')) {
+               $exist = 0;
+            }
+            if($datos->id_estatus_notificacion != $idEstatus) {
+               $exist = 1;
+               $bandEstatus = 1;
             }
          }
-
-         if ($result[0]) {
-            $idCambio= $result[2];
-            $datosCampos = $this->MServicios->getCamposCambioEmpleado($id_tipo_cambio)->getResult();
-            foreach ($datosCampos as $key) {
-               $id_campo = $key->id_campo;
-               $tipo_dato   = $key->nombre_tipo_dato;
-               $datoValue   = $this->request->getPost($key->nombre_campo);
-               if($key->nombre_campo == 'num_tarjeta' && $datoValue == '') {
-                  $datoValue   = '0000000000000000';
-               }
-               $result = $this->MCambios->insertCambiosCampos($idCambio,$id_campo,$tipo_dato,$datoValue,$usuario,$ip);
+         $this->db->transBegin();
+         //
+         if((int)$exist == 0) {
+            if(empty($idNotificacion)){
+               $result = $this->Modelo->insertNotificacion(
+                  $numOficio,$fechaOficio,$domicilio,$referenciaUbicacion,$idEstatus,$usuario,$ip);
             }
-         }
-
-         if ($result[0]) {
-            $this->db->transCommit();
-            $response = array('respuesta' => true, 'mensaje' => $result[1]);
-         }
-         else {
-            $this->db->transRollback();
-            $response = array('respuesta' => false, 'mensaje' => $result[1]);
-         }
-      }
-
-      return $this->response->setJSON($response);
-   }
-   //
-   public function actualizarCambioEnviado(){
-      set_time_limit(0);
-      if ($this->session->get("logueado") != true) {
-         $response = array('respuesta' => false, 'mensaje' => 'Se terminó la sesión, vuelva a iniciar nuevamente');
-      }
-      else {
-         $id_cambio = $this->request->getPost("pid_cambio");         
-         $usuario   = $this->session->get("usuario");
-         $ip        = $this->session->get("ip");
-         $estatus = 'ENVIADO';
-         $this->db->transBegin();
-
-         $result = $this->MCambios->updateEstatusCambio($id_cambio,$estatus,$usuario,$ip);
-         if ($result[0]) {
-            $this->db->transCommit();
-            $response = array('respuesta' => true, 'mensaje' => $result[1]);
-         }
-         else {
-            $this->db->transRollback();
-            $response = array('respuesta' => false, 'mensaje' => $result[1]);
-         }
-      }
-
-      return $this->response->setJSON($response);
-   }
-   //
-   public function aplicarCambioEmpleado(){
-      set_time_limit(0);
-      if ($this->session->get("logueado") != true) {
-         $response = array('respuesta' => false, 'mensaje' => 'Se terminó la sesión, vuelva a iniciar nuevamente');
-      }
-      else {
-         $id_cambio = $this->request->getPost("pid_cambio");         
-         $usuario   = $this->session->get("usuario");
-         $ip        = $this->session->get("ip");
-         $estatus = 'APLICADO';
-         $contador = 0;
-         $valorCambio;
-         $this->db->transBegin();
-
-         $result = $this->MCambios->updateEstatusCambio($id_cambio,$estatus,$usuario,$ip);
-         if($result[0]) {
-            $cambiosCampos = $this->MCambios->getCambiosCampos($id_cambio)->getResult();
-            foreach ($cambiosCampos as $key) {
-               $idEmpleado = $key->id_empleado;
-               $nombreColumnaValor    = $this->getColumnaValorCambio($key->nombre_tipo_dato);
-               $valorCambio = $key->$nombreColumnaValor;
-               $condicion = json_decode($key->condicion);
-               foreach ($condicion as $key) {
-                  $sql = $key->{'sql'};
-                  $result = $this->MCambios->updateCambioAplicar($sql,$idEmpleado,$valorCambio,$usuario,$ip);
-                  if(!$result[0]) {
-                     $contador++;
-                     break;
-                  }
-               }               
+            else{
+               $result = $this->Modelo->updateNotificacion(
+                  $idNotificacion,$numOficio,$fechaOficio,$domicilio,$referenciaUbicacion,$usuario,$ip);
             }
          }
          else {
-            $contador++;
+            if((int)$bandEstatus == 0) {
+               $result = array(false,"El n&uacute;mero de oficio (<b>".$numOficio."</b>) ya se encuentra registrado",1);
+            }
+            else {
+               $result = array(false,"El n&uacute;mero de oficio (<b>".$numOficio."</b>) ya se encuentra asignado a un paquete, ya no se puede modificar",1);
+            }
          }
-
-         if ($contador == 0) {
-            $this->db->transCommit();
-            $response = array('respuesta' => true, 'mensaje' => $result[1]);
-         }
-         else {
-            $this->db->transRollback();
-            $response = array('respuesta' => false, 'mensaje' => $result[1]);
-         }
-      }
-
-      return $this->response->setJSON($response);
-   }
-   //
-   function getColumnaValorCambio($tipo_dato){
-      switch ($tipo_dato) {
-         case 'Primary':
-            return 'valor_campo_id';
-            break;
-
-         case 'Texto':
-            return 'valor_campo_texto';
-            break;
-
-         case 'Entero':
-            return 'valor_campo_entero';
-            break;
-
-         case 'Decimal':
-            return 'valor_campo_decimal';
-            break;
-
-         case 'Fecha':
-            return 'valor_campo_fecha';
-            break;
-         
-         default:
-         return false;
-            break;
-      }
-   }
-   //
-   public function actualizarRegresoCambio(){
-      set_time_limit(0);
-      if ($this->session->get("logueado") != true) {
-         $response = array('respuesta' => false, 'mensaje' => 'Se terminó la sesión, vuelva a iniciar nuevamente');
-      }
-      else {
-         $id_cambio = $this->request->getPost("pid_cambio");  
-         $observacion = $this->request->getPost("pobservacion");        
-         $usuario   = $this->session->get("usuario");
-         $ip        = $this->session->get("ip");
-         $estatus = 'OBSERVADO';
-         $this->db->transBegin();
-
-         $result = $this->MCambios->updateRegresaCambio($id_cambio,$estatus,$observacion,$usuario,$ip);
+         //
          if ($result[0]) {
             $this->db->transCommit();
             $response = array('respuesta' => true, 'mensaje' => $result[1]);
          }
          else {
             $this->db->transRollback();
-            $response = array('respuesta' => false, 'mensaje' => $result[1]);
+            $response = array('respuesta' => false, 'mensaje' => $result[1], 'valid' => $result[2]);
          }
       }
 
       return $this->response->setJSON($response);
-   }   
-   //
-   public function actualizarCambioCancelado(){
+   }  
+   // TODO: Proceso de cancelacion
+   public function procesoCancelado(){
       set_time_limit(0);
       if ($this->session->get("logueado") != true) {
          $response = array('respuesta' => false, 'mensaje' => 'Se terminó la sesión, vuelva a iniciar nuevamente');
       }
       else {
-         $id_cambio = $this->request->getPost("pid_cambio");         
+         $idNotificacion = $this->request->getPost("id_notificacion");         
          $usuario   = $this->session->get("usuario");
          $ip        = $this->session->get("ip");
          $estatus = 'CANCELADO';
+         $datos = $this->Modelo->getDatosNotificacion($idNotificacion)->getRow();
+         $numOficio = $datos->num_oficio;
          $this->db->transBegin();
-
-         $result = $this->MCambios->updateEstatusCambio($id_cambio,$estatus,$usuario,$ip);
+         //
+         if($datos->id_estatus_notificacion == "POR_NOTIFICAR") {
+            $result = $this->Modelo->updateCancelacion($idNotificacion,$estatus,$usuario,$ip);
+         }
+         else {
+            $result = array(false,"El n&uacute;mero de oficio (<b>".$numOficio."</b>) ya se encuentra asignado a un paquete, ya no se puede <b class='text-danger'>CANCELAR</b>",1);
+         }
+         //
          if ($result[0]) {
             $this->db->transCommit();
             $response = array('respuesta' => true, 'mensaje' => $result[1]);
          }
          else {
             $this->db->transRollback();
-            $response = array('respuesta' => false, 'mensaje' => $result[1]);
+            $response = array('respuesta' => false, 'mensaje' => $result[1], 'valid' => $result[2]);
          }
       }
 

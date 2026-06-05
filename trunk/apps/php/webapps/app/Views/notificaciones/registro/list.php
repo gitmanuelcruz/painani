@@ -1,4 +1,4 @@
-<?=$this->section('title')?><?php if(!empty($data_user["titulo_gral"])) echo $data_user["titulo_gral"]." - ".$titulo;?><?=$this->endSection()?>
+<?=$this->section('title')?><?php if(!empty($data_user["titulo_gral"])) echo $data_user["titulo_gral"]." - ".$titulo2;?><?=$this->endSection()?>
 <?=$this->section("content")?>
 <div class="page-wrapper">
 	<div class="container-fluid">
@@ -10,7 +10,7 @@
 				<ul class="app-line-breadcrumbs mb-3">
 					<li>
 						<a class="f-s-14 f-w-500" href="javascript:void(0)">
-							<span><i class="f-s-16"></i>Recursos Humanos</span>
+							<span><i class="f-s-16"></i>Notificaciones</span>
 						</a>
 					</li>
 					<li class="active">
@@ -29,34 +29,24 @@
 						</button>
 					</div>
 					<div class="card-body collapse show" id="flush-collapseOne">
-						<form method="post" class="app-form" id="frmCambios" name="frmCambios" onsubmit="return false">
+						<form method="post" class="app-form" id="frmNotificaciones" name="frmNotificaciones" onsubmit="return false">
 							<div class="row">
-								<div class="col-md-5">
-									<label class="form-label">RFC / CURP / Nombre</label>
-									<input type="text" class="form-control" id="txt_nombre_rfc_curp" name="txt_nombre_rfc_curp" style="height: 40px;">
+								<div class="col-sm-3">
+									<label class="form-label">ID / Num. Oficio</label>
+									<input type="text" class="form-control" id="txt_id_num_oficio" name="txt_id_num_oficio" style="height: 40px;">
 								</div>
 								<div class="col-sm-3">
-									<label class="form-label">Tipo Cambio</label>
-									<select class="form-control select2" id="id_tipo_cambio" name="id_tipo_cambio" style="width: 100%">
-										<option value="">[Todos]</option>
-										<?php
-										foreach($tiposCambio as $key) {
-											echo '<option value="'.$key->id.'">'.$key->descripcion.'</option>';
-										}
-										?>
-									</select>
-								</div>	
-								<div class="col-md-2">
-									<label class="form-label">Fecha Cambio</label>
-									<input type="date" class="form-control" id="txt_fecha_cambio" name="txt_fecha_cambio" style="height: 40px;">
+									<label class="form-label">Fecha Oficio</label>
+									<input type="date" class="form-control" id="txt_fecha_oficio" name="txt_fecha_oficio" style="height: 40px;">
 								</div>							
-								<div class="col-sm-2">
+								<div class="col-sm-3">
 									<label class="form-label">Estatus</label>
-									<select class="form-control select2" id="id_estatus_cambio" name="id_estatus_cambio" style="width: 100%">
+									<select class="form-control select2" id="id_estatus" name="id_estatus" style="width: 100%">
 										<option value="">[Todos]</option>
 										<?php
-										foreach($estatusCambio as $key) {
-											echo '<option value="'.$key->id.'">'.$key->descripcion.'</option>';
+										foreach($estatus as $key) {
+											$select = ($key->id == "POR_NOTIFICAR") ? "selected":"";
+											echo '<option value="'.$key->id.'" '.$select.'>'.$key->descripcion.'</option>';
 										}
 										?>
 									</select>
@@ -72,7 +62,7 @@
 								<?php
 								if($btn_nuevo) {
 									echo  '<button type="button" class="btn btn-sm btn-info me-1" id="btnNuevo" btn="btn">'.
-											'  <i class="fa-solid fa-plus me-2"></i>Nuevo Cambio'.
+											'  <i class="fa-solid fa-plus me-2"></i>Nuevo Registro'.
 											'</button>';
 								}
 								?>
@@ -83,16 +73,13 @@
 			</div>
 		</div>
 		<div class="table-responsive-sm">
-			<table class="table table-striped table-hover" id="gridCambios" style="width: 100%;">
+			<table class="table table-striped table-hover" id="gridNotificaciones" style="width: 100%;">
 				<thead class="table-dark">
 					<tr class="p-font-msg-09">
-						<th width="1%"  class="text-center"></th>
-						<th width="5%"  class="text-start">ID</th>
-						<th width="10%" class="text-start">CURP</th>
-						<th width="25%" class="text-start">Empleado</th>
-						<th width="15%" class="text-start">Tipo Cambio</th>
-						<th width="10%" class="text-start">Fecha Cambio</th>
-						<th width="25%" class="text-start">Motivo</th>
+						<th width="10%" class="text-start">Num. Oficio</th>
+						<th width="13%" class="text-center">Fecha Oficio</th>
+						<th width="25%" class="text-start">Domicilio</th>
+						<th width="25%" class="text-start">Referencia</th>
 						<th width="10%" class="text-center">Estatus</th>
 						<th width="5%"  class="text-center">Acciones</th>
 					</tr>
@@ -102,10 +89,10 @@
 		</div>
 	</div>	
 </div>
-<div id="overlay" class="overlay"></div>
 <?=$this->endSection()?>
 <?=$this->section("js")?>
-	<script src="<?php echo base_url(); ?>app/Views/cambios/js/list.js?version=<?php echo time(); ?>" type="text/javascript"></script>
-	<script src="<?php echo base_url(); ?>app/Views/cambios/js/create.js?version=<?php echo time(); ?>" type="text/javascript"></script>
+	<script src="<?php echo base_url(); ?>app/Views/notificaciones/registro/js/list.js?version=<?php echo time(); ?>" type="text/javascript"></script>
+	<script src="<?php echo base_url(); ?>app/Views/notificaciones/registro/js/create.js?version=<?php echo time(); ?>" type="text/javascript"></script>
+	<script src="<?php echo base_url(); ?>app/Views/notificaciones/registro/js/detalle.js?version=<?php echo time(); ?>" type="text/javascript"></script>
 <?=$this->endSection()?>
 <?=$this->extend("layout/main")?>

@@ -28905,9 +28905,9 @@ body[class="ltr dark"] .card.card-bordered .card-body {
 }
 
 .table {
-  -webkit-user-select: none;
+  /*-webkit-user-select: none;
      -moz-user-select: none;
-          user-select: none;
+          user-select: none;*/
 }
 .table thead tr th {
   padding: 0.5rem 0.75rem;
