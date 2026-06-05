@@ -6,7 +6,8 @@ const pool = new Pool({
    database:process.env.DBNAME,
    port: process.env.PORTDB,
    user:process.env.USERDB,
-   password: process.env.CONTRASENIA
+   password: process.env.CONTRASENIA,
+   options: '-c search_path=painani'
 });
 
 module.exports = pool
