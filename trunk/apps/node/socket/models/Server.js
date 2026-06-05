@@ -50,6 +50,7 @@ class Server {
       //API End Points routers
       this.app.use('/api',require('../routes/apiKeyRoutes'));
       this.app.use('/api/auth',require('../routes/authRoutes'));
+      this.app.use('/api/notificacion',require('../routes/notificacionRoutes'));
 
    }
   

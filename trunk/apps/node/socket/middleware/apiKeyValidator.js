@@ -9,7 +9,7 @@ const validarApiKey = async (req, res,next) => {
   if (!appId || !apiKeyHeader) {
     return res
       .status(401)
-      .json({ error: "Faltan credenciales en los headers." });
+      .json({ error: "Faltan credenciales en los headers.", ok:false });
   }
 
   try {
@@ -22,7 +22,7 @@ const validarApiKey = async (req, res,next) => {
     const result = await db.query(query, [appId, apiKeyHash]);
 
     if (result.rows.length === 0) {
-      return res.status(401).json({ error: 'API KEY inválido' });
+      return res.status(401).json({ error: 'API KEY inválido', ok:false });
     }
 
     req.id = result.rows[0].id;
@@ -32,7 +32,7 @@ const validarApiKey = async (req, res,next) => {
 
   } catch (error) {
     console.error("Error de validación:", error);
-    return res.status(500).json({ error: "Error interno." });
+    return res.status(500).json({ error: "Error interno.", ok:false });
   }
 };
 

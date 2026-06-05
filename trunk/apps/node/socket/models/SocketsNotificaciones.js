@@ -2,7 +2,7 @@ const {
    getNotificaciones,
    insertaNotificacion,
    getDatosNotificacion
-} = require('../controllers/notificaciones');
+} = require('../controllers/pushNotificaciones');
 
 class SocketsNotificaciones {
    constructor(io) {
