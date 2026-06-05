@@ -10,7 +10,7 @@ const SocketsNotificaciones = require('./SocketsNotificaciones');
 class Server {
    constructor() {
       this.app = express();
-      this.port = process.env.PORT || 3039;
+      this.port = process.env.PORT || 3036;
 
       // Http server
       this.server = http.createServer(this.app);
