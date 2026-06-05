@@ -11,7 +11,7 @@ class Server {
    constructor() {
       this.app = express();
       this.port = process.env.PORT || 3039;
-      
+
       // Http server
       this.server = http.createServer(this.app);
 
@@ -46,6 +46,10 @@ class Server {
       this.app.get('/mensaje', function(req, res) {
          res.json({ mensaje: 'Método GET test' })
       });
+
+      //API End Points routers
+      this.app.use('/api',require('../routes/apiKeyRoutes'));
+      this.app.use('/api/auth',require('../routes/authRoutes'));
 
    }
   

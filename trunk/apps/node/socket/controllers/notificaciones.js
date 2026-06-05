@@ -1,4 +1,4 @@
-const pool = require('../database/config');
+const pool = require('../config/db');
 
 const getNotificaciones = async (data) => {
    const sql = "SELECT n.*, " +

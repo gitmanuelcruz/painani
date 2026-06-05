@@ -1,32 +1,17 @@
 const jwt = require('jsonwebtoken');
+const { hashSHA256 } = require('../utils/security');
 
-const generarJWT = (uuid)=>{
-	return new Promise(  ( resolve, reject ) => {
-		const payload = { uuid };
-		jwt.sign( payload, process.env.JWT_KEY, {
-			expiresIn: process.env.JWT_EXPIRATION
-		}, ( err, token ) => {
-			if ( err ) {
-				console.log(err);
-				reject('No se pudo generar el JWT');
-			} else {
-				resolve( token );
-			}
+const verificarJWT = (token, userAgent) => {
+    const decodificado = jwt.verify(token, process.env.JWT_KEY, {
+        audience: 'app-movil-painani'
+    });
 
-		});
-	});
-}
+    const hashActual = hashSHA256(userAgent);
+    if (decodificado.fingerprint !== hashActual) {
+        throw new Error('FingerprintMismatch');
+    }
 
-const comprobarToken=(token = '')=>{
-	try {
-		const { uid } = jwt.verify( token, process.env.JWT_KEY );
-		return [ true, uid ];
-	} catch (error) {
-		return [ false, null ];
-	}
-}
+    return decodificado;
+};
 
-module.exports={
-   generarJWT,
-   comprobarToken
-}
+module.exports = { verificarJWT };

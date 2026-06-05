@@ -1,5 +1,5 @@
 const Pool = require('pg').Pool
-//require('dotenv').config({ quiet: true });
+require('dotenv').config({ quiet: true });
 
 const pool = new Pool({
    host:process.env.HOSTDB,
