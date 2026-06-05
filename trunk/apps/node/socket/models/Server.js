@@ -10,11 +10,11 @@ const SocketsNotificaciones = require('./SocketsNotificaciones');
 class Server {
    constructor() {
       this.app = express();
-      this.port = process.env.PORT || 8890;
-      // Conectar a DB
-      //dbConecta();
+      this.port = process.env.PORT || 3039;
+      
       // Http server
       this.server = http.createServer(this.app);
+
       // Configuraciones de sockets
       this.io = socketio(this.server, {
          cors: {
@@ -33,30 +33,32 @@ class Server {
       new SocketsNotificaciones(this.io);
    }
    //
-   middlewares() {
-      // Desplegar el directorio público
-      this.app.use(express.static(path.resolve(__dirname, '../public')));
+   middlewares() {      
       // CORS
       this.app.use(cors());
+      
       // Parseo del body
-      this.app.use(express.json());
+      this.app.use(express.json({ limit: '20mb' }));
+
+      // Desplegar el directorio público
+      this.app.use(express.static(path.resolve(__dirname, '../public')));
 
       this.app.get('/mensaje', function(req, res) {
          res.json({ mensaje: 'Método GET test' })
       });
-      
-	   //this.app.use("/api/guardias",require('../router/guardias'));
-   }
-   // Esta configuración se puede tener aquí o como propieda de clase
-   // depende mucho de lo que necesites
 
+   }
+  
    execute() {
       // Inicializar Middlewares
       this.middlewares();
+
       // Inicializar sockets
       this.configurarSockets();
+
       // Inicializar sockets de notificaciones
       this.configurarSocketsNotificaciones();
+
       // Inicializar Server
       this.server.listen(this.port, () => {
          console.log('Server corriendo en puerto:', this.port);
