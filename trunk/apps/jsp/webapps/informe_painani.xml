@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context crossContext="true" docBase="C:/proyectos/painani/trunk/apps/jsp/webapps"  path="/informe_painani" reloadable="true">
+	<!-- HANA INFORMES -->	
+	<Resource name="jdbc/informe_painani" auth="Container"
+		type="javax.sql.DataSource" driverClassName="org.postgresql.Driver"
+		url="jdbc:postgresql://198.251.67.211:5432/mensajeria"
+		username="painani" password="X9M4n8oL8ouS" maxTotal="20" maxIdle="10" maxWaitMillis="-1"
+	/>
+</Context>
