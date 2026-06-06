@@ -5,11 +5,11 @@ const login = async (req, res) => {
     const userAgent = req.headers['user-agent'];
     const { usuario, password } = req.body;
 
-    const token = await authService.login(usuario, password,userAgent);
+    const data = await authService.login(usuario, password,userAgent);
 
     res.json({
       ok: true,
-      token,
+      data,
       expiration:process.env.JWT_EXPIRATION_MOBILE
     });
 
