@@ -9,7 +9,7 @@ class MPaquetesRegistro extends Model
 	}
 	//
 	public function getPaquetesPag(
-		$idNumOficio,$fechaProgramada,$fechaApertura,$fechaCierre,$notificador,$iconEditar,$iconEliminar) {
+		$idNumOficio,$fechaProgramada,$fechaApertura,$fechaCierre,$notificador,$iconEditar,$iconEliminar,$iconInforme) {
       $sql ="SELECT
 					paq.id_paquete,
 					paq.id_usuario_notificador AS id_notificador,
@@ -25,6 +25,7 @@ class MPaquetesRegistro extends Model
 					1 AS band_detalle,
 					(CASE WHEN COALESCE($iconEditar,0) > 0 AND paq.fecha_hora_apertura_operacion IS NOT NULL THEN 0 ELSE 1 END) AS icon_editar,
 					(CASE WHEN COALESCE($iconEliminar,0) > 0 AND paq.fecha_hora_apertura_operacion IS NOT NULL THEN 0 ELSE 1 END) AS icon_eliminar,
+					(CASE WHEN COALESCE($iconInforme,0) > 0 THEN 1 ELSE 0 END) AS icon_informe,
 					'#145dbd' AS color_blue,
 					'#8e825a' AS color_black,
 					'#66bb6a' AS color_green,
@@ -324,6 +325,47 @@ class MPaquetesRegistro extends Model
 		else {
 			return array(false, 'ERROR AL ELIMINAR EL PAQUETE', 0);
 		}
+	}
+	//
+	public function getDatosInfoNotificaciones($num_oficio,$fechaProgramada,$fechaApertura,$fechaCierre,$notificador) {
+		
+		$sql ="SELECT
+					row_number() OVER (ORDER BY pa.id_usuario_notificador,nt.fecha_oficio ASC) AS fila,
+					nt.num_oficio,
+					to_char(nt.fecha_oficio,'dd/mm/yyyy') AS fecha_oficio,
+					nt.domicilio,
+					nt.referencia_ubicacion,
+					et.nombre_estatus_notificacion AS id_estatus_notificacion,
+					pa.id_usuario_notificador,
+					us.nombre_completo AS nombre_notificador,
+					(CASE WHEN pq.notificado = true THEN 'Si' ELSE 'No' END) AS notificado,
+					to_char(pq.fecha_hora_notificacion,'dd/mm/yyyy hh24:mi') AS fecha_hora_notificado
+				FROM paquetes_notificaciones pq 
+				INNER JOIN notificaciones nt ON pq.id_notificacion = nt.id_notificacion
+				INNER JOIN estatus_notificacion et ON pq.id_estatus_notificacion = et.id_estatus_notificacion
+				INNER JOIN paquetes pa ON pq.id_paquete = pa.id_paquete
+				LEFT JOIN usuarios us ON pa.id_usuario_notificador = us.id_usuario
+				WHERE 1=1 ";
+
+	if(!empty($num_oficio)) {
+		$sql .="AND parse_text(nt.num_oficio) LIKE parse_text('%".trim($num_oficio)."%') ";
+	}
+	if (!empty($fechaProgramada)) {
+		$sql .="AND pa.fecha_programada = TO_DATE('$fechaProgramada','yyyy-mm-dd') ";
+	}
+	if (!empty($fechaApertura)) {
+		$sql .="AND pa.fecha_hora_apertura_operacion::date = TO_DATE('$fechaApertura','yyyy-mm-dd') ";
+	}
+	if (!empty($fechaCierre)) {
+		$sql .="AND pa.fecha_hora_cierre_operacion::date = TO_DATE('$fechaCierre','yyyy-mm-dd') ";
+	}
+	if(!empty($notificador)) {
+		$sql .="AND parse_text(us.nombre_completo) LIKE parse_text('%".trim($notificador)."%') ";
+	}
+
+		$sql .=" ORDER BY pa.id_usuario_notificador,nt.fecha_oficio ASC ";		
+
+		return $this->db->query($sql);
 	}
 }
 ?>

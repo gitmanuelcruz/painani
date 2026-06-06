@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="detalle_notificaciones" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="98aab069-0ad7-44de-8fdb-a8ee54ac9778">
+	<property name="ireport.zoom" value="1.6105100000000492"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="65"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="232"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="760"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Painani Dev"/>
+	<parameter name="pid_paquete" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT 
+			row_number() OVER (ORDER BY nt.num_oficio) AS fila,
+			nt.num_oficio,
+			to_char(nt.fecha_oficio,'dd/mm/yyyy') AS fecha_oficio,
+			nt.domicilio,
+			nt.referencia_ubicacion,
+			to_char(pq.fecha_hora_notificacion,'dd/mm/yyyy hh24:mi') AS fecha_hora_notificado,
+			(CASE WHEN pq.notificado = true THEN 'SI' ELSE 'NO' END) AS notificado,
+			UPPER(et.nombre_estatus_notificacion) AS id_estatus_notificacion
+FROM paquetes_notificaciones pq 
+INNER JOIN notificaciones nt ON pq.id_notificacion = nt.id_notificacion
+INNER JOIN estatus_notificacion et ON pq.id_estatus_notificacion = et.id_estatus_notificacion
+WHERE pq.id_paquete =  $P!{pid_paquete} 
+ORDER BY nt.num_oficio]]>
+	</queryString>
+	<field name="fila" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="fila"/>
+		<property name="com.jaspersoft.studio.field.label" value="fila"/>
+	</field>
+	<field name="num_oficio" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="num_oficio"/>
+		<property name="com.jaspersoft.studio.field.label" value="num_oficio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="notificaciones"/>
+	</field>
+	<field name="fecha_oficio" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_oficio"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_oficio"/>
+	</field>
+	<field name="domicilio" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="domicilio"/>
+		<property name="com.jaspersoft.studio.field.label" value="domicilio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="notificaciones"/>
+	</field>
+	<field name="referencia_ubicacion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="referencia_ubicacion"/>
+		<property name="com.jaspersoft.studio.field.label" value="referencia_ubicacion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="notificaciones"/>
+	</field>
+	<field name="fecha_hora_notificado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_hora_notificado"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_hora_notificado"/>
+	</field>
+	<field name="notificado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="notificado"/>
+		<property name="com.jaspersoft.studio.field.label" value="notificado"/>
+	</field>
+	<field name="id_estatus_notificacion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="id_estatus_notificacion"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_estatus_notificacion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="estatus_notificacion"/>
+	</field>
+	<background>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="26" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement x="3" y="0" width="555" height="25" backcolor="#212529" uuid="b3c0dbe4-f657-4463-9a4e-fd4c019c7e6e"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="13" y="0" width="85" height="25" forecolor="#FFFFFF" uuid="590e7349-e312-4afa-902b-103f99e29c1e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7.5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[# / NUM. OFICIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="93" y="0" width="55" height="25" forecolor="#FFFFFF" uuid="12ee65f3-a28b-458d-b419-b8145e995240">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7.5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA OFICIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="150" y="0" width="228" height="25" forecolor="#FFFFFF" uuid="6d93795e-0cfb-436e-b690-a526a6fff2c6"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7.5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DOMICILIO Y REFERENCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="379" y="0" width="67" height="25" forecolor="#FFFFFF" uuid="fffaf323-4978-41a0-97e4-05073b7a9ae0">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7.5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[F. HORA NOTIFIC.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="448" y="0" width="28" height="25" forecolor="#FFFFFF" uuid="b3e1c814-4b63-4970-8ea0-7db3f074c801"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7.5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOTIF.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="476" y="0" width="82" height="25" forecolor="#FFFFFF" uuid="c9848f8b-55c1-4d10-8c25-df2d34c9f2d8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7.5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESTATUS]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="34" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="3" y="33" width="555" height="1" forecolor="#DEE2E6" uuid="aba5699e-85d0-4092-8ac1-fd6169d13ad2"/>
+			</line>
+			<textField>
+				<reportElement x="8" y="3" width="85" height="14" forecolor="#0D6EFD" uuid="64e322e6-d4ff-4f71-b882-d9105fb20aa6"/>
+				<textElement>
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fila}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement stretchType="ElementGroupHeight" x="8" y="17" width="85" height="14" forecolor="#6C757D" uuid="bc1ca1ed-855b-411e-b01b-6046ea179747"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_oficio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd" isBlankWhenNull="true">
+				<reportElement x="93" y="3" width="55" height="14" uuid="e29a585c-bff8-478f-b8a9-dfcf3e2524e9"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_oficio}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="150" y="3" width="223" height="14" isPrintWhenDetailOverflows="true" uuid="0b6177aa-721f-4f71-96dd-cf71200183b4"/>
+				<textElement textAlignment="Justified">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{domicilio}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="150" y="18" width="223" height="14" isPrintWhenDetailOverflows="true" forecolor="#6C757D" uuid="c157d5ab-494c-4db1-8281-a1f7f9105d7c"/>
+				<textElement textAlignment="Justified">
+					<font fontName="SansSerif" size="8" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{referencia_ubicacion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd HH:mm:ss" isBlankWhenNull="true">
+				<reportElement x="378" y="3" width="68" height="14" uuid="19186355-5c26-40c4-9160-bfd275f07c47"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_hora_notificado}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="448" y="3" width="28" height="14" uuid="56de7e2c-e041-460d-ba68-a5c3cd8d753b"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{notificado}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="476" y="3" width="82" height="14" uuid="6aac372e-aa84-4d54-a574-90e5eff8ddc7"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id_estatus_notificacion}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

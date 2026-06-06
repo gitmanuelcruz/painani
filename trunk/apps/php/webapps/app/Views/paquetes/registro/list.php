@@ -58,6 +58,15 @@
 						<hr>
 						<div class="row">
 							<div class="col-sm-12 text-end">
+								<?php
+									if($btn_inf_excel > 0) {
+								?>
+									<button type="button" class="btn btn-success btn-sm" btn="btn" id="btn_inf_detalle_notif">
+										<i class="fa-solid fa-file-excel me-2"></i>Inf. Notificaciones
+									</button>
+								<?php
+									}
+								?>
 								<button type="button" class="btn btn-sm btn-secondary" id="btnBuscar" btn="btn">
 									<i class="fa-solid fa-magnifying-glass me-2"></i>Buscar
 								</button>
