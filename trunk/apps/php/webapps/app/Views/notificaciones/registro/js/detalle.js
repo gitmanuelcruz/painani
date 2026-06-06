@@ -30,7 +30,7 @@ const detalle = (reg) => {
                      </ol>
                   </div>
                </div>
-            </div>`
+            </div>`;
 
    botones +=  `<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" id="bt_cerrar_detalle">
                   <i class="fa-solid fa-xmark me-2"></i>Cerrar

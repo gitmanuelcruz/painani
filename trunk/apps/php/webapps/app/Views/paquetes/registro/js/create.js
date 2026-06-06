@@ -56,7 +56,7 @@ const vmRegistro = (id_paquete,tipo) => {
    modalLG('frmPaquetes', titulo, html, 'formlg_scrollable', botones, 'cerrar_vm_registro()');
    $(".selectpicker").select2({dropdownParent: $("#vModalLG")});
    if(tipo == 'N') {
-      cargaComboRegistro(true,id_paquete,null);
+      cargaComboRegistro(true,true,id_paquete,null);
    }
    //
    $("#bt_guardar").on("click", function () {
@@ -77,7 +77,7 @@ const cerrar_vm_registro = () => {
    recargaPaginadoPrincipal()
 }
 //!
-function cargaComboRegistro(async,pid_paquete,id_usuario_notificador) {
+function cargaComboRegistro(async,inicializar,pid_paquete,id_usuario_notificador) {
 	let tar,spin;
 	$.ajax({
       type: 'post',
@@ -99,9 +99,14 @@ function cargaComboRegistro(async,pid_paquete,id_usuario_notificador) {
             $("#vm_id_usuario_notificador").append('<option value="'+v.id+'">'+v.descripcion+'</option>');
          });
 
-         $(data.listOficios).each(function(i, v) {
-            $("#vm_listado").append('<option value="'+v.id+'" '+v.seleccion+'>'+v.descripcion+'</option>');
-         });
+         if(data.listOficios.length == 0) {
+            $(".dual-listbox__selected").empty();
+         }
+         else {
+            $(data.listOficios).each(function(i, v) {
+               $("#vm_listado").append('<option value="'+v.id+'" '+v.seleccion+'>'+v.descripcion+'</option>');
+            });
+         }
 
          if(id_usuario_notificador != '' && id_usuario_notificador != null) {
             $("#vm_id_usuario_notificador").val(id_usuario_notificador);
@@ -111,7 +116,9 @@ function cargaComboRegistro(async,pid_paquete,id_usuario_notificador) {
          $('button[btn="btn"]').prop('disabled',false);
          spin.stop();
          $("#overlayprincipal").hide();
-         comboListado();
+         if(inicializar) {
+            comboListado();
+         }
       }
    });
 }
@@ -128,12 +135,12 @@ const comboListado = () => {
       enableDoubleClick: false
    });
    
-   dlb2.addEventListener("added", function(event) {
+   /*dlb2.addEventListener("added", function(event) {
       document.querySelector(".changed-element").innerHTML = event.addedElement.outerHTML;
    });
    dlb2.addEventListener("removed", function(event) {
       document.querySelector(".changed-element").innerHTML = event.removedElement.outerHTML;
-   });
+   });*/
 }
 //!
 const limpiarFrmRegistro = () => {
@@ -142,10 +149,10 @@ const limpiarFrmRegistro = () => {
 	$("#frmRegistro").removeClass('frm-modal-reg was-validated').addClass('frm-modal-reg');
    $("#vm_contador_valid").val(0);
 	$("#vm_fecha_programada").val(fAct.fecha2);
-   //$("#vm_id_usuario_notificador").val('').trigger('change');
 	$("#divUserNotificador").removeClass("has-valid");
 	$("#divUserNotificador").removeClass("has-error");
-   cargaComboRegistro(false,pid_paquete,null);
+   cargaComboRegistro(false,false,pid_paquete,null);
+   //$(".selectList").find('option').prop('selected', false);
 }
 //!
 const validRegistro = () => {

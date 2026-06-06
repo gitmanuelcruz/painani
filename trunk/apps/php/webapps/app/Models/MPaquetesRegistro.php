@@ -60,9 +60,74 @@ class MPaquetesRegistro extends Model
 			$sql .="AND paq.fecha_hora_cierre_operacion::date = TO_DATE('$fechaCierre','yyyy-mm-dd') ";
 		}
 		if(!empty($notificador)) {
-			$sql .="AND parse_text(su.nombre_completo) LIKE parse_text('%".trim($notificador)."%') ";
+			$sql .="AND parse_text(usu.nombre_completo) LIKE parse_text('%".trim($notificador)."%') ";
 		}
 		$sql .="ORDER BY paq.fecha_programada,paq.id_paquete";
+
+		return $sql;
+   }
+	//
+	public function getNotificacionesAsigPag($idPaquete) {
+      $sql ="SELECT
+					pno.id_paquete,
+					pno.id_paquete_notificacion,
+					ntf.id_notificacion,
+					ntf.num_oficio,					
+					ntf.fecha_oficio,
+					TO_CHAR(ntf.fecha_oficio,'dd/mm/yyyy') AS foficio,
+					ntf.domicilio AS domicilio,
+					(CASE WHEN LENGTH(ntf.domicilio) > 100
+						THEN CONCAT(ntf.domicilio,'...')
+						ELSE ntf.domicilio
+					END) AS desc_domicilio,
+					ntf.referencia_ubicacion AS referencia_ubicacion,
+					pno.id_estatus_notificacion,
+					(CASE WHEN COALESCE(pno.notificado,FALSE) = TRUE
+						THEN CONCAT(UPPER(eno.nombre_estatus_notificacion),'<br><span class=''badge bg-light-primary text-primary fs-1 fw-bold''>',TO_CHAR(pno.fecha_hora_notificacion,'dd/mm/yyyy hh24:mi'),'</span>')
+						ELSE UPPER(eno.nombre_estatus_notificacion)
+					END) AS desc_estatus,
+					(CASE WHEN COALESCE(sno.total_soportes,0) > 0 THEN 1 ELSE 0 END) AS icon_soportes,
+					'#145dbd' AS color_blue
+				FROM paquetes_notificaciones pno
+				INNER JOIN notificaciones ntf ON pno.id_notificacion = ntf.id_notificacion
+				INNER JOIN estatus_notificacion eno ON pno.id_estatus_notificacion = eno.id_estatus_notificacion
+				LEFT JOIN (
+					SELECT
+						id_notificacion,
+						id_paquete_notificacion,
+						COUNT(*) AS total_soportes
+					FROM soportes_notificacion
+					GROUP BY id_notificacion,id_paquete_notificacion
+				) sno ON ntf.id_notificacion = sno.id_notificacion AND pno.id_paquete_notificacion = sno.id_paquete_notificacion
+				WHERE pno.id_paquete = $idPaquete
+				ORDER BY ntf.num_oficio,ntf.fecha_oficio,pno.id_paquete_notificacion";
+
+		return $sql;
+   }
+	//
+	public function getSoporteNotificacionAsigPag($idPaqueteNotificacion,$idNotificacion) {
+      $sql ="SELECT
+					sno.id_paquete_notificacion,
+					sno.id_notificacion,
+					sno.id_soporte_notificacion,
+					sno.nombre_original,
+					sno.ruta_soporte,
+					sno.extension_archivo AS extension,
+					sno.comentarios,
+					1 AS band,
+					(CASE WHEN sno.extension_archivo IN('pdf')
+						THEN 1
+						WHEN sno.extension_archivo IN('png','jpg','jpeg')
+						THEN 2
+						WHEN sno.extension_archivo IN('zip','rar')
+						THEN 3
+						ELSE 4
+					END) AS archivo,
+					'#ea4335' AS color_red
+				FROM soportes_notificacion sno
+				WHERE sno.id_paquete_notificacion = $idPaqueteNotificacion
+				AND sno.id_notificacion = '$idNotificacion'
+				ORDER BY sno.id_soporte_notificacion";
 
 		return $sql;
    }
@@ -85,6 +150,22 @@ class MPaquetesRegistro extends Model
 				ORDER BY a.num_oficio";
 
 		return $this->db->query($sql,[$idPaquete,$idNotificaciones]);
+	}
+	//
+	public function getDatosOficiosNotificados($idPaquete) {
+		if(empty($idPaquete)) { $idPaquete = 0; }
+		$sql ="SELECT
+					b.id_paquete,
+					a.num_oficio,
+					TO_CHAR(a.fecha_oficio,'dd/mm/yyyy') AS foficio,
+					TO_CHAR(b.fecha_hora_notificacion,'dd/mm/yyyy hh24:mi') AS fnotificado
+				FROM paquetes_notificaciones b
+				INNER JOIN notificaciones a ON b.id_notificacion = a.id_notificacion
+				WHERE COALESCE(b.notificado,FALSE) = TRUE
+				AND b.id_paquete = ?
+				ORDER BY a.num_oficio";
+
+		return $this->db->query($sql,[$idPaquete]);
 	}
 	//
 	public function getNotificadores() {

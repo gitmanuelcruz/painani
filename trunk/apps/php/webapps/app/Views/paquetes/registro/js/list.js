@@ -23,7 +23,7 @@ $(document).ready(function() {
 		vmRegistro('','N');
 	});
 
-	$("#txt_id_num_oficio").keypress(function (e) {
+	$("#txt_id_num_oficio,#txt_nombre_notificador").keypress(function (e) {
       keyEvent(e);
    });
 });
@@ -83,7 +83,7 @@ const validCombos = (id,id2) => {
 const editarPaquete = (reg) =>{
    vmRegistro(reg.id_paquete,'E');
    $("#vm_fecha_programada").val(reg.fecha_programada);
-   cargaComboRegistro(true,reg.id_paquete,reg.id_notificador);
+   cargaComboRegistro(true,true,reg.id_paquete,reg.id_notificador);
 }
 // TODO: Proceso de cancelacion
 const eliminarPaquete = (reg) => {

@@ -60,6 +60,39 @@ class PaquetesRegistro extends BaseController
 
 		return $this->response->setJSON($results);
 	}
+   //
+   public function notificacionesAsigPag() {
+      $idPaquete  = $this->request->getPost("id_paquete");
+		$pagina     = 0;
+		$resultados = 0;
+
+		if (!empty($this->request->getPost("pagina")))
+			$pagina = $this->request->getPost("pagina");
+		if (!empty($this->request->getPost("resultados")))
+			$resultados = $this->request->getPost("resultados");
+
+		$sql = $this->Modelo->getNotificacionesAsigPag($idPaquete);
+		$results = $this->utilerias->loadJSON($sql,$pagina,$resultados);
+
+		return $this->response->setJSON($results);
+	}
+   //
+   public function soportesNotificacionAsigPag() {
+      $idPaqueteNotificacion = $this->request->getPost("id_paquete_notificacion");
+      $idNotificacion = $this->request->getPost("id_notificacion");
+		$pagina     = 0;
+		$resultados = 0;
+
+		if (!empty($this->request->getPost("pagina")))
+			$pagina = $this->request->getPost("pagina");
+		if (!empty($this->request->getPost("resultados")))
+			$resultados = $this->request->getPost("resultados");
+
+		$sql = $this->Modelo->getSoporteNotificacionAsigPag($idPaqueteNotificacion,$idNotificacion);
+		$results = $this->utilerias->loadJSON($sql,$pagina,$resultados);
+
+		return $this->response->setJSON($results);
+	}
 	// TODO: Proceso de registro o edicion
    public function getComboRegistro() {
       $idPaquete   = $this->request->getPost("id_paquete");
@@ -86,11 +119,12 @@ class PaquetesRegistro extends BaseController
          $msjExist = "";
          $msjValid = "";
          $dataOficios = $this->Modelo->getDatosNotificacion($idsNotificaciones,$idPaquete);
+         $dataNotificados = $this->Modelo->getDatosOficiosNotificados($idPaquete);
          $this->db->transBegin();
          //
          if($dataOficios->getNumRows() > 0) {
-            $msjValid .= '<p class="p-font-msg">Num. Oficios que se encuentran asignado a un paquete</p>';
-            $msjValid .= '<table class="table table-striped table-hover">
+            $msjValid .= '<p class="p-font-msg">Los n&uacute;meros de oficios que se encuentran asignado a un paquete</p>';
+            $msjValid .= '<table class="table table-bordered table-striped table-hover">
                            <thead class="table-dark">
                               <tr class="p-font-msg-07">
                                  <th width="15%" class="text-start">Num. Oficio</th>
@@ -110,7 +144,31 @@ class PaquetesRegistro extends BaseController
                         </table>';
             $result = array(false,$msjValid,1);
          }
-         else {
+         //
+         if(empty($msjValid) && $dataNotificados->getNumRows() > 0) {
+            $msjValid .= '<p class="p-font-msg">Los n&uacute;meros de oficios que NO se pueden regresar a disponible porque ya esta <b>NOTIFICADO</b></p>';
+            $msjValid .= '<table class="table table-bordered table-striped table-hover">
+                           <thead class="table-dark">
+                              <tr class="p-font-msg-07">
+                                 <th width="15%" class="text-start">Num. Oficio</th>
+                                 <th width="15%" class="text-center">Fecha Oficio</th>
+                                 <th width="15%" class="text-center">Fecha Notificado</th>
+                              </tr>
+                           </thead>
+                           <tbody>';
+            foreach($dataNotificados->getResult() as $key) {
+               $msjValid .='<tr class="p-font-msg-07">
+                              <td class="text-start">'.$key->num_oficio.'</td>
+                              <td class="text-center">'.$key->foficio.'</td>
+                              <td class="text-center">'.$key->fnotificado.'</td>
+                           </tr>';
+            }
+            $msjValid .= ' </tbody>
+                        </table>';
+            $result = array(false,$msjValid,1);
+         }
+         //
+         if(empty($msjValid)) {
             if(empty($idPaquete)){
                $result = $this->Modelo->insertPaquete(
                   $idUserNotificador,$fechaProgramacion,$usuario,$ip);
@@ -153,10 +211,36 @@ class PaquetesRegistro extends BaseController
       else {
          $idPaquete = $this->request->getPost("id_paquete");         
          $datos = $this->Modelo->getDatosPaquete($idPaquete)->getRow();
+         $dataNotificados = $this->Modelo->getDatosOficiosNotificados($idPaquete);
+         $msjValid = "";
          $this->db->transBegin();
          //
          if($datos->fecha_hora_apertura_operacion == "") {
-            $result = $this->Modelo->deletePaquetes($idPaquete);
+            if($dataNotificados->getNumRows() > 0) {
+               $msjValid .= '<p class="p-font-msg">El paquete no se puede <b class="text-danger">ELIMINAR</b> porque tienen n&uacute;meros de oficios que estan <b>NOTIFICADO</b></p>';
+               $msjValid .= '<table class="table table-bordered table-striped table-hover">
+                              <thead class="table-dark">
+                                 <tr class="p-font-msg-07">
+                                    <th width="15%" class="text-start">Num. Oficio</th>
+                                    <th width="15%" class="text-center">Fecha Oficio</th>
+                                    <th width="15%" class="text-center">Fecha Notificado</th>
+                                 </tr>
+                              </thead>
+                              <tbody>';
+               foreach($dataNotificados->getResult() as $key) {
+                  $msjValid .='<tr class="p-font-msg-07">
+                                 <td class="text-start">'.$key->num_oficio.'</td>
+                                 <td class="text-center">'.$key->foficio.'</td>
+                                 <td class="text-center">'.$key->fnotificado.'</td>
+                              </tr>';
+               }
+               $msjValid .= ' </tbody>
+                           </table>';
+               $result = array(false,$msjValid,1);
+            }
+            else {
+               $result = $this->Modelo->deletePaquetes($idPaquete);
+            }
          }
          else {
             $result = array(false,"El paquete con el ID (<b>".$idPaquete."</b>) no se puede eliminar porque ya se aperturo la operaci&oacute;n",1);

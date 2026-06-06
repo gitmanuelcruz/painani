@@ -25,7 +25,7 @@ class MNotificacionesRegistro extends Model
 					TO_CHAR(ntf.fecha_hora_notificado,'dd/mm/yyyy hh24:mi') AS fnotificado,
 					ntf.id_estatus_notificacion,
 					eno.nombre_estatus_notificacion,
-					(CASE WHEN COALESCE(pno.notificado,0) > 0
+					(CASE WHEN COALESCE(pno.notificado,FALSE) = TRUE
 						THEN CONCAT(eno.nombre_estatus_notificacion,'<br><span class=''badge bg-light-info text-info fs-1 fw-bold''>',TO_CHAR(ntf.fecha_hora_notificado,'dd/mm/yyyy hh24:mi'),'</span>')
 						ELSE eno.nombre_estatus_notificacion
 					END) AS desc_estatus,

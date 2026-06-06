@@ -31,7 +31,7 @@ VersionId,Version_ID,Copyright,Global_User_ID,Row_Time_Stamp
 
 Diagram
 DiagramId,Version_ID,VersionId,LastUpdate,CreateDate,ActiveModel,ActiveSubmodel,VSplitterPosition,X,Y,Width,Height,DiagramNameId,AuthorId,CompanyId,VersionNoId,CopyrightStringId,DefinitionId,UnificationOptionId,FileNameId,CopyrightYearStringId,DiagramName,CodePage,SignatureGUID,ReleaseName,Flags,Global_User_ID,Row_Time_Stamp
-1,1,1900,06/05/2026 23:08:17G,06/02/2026 22:53:13G,1,2,180,0,0,0,0,34,0,0,0,0,0,35,34,0,painani.DM1,1252,NULL,NULL,0,1,0
+1,1,1900,06/06/2026 01:28:08G,06/02/2026 22:53:13G,1,2,180,0,0,0,0,34,0,0,0,0,0,35,34,0,painani.DM1,1252,NULL,NULL,0,1,0
 
 GraphManager_Properties
 GraphManager_Properties_ID,DiagramId,FixedSize,FixedPosition,HorizontalSpacingBetweenEdges,HorizontalSpacingBetweenNodes,VerticalSpacingBetweenEdges,VerticalSpacingBetweenNodes,ApplyStyleDeeply,DrawingFitting,HorizontalSpacingBetweenIntergraphEdges,VerticalSpacingBetweenIntergraphEdges,Global_User_ID
@@ -683,7 +683,7 @@ DiagramId,ModelId,EntityId,AttributeId,Attribute_ID,Entity_ID,UserDatatypeId,Rul
 1,1,19,6,90,20,0,0,0,0,149,149,0,0,0,0,28,1,-2,-1,N,1,1,6,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,100,0,0,149,605,0
 1,1,5,1,23,5,0,0,0,0,71,71,0,0,0,0,47,0,-2,-1,N,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,59,60,10,0,71,331,0
 1,1,5,2,24,5,0,0,0,0,72,72,0,0,0,0,48,0,400,-1,N,1,1,4,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,54,114,400,0,72,333,0
-1,1,5,3,25,5,0,0,0,0,73,73,0,0,0,0,48,0,20,-1,N,1,1,6,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,54,99,20,0,73,334,0
+1,1,5,3,25,5,0,0,0,0,271,271,0,0,0,0,48,0,20,-1,N,1,1,6,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,54,99,20,0,271,334,0
 1,1,5,4,26,5,0,0,0,0,74,74,0,0,0,0,48,0,400,-1,N,1,1,5,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,54,114,400,0,74,335,0
 1,1,5,5,27,5,0,0,0,0,63,63,0,0,0,0,52,1,-2,-1,N,1,1,7,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,56,57,10,0,63,336,0
 1,1,5,7,29,5,0,0,0,0,94,94,0,0,94,94,13,0,-2,-1,N,0,0,2,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,36,37,0,0,94,347,0
@@ -900,7 +900,7 @@ DiagramId,ModelId,SubmodelId,EntityId,EntityDisplay_ID,Submodel_ID,Entity_ID,Hor
 1,1,2,3,6,2,3,381,462,184,105,0,0,0,0,1,8454016,259,0
 1,1,3,22,67,3,43,-391,768,-1,-1,0,0,0,0,1,16764592,1345,0
 1,1,2,4,8,2,4,35,509,197,141,0,0,0,0,1,8454016,284,0
-1,1,2,5,10,2,5,-316,373,206,138,0,0,0,0,1,8454016,330,0
+1,1,2,5,10,2,5,-317,373,206,138,0,0,0,0,1,8454016,330,0
 1,1,2,7,14,2,7,50,698,177,67,0,0,0,0,1,8454143,366,0
 1,1,2,16,45,2,17,406,247,149,84,0,0,0,0,1,10744309,753,0
 1,1,1,1,1,1,1,253,567,151,86,0,0,0,0,1,16777215,238,0
@@ -1038,40 +1038,42 @@ Path_Node_ID,RelationshipDisplay_ID,View_Relationship_Display_ID,SupertypeDispla
 50,8,0,0,0,0,0,0,312,453,2
 51,10,0,0,0,0,0,0,-35,601,1
 52,10,0,0,0,0,0,0,-35,446,2
-53,14,0,0,0,0,0,0,107,274,1
-54,18,0,0,0,0,0,0,-36,673,1
-55,18,0,0,0,0,0,0,-36,640,2
-56,70,0,0,0,0,0,0,459,310,1
-57,70,0,0,0,0,0,0,458,310,2
-58,59,0,0,0,0,0,0,-704,256,1
-59,59,0,0,0,0,0,0,-704,301,2
-60,62,0,0,0,0,0,0,-441,287,1
-61,62,0,0,0,0,0,0,-441,279,2
-62,65,0,0,0,0,0,0,-153,287,1
-63,65,0,0,0,0,0,0,-153,352,2
-64,68,0,0,0,0,0,0,-346,-8,1
-65,26,0,0,0,0,0,0,-905,303,1
-66,26,0,0,0,0,0,0,-905,455,2
-67,26,0,0,0,0,0,0,-993,455,3
-68,29,0,0,0,0,0,0,-1076,119,1
-69,29,0,0,0,0,0,0,-1050,119,2
-70,32,0,0,0,0,0,0,-834,91,1
-71,32,0,0,0,0,0,0,-990,91,2
-72,35,0,0,0,0,0,0,-451,421,1
-73,35,0,0,0,0,0,0,-451,436,2
-74,38,0,0,0,0,0,0,-151,430,1
-75,38,0,0,0,0,0,0,-151,446,2
-76,41,0,0,0,0,0,0,-980,109,1
-77,41,0,0,0,0,0,0,-788,109,2
-78,44,0,0,0,0,0,0,-704,157,1
-79,47,0,0,0,0,0,0,144,114,1
-80,47,0,0,0,0,0,0,-77,114,2
-81,50,0,0,0,0,0,0,-260,45,1
-82,50,0,0,0,0,0,0,-165,45,2
-83,53,0,0,0,0,0,0,219,102,1
-84,53,0,0,0,0,0,0,221,102,2
-85,56,0,0,0,0,0,0,-224,71,1
-86,56,0,0,0,0,0,0,123,71,2
+53,12,0,0,0,0,0,0,-229,475,1
+54,12,0,0,0,0,0,0,-230,475,2
+55,14,0,0,0,0,0,0,107,274,1
+56,18,0,0,0,0,0,0,-36,673,1
+57,18,0,0,0,0,0,0,-36,640,2
+58,70,0,0,0,0,0,0,459,310,1
+59,70,0,0,0,0,0,0,458,310,2
+60,59,0,0,0,0,0,0,-704,256,1
+61,59,0,0,0,0,0,0,-704,301,2
+62,62,0,0,0,0,0,0,-441,287,1
+63,62,0,0,0,0,0,0,-441,279,2
+64,65,0,0,0,0,0,0,-153,287,1
+65,65,0,0,0,0,0,0,-153,352,2
+66,68,0,0,0,0,0,0,-346,-8,1
+67,26,0,0,0,0,0,0,-905,303,1
+68,26,0,0,0,0,0,0,-905,455,2
+69,26,0,0,0,0,0,0,-993,455,3
+70,29,0,0,0,0,0,0,-1076,119,1
+71,29,0,0,0,0,0,0,-1050,119,2
+72,32,0,0,0,0,0,0,-834,91,1
+73,32,0,0,0,0,0,0,-990,91,2
+74,35,0,0,0,0,0,0,-451,421,1
+75,35,0,0,0,0,0,0,-451,436,2
+76,38,0,0,0,0,0,0,-151,430,1
+77,38,0,0,0,0,0,0,-151,446,2
+78,41,0,0,0,0,0,0,-980,109,1
+79,41,0,0,0,0,0,0,-788,109,2
+80,44,0,0,0,0,0,0,-704,157,1
+81,47,0,0,0,0,0,0,144,114,1
+82,47,0,0,0,0,0,0,-77,114,2
+83,50,0,0,0,0,0,0,-260,45,1
+84,50,0,0,0,0,0,0,-165,45,2
+85,53,0,0,0,0,0,0,219,102,1
+86,53,0,0,0,0,0,0,221,102,2
+87,56,0,0,0,0,0,0,-224,71,1
+88,56,0,0,0,0,0,0,123,71,2
 
 View_Relationship_Display
 View_Relationship_Display_ID,Entity_ID,Parent_View_ID,Submodel_ID,Child_View_ID,ElbowPosition,Inter_Model_View_Rel_Disp_ID,DesiredRoutingStyle,ParentConnectorFlags,ParentConnectorOffsetX,ParentConnectorOffsetY,ParentConnectorPerMils,ChildConnectorFlags,ChildConnectorOffsetX,ChildConnectorOffsetY,ChildConnectorPerMils,cxName,cyName,NameOffsetX,NameOffsetY,NameOrientation,Global_User_ID,Row_Time_Stamp
@@ -1165,7 +1167,6 @@ String_Id,Data,Overflow,ConstantString,Row_Time_Stamp
 70,soportes_notificacion,0,0,0
 71,id_soporte_notificacion,0,0,0
 72,nombre_original,0,0,0
-73,extension,0,0,0
 74,ruta_soporte,0,0,0
 76,PK5,0,0,0
 77,num_oficio,0,0,0
@@ -1353,6 +1354,7 @@ String_Id,Data,Overflow,ConstantString,Row_Time_Stamp
 267,fk_usuarios_usercomplementos,0,0,0
 268,pk_usuarios_complementos,0,0,0
 270,BIT NOT NULL,0,0,0
+271,extension_archivo,0,0,0
 
 LargeString
 String_Id,Data,Row_Time_Stamp
@@ -1465,7 +1467,7 @@ StringUsage_Id,UniqueObject_Id,StringUsageType_Id,String_Id,Row_Time_Stamp
 122,325,2,70,0
 123,331,14,71,0
 124,333,14,72,0
-125,334,14,73,0
+125,334,14,271,0
 126,335,14,74,0
 127,336,14,63,0
 130,347,15,94,0
@@ -1480,7 +1482,7 @@ StringUsage_Id,UniqueObject_Id,StringUsageType_Id,String_Id,Row_Time_Stamp
 147,333,195,72,0
 148,334,193,54,0
 149,334,194,99,0
-150,334,195,73,0
+150,334,195,271,0
 151,335,193,54,0
 152,335,194,114,0
 153,335,195,74,0
@@ -1623,7 +1625,7 @@ StringUsage_Id,UniqueObject_Id,StringUsageType_Id,String_Id,Row_Time_Stamp
 232,289,124,110,0
 234,263,124,113,0
 235,333,15,72,0
-236,334,15,73,0
+236,334,15,271,0
 237,335,15,74,0
 238,336,15,63,0
 239,285,15,21,0
@@ -2597,7 +2599,7 @@ Identity_Value_ID,Table_Name,Column_Name,Next_Valid_Value,Global_User_ID,Row_Tim
 16,BusDataObjectDisplay,BusDataObjectDisplay_ID,1,0,0
 17,CheckConstraints,CheckConstraints_ID,1,0,0
 18,Circular_Layout,Circular_Layout_ID,4,0,0
-19,ColorDefault,ColorDefault_ID,517,0,0
+19,ColorDefault,ColorDefault_ID,520,0,0
 20,Column_Usage,Column_Usage_ID,1,0,0
 21,Components_Layout,Components_Layout_ID,4,0,0
 22,Configuration_Option,Configuration_Option_ID,1,0,0
@@ -2681,7 +2683,7 @@ Identity_Value_ID,Table_Name,Column_Name,Next_Valid_Value,Global_User_ID,Row_Tim
 100,ObjectModification,ObjectModification_ID,1,0,0
 101,Orthogonal_Layout,Orthogonal_Layout_ID,4,0,0
 102,PasteInfo,PasteInfo_ID,1,0,0
-103,Path_Node,Path_Node_ID,87,0,0
+103,Path_Node,Path_Node_ID,89,0,0
 104,Pipeline,Pipeline_ID,1,0,0
 105,Pipeline_Member,Pipeline_Member_ID,1,0,0
 106,Pipeline_Member_Property,Pipeline_Member_Property_ID,1,0,0
