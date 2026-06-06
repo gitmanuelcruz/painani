@@ -80,7 +80,7 @@ class NotificacionesRegistro extends BaseController
          $referenciaUbicacion = $this->request->getPost("vm_referencia_ubicacion");
          $usuario = $this->session->get("usuario");
          $ip      = $this->session->get("ip");
-         $idEstatus = "POR_NOTIFICAR";
+         $idEstatus = "POR_ASIGNAR";
          $bandEstatus = 0;
          $exist = $this->Modelo->getExisteOficio($numOficio)->getRow()->total;
          if(!empty($idNotificacion)){
@@ -141,7 +141,7 @@ class NotificacionesRegistro extends BaseController
          $numOficio = $datos->num_oficio;
          $this->db->transBegin();
          //
-         if($datos->id_estatus_notificacion == "POR_NOTIFICAR") {
+         if($datos->id_estatus_notificacion == "POR_ASIGNAR") {
             $result = $this->Modelo->updateCancelacion($idNotificacion,$estatus,$usuario,$ip);
          }
          else {

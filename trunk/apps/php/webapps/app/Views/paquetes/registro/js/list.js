@@ -13,7 +13,7 @@ const Toast = Swal.mixin({
 
 $(document).ready(function() {
 	$(".preloader").fadeOut();
-	//loadPaquetesPag();
+	loadPaquetesPag();
 
 	$("#btnBuscar").on("click", function () {
 		loadPaquetesPag();
@@ -30,31 +30,31 @@ $(document).ready(function() {
 
 const loadPaquetesPag = () => {
 	table.setTablaHTML("gridPaquetes");
-	table.setUrl(contexto+nameController+"/notificacionesPag");
+	table.setUrl(contexto+nameController+"/paquetesPag");
 	table.setRegistrosPagina(10);
-	table.setColumnas("desc_num_oficio,foficio,domicilio,referencia_ubicacion,desc_estatus,band");
-	table.setColTipos("textHTML,text,text,text,textHTML,dropdown");
-	table.setAlineacion("left,center,left,left,center,center");
+	table.setColumnas("id_paquete,notificador,fprogramada,fapertura,fcierre,total_notificaciones,band");
+	table.setColTipos("text,text,text,text,text,numeroSD,dropdown");
+	table.setAlineacion("left,left,center,center,center,center,center");
 	let dropdown = {
-      "col6": {
+      "col7": {
          "opciones": [
-            {"etiqueta":"", "titulo": "Opc. Notificación", "icono": "fa-solid fa-list-ul fa-lg", "tooltip": "Lista de opciones", "tipoicono": "i",
+            {"etiqueta":"", "titulo": "Opc. Paquete", "icono": "fa-solid fa-list-ul fa-lg", "tooltip": "Lista de opciones", "tipoicono": "i",
                "menu":[
                  { "campo_bd": "band_detalle", "valor_campo": "1", "icono": "fa-solid fa-circle-info fa-lg", "callback": "detalle", "etiqueta": "Detalle", "tipoicono": "i", "color": "color_blue" },
-                 { "campo_bd": "icon_editar", "valor_campo": "1", "icono": "fa-solid fa-pen-to-square fa-lg", "callback": "editarNotificacion", "etiqueta": "Editar", "tipoicono": "i", "color": "color_black" },
-                 { "campo_bd": "icon_cancelar", "valor_campo": "1", "icono": "fa-solid fa-circle-xmark fa-lg", "callback": "cancelarNotificacion", "etiqueta": "Cancelar", "tipoicono": "i", "color": "color_red" }
+                 { "campo_bd": "icon_editar", "valor_campo": "1", "icono": "fa-solid fa-pen-to-square fa-lg", "callback": "editarPaquete", "etiqueta": "Editar", "tipoicono": "i", "color": "color_black" },
+                 { "campo_bd": "icon_eliminar", "valor_campo": "1", "icono": "fa-solid fa-trash fa-lg", "callback": "eliminarPaquete", "etiqueta": "Eliminar", "tipoicono": "i", "color": "color_red" }
                ]
             }
          ]
       }
    }
 	table.setDropDown(dropdown);
-	table.setParametros($("#frmfrmPaquetes").serialize());
+	table.setParametros($("#frmPaquetes").serialize());
 	table.loadJSON();
 }
 //!
 const recargaPaginadoPrincipal = () => {
-   table.parametros = $("#frmfrmPaquetes").serialize();
+   table.parametros = $("#frmPaquetes").serialize();
    table.loadJSON(table.pagina);
 }
 //!
@@ -80,17 +80,15 @@ const validCombos = (id,id2) => {
 	}
 }
 // TODO: Proceso de edicion
-const editarNotificacion = (reg) =>{
-   vmRegistro(reg.id_notificacion,'E');
-   $("#vm_num_oficio").val(reg.num_oficio);
-   $("#vm_fecha_oficio").val(reg.fecha_oficio);
-   $("#vm_domicilio").val(reg.domicilio);
-   $("#vm_referencia_ubicacion").val(reg.referencia_ubicacion);
+const editarPaquete = (reg) =>{
+   vmRegistro(reg.id_paquete,'E');
+   $("#vm_fecha_programada").val(reg.fecha_programada);
+   cargaComboRegistro(true,reg.id_paquete,reg.id_notificador);
 }
 // TODO: Proceso de cancelacion
-const cancelarNotificacion = (reg) => {
-   let titulo =   `Confirma <span class="fw-bold text-danger">CANCELAR</span> la notificaci&oacute;n con el Num. Oficio
-                  <span class="fw-bold">${reg.num_oficio}</span>`;
+const eliminarPaquete = (reg) => {
+   let titulo =   `Confirma <span class="fw-bold text-danger">ELIMINAR</span> el paquete con el ID
+                  <span class="fw-bold">${reg.id_paquete}</span>`;
    Swal.fire({
       title: 'Confirmaci&oacute;n',
       html: '<p class="p-font-msg-1-2">\u{BF}'+titulo+'?</p>',
@@ -102,17 +100,17 @@ const cancelarNotificacion = (reg) => {
       confirmButtonText: 'Si, confirmar',
    }).then((result) => {
       if (result.isConfirmed) {
-         updateCancelar(reg.id_notificacion);
+         deletePaquete(reg.id_paquete);
       }
    });
 }
 //!
-const updateCancelar = (id_notificacion) => {
+const deletePaquete = (id_paquete) => {
    let formData = new FormData();
-   formData.append("id_notificacion", id_notificacion);
+   formData.append("id_paquete", id_paquete);
    $.ajax({
       type: 'post',
-      url: contexto+nameController+'/procesoCancelado',
+      url: contexto+nameController+'/procesoEliminacion',
       async: true,
       processData: false,
       contentType: false,
@@ -121,7 +119,7 @@ const updateCancelar = (id_notificacion) => {
       beforeSend(xhr) {
          $('button[btn="btn"]').prop('disabled', true);
          $("#overlayprincipal").show();
-         targetPrincipal = document.getElementById('frmfrmPaquetes');
+         targetPrincipal = document.getElementById('frmPaquetes');
          spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {

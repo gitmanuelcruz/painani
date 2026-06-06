@@ -23,6 +23,7 @@
    <link href="<?php echo base_url();?>includes/bootstrap/bootstrap.min.css?version=<?php echo time();?>" rel="stylesheet" type="text/css">
    <link href="<?php echo base_url();?>includes/template/simplebar.css?version=<?php echo time();?>" rel="stylesheet" type="text/css">
    <link href="<?php echo base_url();?>includes/select2/select2.css?version=<?php echo time();?>" rel="stylesheet" type="text/css"/>
+   <link href="<?php echo base_url();?>includes/dual_listbox/dual-listbox.css?version=<?php echo time();?>" rel="stylesheet" type="text/css"/>
    <link href="<?php echo base_url();?>includes/template/style.css?version=<?php echo time();?>" rel="stylesheet" type="text/css">
    <link href="<?php echo base_url();?>includes/template/responsive.css?version=<?php echo time();?>" rel="stylesheet" type="text/css">
    <link href="<?php echo base_url();?>includes/mtable/mtable.css?version=<?php echo time();?>" rel="stylesheet" type="text/css">
@@ -90,6 +91,7 @@
    <script src="<?php echo base_url();?>includes/template/simplebar.js?version=<?php echo time(); ?>" type="text/javascript"></script>
    <script src="<?php echo base_url();?>includes/select2/select2.js?version=<?php echo time();?>" type="text/javascript"></script>
    <script src="<?php echo base_url();?>includes/select2/select2.init.js?version=<?php echo time();?>" type="text/javascript"></script>
+   <script src="<?php echo base_url();?>includes/dual_listbox/dual-listbox.js?version=<?php echo time();?>" type="text/javascript"></script>
    <script src="<?php echo base_url();?>includes/template/customizer.js?version=<?php echo time(); ?>" type="text/javascript"></script>
    <script src="<?php echo base_url();?>includes/template/phosphor.js?version=<?php echo time(); ?>" type="text/javascript"></script>
    <script src="<?php echo base_url();?>includes/slick/slick.min.js?version=<?php echo time(); ?>" type="text/javascript"></script>

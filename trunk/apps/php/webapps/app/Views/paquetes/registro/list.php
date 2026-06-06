@@ -37,7 +37,7 @@
 								</div>
 								<div class="col-sm-3">
 									<label class="form-label">Fecha Programada</label>
-									<input type="date" class="form-control" id="txt_fecha_oficio" name="txt_fecha_oficio" style="height: 40px;">
+									<input type="date" class="form-control" id="txt_fecha_programada" name="txt_fecha_programada" style="height: 40px;">
 								</div>
 								<div class="col-sm-3">
 									<label class="form-label">Fecha Apertura</label>
@@ -79,7 +79,7 @@
 				<thead class="table-dark">
 					<tr class="p-font-msg-09">
 						<th width="10%" class="text-start">ID</th>
-						<th width="18%" class="text-start">Notificador</th>
+						<th width="20%" class="text-start">Notificador</th>
 						<th width="13%" class="text-center">Fecha Programda</th>
 						<th width="13%" class="text-center">Fecha Apertura</th>
 						<th width="13%" class="text-center">Fecha Cierre</th>
@@ -94,8 +94,8 @@
 </div>
 <?=$this->endSection()?>
 <?=$this->section("js")?>
-	<script src="<?php echo base_url(); ?>app/Views/paquetes/registro/js/list.js?version=<?php echo time(); ?>" type="text/javascript"></script>
-	<script src="<?php echo base_url(); ?>app/Views/paquetes/registro/js/create.js?version=<?php echo time(); ?>" type="text/javascript"></script>
-	<script src="<?php echo base_url(); ?>app/Views/paquetes/registro/js/detalle.js?version=<?php echo time(); ?>" type="text/javascript"></script>
+	<script src="<?php echo base_url();?>app/Views/paquetes/registro/js/list.js?version=<?php echo time(); ?>" type="text/javascript"></script>
+	<script src="<?php echo base_url();?>app/Views/paquetes/registro/js/create.js?version=<?php echo time(); ?>" type="text/javascript"></script>
+	<script src="<?php echo base_url();?>app/Views/paquetes/registro/js/detalle.js?version=<?php echo time(); ?>" type="text/javascript"></script>
 <?=$this->endSection()?>
 <?=$this->extend("layout/main")?>

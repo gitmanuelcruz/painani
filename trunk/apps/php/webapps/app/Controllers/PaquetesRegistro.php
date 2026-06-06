@@ -37,86 +37,104 @@ class PaquetesRegistro extends BaseController
 		}
 	}
 	//
-	public function notificacionesPag() {
+	public function paquetesPag() {
       $idNumOficio  = $this->request->getPost("txt_id_num_oficio");
-		$fechaOficio  = $this->request->getPost("txt_fecha_oficio");
-		$idEstatus    = $this->request->getPost("id_estatus");
-		$usuario 	  = $this->session->get("usuario");
-		$iconEditar   = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_EDI_NOTIFICACION","PRIVILEGIO");
-		$iconCancelar = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_CANL_NOTIFICACION","PRIVILEGIO");
-		$pagina       = 0;
-		$resultados   = 0;
+		$fechaProgramada = $this->request->getPost("txt_fecha_programada");
+		$fechaApertura = $this->request->getPost("txt_fecha_apertura");
+      $fechaCierre   = $this->request->getPost("txt_fecha_cierre");
+      $notificador   = $this->request->getPost("txt_nombre_notificador");
+		$usuario 	   = $this->session->get("usuario");
+		$iconEditar    = 1;//$this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_EDI_NOTIFICACION","PRIVILEGIO");
+		$iconEliminar  = 1;//$this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_CANL_NOTIFICACION","PRIVILEGIO");
+		$pagina        = 0;
+		$resultados    = 0;
 
 		if (!empty($this->request->getPost("pagina")))
 			$pagina = $this->request->getPost("pagina");
 		if (!empty($this->request->getPost("resultados")))
 			$resultados = $this->request->getPost("resultados");
 
-		$sql = $this->Modelo->getNotificacionesPag(
-         $idNumOficio,$fechaOficio,$idEstatus,$iconEditar,$iconCancelar);
-		$results = $this->utilerias->loadJSON($sql, $pagina, $resultados);
+		$sql = $this->Modelo->getPaquetesPag(
+         $idNumOficio,$fechaProgramada,$fechaApertura,$fechaCierre,$notificador,$iconEditar,$iconEliminar);
+		$results = $this->utilerias->loadJSON($sql,$pagina,$resultados);
 
 		return $this->response->setJSON($results);
 	}
 	// TODO: Proceso de registro o edicion
-	public function existeOficio() {
-		$numOficio   = $this->request->getPost("num_oficio");
-		$total  = $this->Modelo->getExisteOficio($numOficio)->getRow()->total;
-		$result = array("total" => $total);
-		
-	  return $this->response->setJSON($result);
-	} 
+   public function getComboRegistro() {
+      $idPaquete   = $this->request->getPost("id_paquete");
+      $result = array(
+         'userNotificadores'=> $this->Modelo->getNotificadores()->getResult(),
+         'listOficios'=> $this->Modelo->getListOficiosNotificacion($idPaquete)->getResult()
+      );
+      return $this->response->setJSON($result);    
+   }
 	//
-   public function guardarNotificacion() {
+   public function guardarPaquete() {
       set_time_limit(0);
       if ($this->session->get("logueado") != true) {
          $response = array('respuesta' => false, 'mensaje' => 'Se terminó la sesión, vuelva a iniciar nuevamente');
       }
       else {
-         $idNotificacion = $this->request->getPost("vm_id_notificacion");
-         $numOficio   = $this->request->getPost("vm_num_oficio");
-         $fechaOficio = $this->request->getPost("vm_fecha_oficio");
-         $domicilio   = $this->request->getPost("vm_domicilio");
-         $referenciaUbicacion = $this->request->getPost("vm_referencia_ubicacion");
+         $idPaquete = $this->request->getPost("vm_id_paquete");
+         $fechaProgramacion = $this->request->getPost("vm_fecha_programada");
+         $idUserNotificador = $this->request->getPost("vm_id_usuario_notificador");
+         $idsNotificaciones = $this->request->getPost("vm_listado");
          $usuario = $this->session->get("usuario");
          $ip      = $this->session->get("ip");
-         $idEstatus = "POR_NOTIFICAR";
-         $bandEstatus = 0;
-         $exist = $this->Modelo->getExisteOficio($numOficio)->getRow()->total;
-         if(!empty($idNotificacion)){
-            $datos = $this->Modelo->getDatosNotificacion($idNotificacion)->getRow();
-            if(mb_strtoupper(trim($datos->num_oficio),'UTF-8') == mb_strtoupper(trim($numOficio),'UTF-8')) {
-               $exist = 0;
-            }
-            if($datos->id_estatus_notificacion != $idEstatus) {
-               $exist = 1;
-               $bandEstatus = 1;
-            }
-         }
+         $idEstatus = "ASIGNADO";
+         $msjExist = "";
+         $msjValid = "";
+         $dataOficios = $this->Modelo->getDatosNotificacion($idsNotificaciones,$idPaquete);
          $this->db->transBegin();
          //
-         if((int)$exist == 0) {
-            if(empty($idNotificacion)){
-               $result = $this->Modelo->insertNotificacion(
-                  $numOficio,$fechaOficio,$domicilio,$referenciaUbicacion,$idEstatus,$usuario,$ip);
+         if($dataOficios->getNumRows() > 0) {
+            $msjValid .= '<p class="p-font-msg">Num. Oficios que se encuentran asignado a un paquete</p>';
+            $msjValid .= '<table class="table table-striped table-hover">
+                           <thead class="table-dark">
+                              <tr class="p-font-msg-07">
+                                 <th width="15%" class="text-start">Num. Oficio</th>
+                                 <th width="15%" class="text-center">Fecha Oficio</th>
+                                 <th width="15%" class="text-center">No. Paquete</th>
+                              </tr>
+                           </thead>
+                           <tbody>';
+            foreach($dataOficios->getResult() as $key) {
+               $msjValid .='<tr class="p-font-msg-07">
+                              <td class="text-start">'.$key->num_oficio.'</td>
+                              <td class="text-center">'.$key->foficio.'</td>
+                              <td class="text-center">'.$key->id_paquete.'</td>
+                           </tr>';
             }
-            else{
-               $result = $this->Modelo->updateNotificacion(
-                  $idNotificacion,$numOficio,$fechaOficio,$domicilio,$referenciaUbicacion,$usuario,$ip);
-            }
+            $msjValid .= ' </tbody>
+                        </table>';
+            $result = array(false,$msjValid,1);
          }
          else {
-            if((int)$bandEstatus == 0) {
-               $result = array(false,"El n&uacute;mero de oficio (<b>".$numOficio."</b>) ya se encuentra registrado",1);
+            if(empty($idPaquete)){
+               $result = $this->Modelo->insertPaquete(
+                  $idUserNotificador,$fechaProgramacion,$usuario,$ip);
             }
-            else {
-               $result = array(false,"El n&uacute;mero de oficio (<b>".$numOficio."</b>) ya se encuentra asignado a un paquete, ya no se puede modificar",1);
+            else{
+               $result = $this->Modelo->updatePaquete(
+                  $idPaquete,$idUserNotificador,$fechaProgramacion,$usuario,$ip);
+            }
+            $msjExist = $result[1];
+            $id_paquete = $result[2];
+            //*
+            if($result[0]) {
+               $result = $this->Modelo->deletePaqueteNotificacion(
+                  $id_paquete,$idsNotificaciones);
+               if($result[0]) {
+                  $result = $this->Modelo->insertPaqueteNotificacion(
+                     $id_paquete,$idsNotificaciones,$idEstatus,$usuario,$ip);
+               }
             }
          }
          //
          if ($result[0]) {
             $this->db->transCommit();
-            $response = array('respuesta' => true, 'mensaje' => $result[1]);
+            $response = array('respuesta' => true, 'mensaje' => $msjExist);
          }
          else {
             $this->db->transRollback();
@@ -126,26 +144,22 @@ class PaquetesRegistro extends BaseController
 
       return $this->response->setJSON($response);
    }  
-   // TODO: Proceso de cancelacion
-   public function procesoCancelado(){
+   // TODO: Proceso de eliminacion
+   public function procesoEliminacion(){
       set_time_limit(0);
       if ($this->session->get("logueado") != true) {
          $response = array('respuesta' => false, 'mensaje' => 'Se terminó la sesión, vuelva a iniciar nuevamente');
       }
       else {
-         $idNotificacion = $this->request->getPost("id_notificacion");         
-         $usuario   = $this->session->get("usuario");
-         $ip        = $this->session->get("ip");
-         $estatus = 'CANCELADO';
-         $datos = $this->Modelo->getDatosNotificacion($idNotificacion)->getRow();
-         $numOficio = $datos->num_oficio;
+         $idPaquete = $this->request->getPost("id_paquete");         
+         $datos = $this->Modelo->getDatosPaquete($idPaquete)->getRow();
          $this->db->transBegin();
          //
-         if($datos->id_estatus_notificacion == "POR_NOTIFICAR") {
-            $result = $this->Modelo->updateCancelacion($idNotificacion,$estatus,$usuario,$ip);
+         if($datos->fecha_hora_apertura_operacion == "") {
+            $result = $this->Modelo->deletePaquetes($idPaquete);
          }
          else {
-            $result = array(false,"El n&uacute;mero de oficio (<b>".$numOficio."</b>) ya se encuentra asignado a un paquete, ya no se puede <b class='text-danger'>CANCELAR</b>",1);
+            $result = array(false,"El paquete con el ID (<b>".$idPaquete."</b>) no se puede eliminar porque ya se aperturo la operaci&oacute;n",1);
          }
          //
          if ($result[0]) {

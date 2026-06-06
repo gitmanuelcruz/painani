@@ -10,7 +10,7 @@ const SocketsNotificaciones = require('./SocketsNotificaciones');
 class Server {
    constructor() {
       this.app = express();
-      this.port = process.env.PORT || 3039;
+      this.port = process.env.PORT || 3036;
 
       // Http server
       this.server = http.createServer(this.app);
@@ -50,6 +50,7 @@ class Server {
       //API End Points routers
       this.app.use('/api',require('../routes/apiKeyRoutes'));
       this.app.use('/api/auth',require('../routes/authRoutes'));
+      this.app.use('/api/notificacion',require('../routes/notificacionRoutes'));
 
    }
   

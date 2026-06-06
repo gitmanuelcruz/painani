@@ -1,40 +1,45 @@
-const vmRegistro = (id_notificacion,tipo) => {
+const vmRegistro = (id_paquete,tipo) => {
 	let html = '';
    let botones = '';
-   const titulo = (id_notificacion == '') ? 'Registro de Notificaci&oacute;n':'Edici&oacute;n de Notificaci&oacute;n';
+   const titulo = (id_paquete == '') ? 'Registro de Paquete':'Edici&oacute;n del Paquete con ID &raquo; <span class="fw-bold">'+id_paquete+'</span>';
    const fAct = fechaActual();
    //
    html +=  `<form method="post" class="app-form frm-modal-reg" id="frmRegistro" name="frmRegistro" novalidate onsubmit="return false">
-               <input type="hidden" id="vm_id_notificacion" name="vm_id_notificacion" value="${id_notificacion}">
+               <input type="hidden" id="vm_id_paquete" name="vm_id_paquete" value="${id_paquete}">
                <input type="hidden" id="vm_tipo" value="${tipo}">
                <input type="hidden" id="vm_contador_valid">
-               <div class="row mb-2">                                     
+               <div class="row mb-2">
                   <div class="col-sm-6">
-                     <label class="form-label">Num. Oficio</label>
-                     <input type="text" class="form-control" id="vm_num_oficio" name="vm_num_oficio" maxlength="49" 
-                        style="height: 40px" required>
-                     <div class="invalid-feedback">Num. Oficio requerido</div>
-                  </div>
-                  <div class="col-sm-6">
-							<label class="form-label">Fecha Oficio</label>
-							<input type="date" class="form-control" id="vm_fecha_oficio" name="vm_fecha_oficio" style="height: 40px;"
+							<label class="form-label">Fecha Programaci&oacute;n</label>
+							<input type="date" class="form-control" id="vm_fecha_programada" name="vm_fecha_programada" style="height: 40px;"
                         required value="${fAct.fecha2}">
-                     <div class="invalid-feedback">Fecha oficio requerido</div>        
+                     <div class="invalid-feedback">Fecha programada requerido</div>        
 						</div>
                </div>
                <div class="row mb-2">   
                   <div class="col-sm-12">
-							<label class="form-label">Domicilio</label>
-							<textarea class="form-control text-uppercase" id="vm_domicilio" name="vm_domicilio" rows="4" required></textarea>
-                     <div class="invalid-feedback">Domicilio requerido</div>  
-						</div>
+                     <label class="form-label">Notificador</label>
+                     <div class="form-group" id="divUserNotificador">
+                        <select class="form-control selectpicker" id="vm_id_usuario_notificador" name="vm_id_usuario_notificador" required
+                           onchange="validCombos(this.id,'divUserNotificador')">
+                           <option value="">[Seleccione una opci&oacute;n]</option>'+
+                        </select>
+                        <div class="invalid-feedback">Notificador requerido</div>
+							</div>
+                  </div>
                </div>
-               <div class="row mb-2">   
+               <div class="app-divider-v dashed text-primary"></div>
+               <div class="row">
                   <div class="col-sm-12">
-							<label class="form-label">Referencia de Ubicaci&oacute;n</label>
-							<textarea class="form-control text-uppercase" id="vm_referencia_ubicacion" name="vm_referencia_ubicacion" rows="4" required></textarea>
-                     <div class="invalid-feedback">Referencia de ubicaci&oacute;n requerido</div>  
-						</div>
+                     <div class="card" style="background-color:#f9f4f4">
+                        <div class="card-header">
+                           <h5>Paquete - Notificaciones</h5>
+                        </div>
+                        <div class="card-body">
+                           <select class="selectList" id="vm_listado" name="vm_listado[]" multiple></select>
+                        </div>
+                     </div>
+                  </div>
                </div>
             </form>`;
 
@@ -48,8 +53,11 @@ const vmRegistro = (id_notificacion,tipo) => {
                   <i class="fa-solid fa-xmark me-2"></i>Cerrar
                </button>`;
 
-   modalLG('frmfrmPaquetes', titulo, html, 'formlg_scrollable', botones, 'cerrar_vm_registro()');
+   modalLG('frmPaquetes', titulo, html, 'formlg_scrollable', botones, 'cerrar_vm_registro()');
    $(".selectpicker").select2({dropdownParent: $("#vModalLG")});
+   if(tipo == 'N') {
+      cargaComboRegistro(true,id_paquete,null);
+   }
    //
    $("#bt_guardar").on("click", function () {
       validRegistro();
@@ -69,14 +77,75 @@ const cerrar_vm_registro = () => {
    recargaPaginadoPrincipal()
 }
 //!
+function cargaComboRegistro(async,pid_paquete,id_usuario_notificador) {
+	let tar,spin;
+	$.ajax({
+      type: 'post',
+      url: contexto+nameController+'/getComboRegistro',
+      async: async,
+      dataType: 'JSON',
+		data: {
+         id_paquete:pid_paquete
+      },
+      beforeSend(xhr){
+         $('button[btn="btn"]').prop('disabled',true);
+         $("#overlayprincipal").show();
+         tar = document.getElementById('frmPaquetes');
+         spin = new Spinner().spin(tar);
+      },
+      success: function (data) {
+         $("#vm_id_usuario_notificador").html('<option value="">[Seleccione una opci&oacute;n]</option>');
+         $(data.userNotificadores).each(function(i, v) {
+            $("#vm_id_usuario_notificador").append('<option value="'+v.id+'">'+v.descripcion+'</option>');
+         });
+
+         $(data.listOficios).each(function(i, v) {
+            $("#vm_listado").append('<option value="'+v.id+'" '+v.seleccion+'>'+v.descripcion+'</option>');
+         });
+
+         if(id_usuario_notificador != '' && id_usuario_notificador != null) {
+            $("#vm_id_usuario_notificador").val(id_usuario_notificador);
+         }
+      },
+      complete(xhr, status) {
+         $('button[btn="btn"]').prop('disabled',false);
+         spin.stop();
+         $("#overlayprincipal").hide();
+         comboListado();
+      }
+   });
+}
+//!
+const comboListado = () => {
+   let dlb2 = new DualListbox(".selectList", {
+      availableTitle: "Notificaciones Dispobibles",
+      selectedTitle: "Notificaciones Asignadas",
+      addButtonText: ">",
+      removeButtonText: "<",
+      addAllButtonText: ">>",
+      removeAllButtonText: "<<",
+      searchPlaceholder: "Num. Oficio",
+      enableDoubleClick: false
+   });
+   
+   dlb2.addEventListener("added", function(event) {
+      document.querySelector(".changed-element").innerHTML = event.addedElement.outerHTML;
+   });
+   dlb2.addEventListener("removed", function(event) {
+      document.querySelector(".changed-element").innerHTML = event.removedElement.outerHTML;
+   });
+}
+//!
 const limpiarFrmRegistro = () => {
+   const pid_paquete = 0;
    const fAct = fechaActual();
 	$("#frmRegistro").removeClass('frm-modal-reg was-validated').addClass('frm-modal-reg');
    $("#vm_contador_valid").val(0);
-   $("#vm_num_oficio").val('');
-	$("#vm_fecha_oficio").val(fAct.fecha2);
-	$("#vm_domicilio,#vm_referencia_ubicacion").val('');
-
+	$("#vm_fecha_programada").val(fAct.fecha2);
+   //$("#vm_id_usuario_notificador").val('').trigger('change');
+	$("#divUserNotificador").removeClass("has-valid");
+	$("#divUserNotificador").removeClass("has-error");
+   cargaComboRegistro(false,pid_paquete,null);
 }
 //!
 const validRegistro = () => {
@@ -89,30 +158,30 @@ const validRegistro = () => {
    .forEach(function (form) {
       if (!form.checkValidity()) {
          contador++; 
+         if($("#vm_id_usuario_notificador").val() == '') {
+				$("#divUserNotificador").removeClass('has-valid').addClass('has-error');
+			}
+			else {
+				$("#divUserNotificador").removeClass('has-erro').addClass('has-valid');
+			}
       }
       form.classList.add('was-validated');
    });
    
    if(contador == 0) {
+      $("#divUserNotificador").removeClass('has-erro').addClass('has-valid');
       confirmarcionRegistro();
    }
 }
 //!
 const validacionRegistro = () => {
    let msg = '';
-   let existeOficio = 0;
-   const numOficio = $("#vm_num_oficio").val();
-   //
-	if($("#vm_tipo").val() == 'N') {
-		ajax(contexto+nameController+'/existeOficio', 'num_oficio='+numOficio,
-		function (data) {
-			existeOficio = parseInt(data.total);
-			if(existeOficio > 0){
-				msg += `<li>El n&uacute;mero de oficio (<b>${numOficio}</b>) ya se encuentra registrado</li>`;
-			}
-		});
-	}
-   
+   const totalSeleccionados = $("#vm_listado option:selected").length;
+
+   if (totalSeleccionados == 0) {
+      msg += `<li>Se requiere que se asigne n&uacute;mero de oficio</li>`;
+   }
+
    return msg;
 }
 //!
@@ -149,7 +218,7 @@ const confirmarcionRegistro = () => {
 const guardarRegistro = () => {
    $.ajax({
       type: 'post',
-      url: contexto+nameController+'/guardarNotificacion',
+      url: contexto+nameController+'/guardarPaquete',
       async: true,
       processData: false,
       contentType: false,
@@ -159,7 +228,7 @@ const guardarRegistro = () => {
          $('button[btn="btn"]').prop('disabled', true);
          $("#overlayprincipal").show();
          $("#bt_guardar").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Guardar');
-         targetPrincipal = document.getElementById('frmfrmPaquetes');
+         targetPrincipal = document.getElementById('frmPaquetes');
          spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
@@ -167,7 +236,7 @@ const guardarRegistro = () => {
             if(parseInt(data.valid) > 0) {
                Swal.fire({
                   title: 'VALIDACIÓN',
-                  html: '<p class="p-font-msg-1-2">'+data.mensaje+'</p>',
+                  html: data.mensaje,
                   icon: 'warning',
                   showDenyButton: true,
                   denyButtonText: 'Aceptar',

@@ -34,7 +34,7 @@ const detalle = (reg) => {
    botones +=  `<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" id="bt_cerrar_detalle">
                   <i class="fa-solid fa-xmark me-2"></i>Cerrar
                </button>`;
-   modalLG('frmfrmPaquetes', titulo, html, 'formlg_scrollable', botones, 'cerrarVMDetalle()');
+   modalLG('frmPaquetes', titulo, html, 'formlg_scrollable', botones, 'cerrarVMDetalle()');
    //
    $("#bt_cerrar_detalle").on("click", function () {
       cerrarVMDetalle();
