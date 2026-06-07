@@ -100,24 +100,23 @@ const cerrarRutaNotificacion = async (usuario, idPaquete) => {
 const setMarcarOficioNotificado = async (usuario, idNotificacion) => {
   const sql = `UPDATE notificaciones SET fecha_hora_notificado = now(),
                     modificado_por = $1,
-                    notificado_por = $1'
+                    notificado_por = $1
                 WHERE id_notificacion = $2`;
 
   await pool.query(sql, [
     usuario,
-    idPaquete,
-    notificado,
-    idEstatusNotificacion,
+    idNotificacion,
   ]);
 };
 
 const setMarcarOficioPaquete = async (
   usuario,
   idPaqueteNotificacion,
-  idEstatus,
+  idStatus,
   notificado,
   comentarios,
 ) => {
+  console.log("idStatus",idStatus);
   const sql = `UPDATE paquetes_notificaciones SET comentarios = $1,
                     fecha_hora_notificacion = now(),
                     notificado = $2,
@@ -128,7 +127,7 @@ const setMarcarOficioPaquete = async (
   await pool.query(sql, [
     comentarios,
     notificado,
-    idEstatus,
+    idStatus,
     usuario,
     idPaqueteNotificacion,
   ]);
