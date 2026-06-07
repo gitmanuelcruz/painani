@@ -12,6 +12,8 @@ const getMiPaqueteNotificacion = async (idUsuario, idPaquete) => {
             pqn.notificado,
             pqn.comentarios,
             pqn.id_estatus_notificacion,
+            en.nombre_estatus_notificacion nombre_estatus,
+            to_char(n.fecha_oficio,'YYYY-mm-dd') fecha_oficio,
             (CASE WHEN pqn.id_estatus_notificacion = 'POR_NOTIFICAR' THEN  1
                 WHEN pqn.id_estatus_notificacion = 'NO_LOCALIZADO' THEN 2
                 WHEN pqn.id_estatus_notificacion = 'NOTIFICADO' THEN 3 
@@ -19,6 +21,7 @@ const getMiPaqueteNotificacion = async (idUsuario, idPaquete) => {
             FROM paquetes_notificaciones pqn
             INNER JOIN paquetes p ON pqn.id_paquete = p.id_paquete 
             INNER JOIN notificaciones n ON pqn.id_notificacion = n.id_notificacion 
+            INNER JOIN estatus_notificacion en ON pqn.id_estatus_notificacion = en.id_estatus_notificacion
         WHERE p.id_usuario_notificador =$1
         AND p.fecha_programada = current_date
         AND p.id_paquete = $2
@@ -32,15 +35,17 @@ const getMiPaqueteNotificacion = async (idUsuario, idPaquete) => {
         key: Number(row.id_paquete_notificacion),
         idNotificacion: row.id_notificacion,
         idPaqueteNotificacion: Number(row.id_paquete_notificacion),
+        idEstatusNotificacionPaquete: row.id_estatus_notificacion,
+        nombreEstatusNotificacion:row.nombre_estatus,
         numOficio: row.num_oficio,
         domicilio: row.domicilio,
         referenciaUbicacion: row.referencia_ubicacion,
         idEstatusOficio: row.estatus_oficio,
         idPaquete: row.idPaquete,
+        fechaOficio:row.fecha_oficio,
         fechaHoraNotificado: row.fechaHoraNotificado,
         notificado: row.notificado,
-        comentarios: row.comentarios,
-        idEstatusNotificacionPaquete: row.id_estatus_notificacion,
+        comentarios: row.comentarios,        
         ordenamiento: Number(row.ordenamiento),
       };
 
