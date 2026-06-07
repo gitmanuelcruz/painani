@@ -62,11 +62,13 @@ const uploadSoporteNotificacion = async (req, res) => {
     const rutaSoporte =
       `../${process.env.FOLDER_PRINCIPAL_UPLOAD}/` +
       filePath.replace(/\\/g, "/").substring(position, filePath.length);
+    
+    const nombreOrginal = originalname.substring(0, originalname.lastIndexOf('.'));
 
     const resultado = await guardarSoporte(
       idNotificacion,
       idPaqueteNotificacion,
-      originalname,
+      nombreOrginal,
       rutaSoporte,
       "jpeg",
       comentarios,
