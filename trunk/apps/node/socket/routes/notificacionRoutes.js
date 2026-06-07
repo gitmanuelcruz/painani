@@ -9,6 +9,7 @@ const { listadoOficiosNotificar,
     marcarOficioPaquete, 
     marcarOficioNotificado 
 } = require('../controllers/notificacionController');
+const { setMarcarOficioPaquete } = require('../services/notificacionService');
 
 const router = Router();
 
@@ -17,7 +18,7 @@ router.post('/paquete-oficios',validarApiKey,validarToken,listadoOficiosNotifica
 router.post('/iniciar-ruta',validarApiKey,validarToken,iniciarRuta);
 router.post('/finalizar-ruta',validarApiKey,validarToken,finalizarRutaNotificacion);
 router.post('/marcar-oficio-paquete',validarApiKey,validarToken,marcarOficioPaquete);
-router.post('/marcar-oficio-notificado',validarApiKey,validarToken,marcarOficioNotificado);
+router.post('/marcar-oficio-notificado',validarApiKey,validarToken,setMarcarOficioPaquete);
 router.post('/upload-soporte',validarApiKey,validarToken,uploadSoporteNotificacion);
 
 module.exports = router;
