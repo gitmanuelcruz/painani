@@ -3,7 +3,8 @@ let contextoInfo = '';
 let targetPrincipal,spinnerPrincipal;
 $(document).ready(function() {
 	contexto = $("#context").val();
-	contextoInfo = $("#contextInfo").val();
+	contextoInfo = $("#contextInfo").val()+'/';
+   //
 	loadMenu();
    nobackbutton();
    $("#btn_ver_perfil").on('click', function (event) {

@@ -44,10 +44,10 @@ const loadPaquetesPag = () => {
          "opciones": [
             {"etiqueta":"", "titulo": "Opc. Paquete", "icono": "fa-solid fa-list-ul fa-lg", "tooltip": "Lista de opciones", "tipoicono": "i",
                "menu":[
-                 { "campo_bd": "band_detalle", "valor_campo": "1", "icono": "fa-solid fa-circle-info fa-lg", "callback": "detalle", "etiqueta": "Detalle", "tipoicono": "i", "color": "color_blue" },
-                 { "campo_bd": "icon_editar", "valor_campo": "1", "icono": "fa-solid fa-pen-to-square fa-lg", "callback": "editarPaquete", "etiqueta": "Editar", "tipoicono": "i", "color": "color_black" },
-                 { "campo_bd": "icon_eliminar", "valor_campo": "1", "icono": "fa-solid fa-trash fa-lg", "callback": "eliminarPaquete", "etiqueta": "Eliminar", "tipoicono": "i", "color": "color_red" },
-                  { "campo_bd": "icon_informe","valor_campo": "1", "icono": "fa-solid fa-print fa-lg","callback": "descargarInfoPaquete", "etiqueta": "Imprimir Paquete", "tipoicono": "i", "color": "color_red" }
+                  { "campo_bd": "band_detalle", "valor_campo": "1", "icono": "fa-solid fa-circle-info fa-lg", "callback": "detalle", "etiqueta": "Detalle", "tipoicono": "i", "color": "color_blue" },
+                  { "campo_bd": "icon_editar", "valor_campo": "1", "icono": "fa-solid fa-pen-to-square fa-lg", "callback": "editarPaquete", "etiqueta": "Editar", "tipoicono": "i", "color": "color_black" },
+                  { "campo_bd": "icon_eliminar", "valor_campo": "1", "icono": "fa-solid fa-trash fa-lg", "callback": "eliminarPaquete", "etiqueta": "Eliminar", "tipoicono": "i", "color": "color_red" },
+                  { "campo_bd": "icon_informe","valor_campo": "1", "icono": "fa-solid fa-print fa-lg","callback": "descargarInfoPaquete", "etiqueta": "Imprimir Inf.", "tipoicono": "i", "color": "color_red" }
                ]
             }
          ]
@@ -195,16 +195,14 @@ const deletePaquete = (id_paquete) => {
 // TODO: INFORMES EN EXCEL
 const descargarInformeNotif = () => {
    let nombreExcel = "InformeNotificaciones.xlsx";
-   $("#overlay").show();
+   $("#overlayprincipal").show();
    $('button[btn="btn"]').prop('disabled',true);
    $("#btn_inf_detalle_notif").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Inf. Notificaciones</button></li>');
    targetPrincipal = document.getElementById('frmPaquetes');
    spinnerPrincipal = new Spinner().spin(targetPrincipal);
-
+   //
    let xhr = new XMLHttpRequest();
-   let ala_fecha = $('#ala_fecha').val();
-   //$('#h_fecha_corte').val(ala_fecha.replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1'));
-	xhr.open('post', "PaquetesRegistro/obtieneInformeNotificaciones", true);
+	xhr.open('post', contexto+nameController+"/obtieneInformeNotificaciones", true);
    xhr.responseType = 'blob';
    xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded; charset=utf-8');
    xhr.onload = function () {
@@ -223,7 +221,7 @@ const descargarInformeNotif = () => {
       $('button[btn="btn"]').prop('disabled',false);
       $("#btn_inf_detalle_notif").html('<i class="fa-solid fa-download me-2"></i>Inf. Notificaciones</button></li>');
       spinnerPrincipal.stop();
-      $("#overlay").hide();
+      $("#overlayprincipal").hide();
    }
    xhr.send($("#frmPaquetes").serialize());
 }
@@ -237,7 +235,7 @@ function descargarInfoPaquete(reg) {
    let idPaquete = reg.id_paquete;
 
    let xhr = new XMLHttpRequest();
-   xhr.open('post', urlInformes+"/notificaciones/paquete/inf_paquete_notificacion.jsp", true);
+   xhr.open('post', urlInformes+"notificaciones/paquete/inf_paquete_notificacion.jsp", true);
    xhr.responseType = 'blob';
    xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded; charset=utf-8');
    xhr.onload = function () {
