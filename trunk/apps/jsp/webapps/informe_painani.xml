@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context crossContext="true" docBase="C:/proyectos/painani/trunk/apps/jsp/webapps"  path="/informe_painani" reloadable="true">
-	<!-- HANA INFORMES -->	
+	<!-- PAINANI INFORMES -->	
 	<Resource name="jdbc/informe_painani" auth="Container"
 		type="javax.sql.DataSource" driverClassName="org.postgresql.Driver"
 		url="jdbc:postgresql://198.251.67.211:5432/mensajeria"
