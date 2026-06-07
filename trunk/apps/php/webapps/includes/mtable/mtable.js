@@ -418,7 +418,7 @@ MTable.prototype.draw = function (r) {
             var xnumero = this.formatoNumero(r[this.columnas[i]]);
             td.appendChild(document.createTextNode(xnumero));
             break;
-         case "numerosf":
+         case "numeroSD":
             var xnumero = this.formatoNumeroSD(r[this.columnas[i]]);
             td.appendChild(document.createTextNode(xnumero));
             break;

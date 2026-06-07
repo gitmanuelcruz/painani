@@ -1,4 +1,5 @@
 let table = new MTable();
+let tblObservLayout = new MTable();
 const nameController = 'NotificacionesRegistro';
 const Toast = Swal.mixin({
    toast: true,
@@ -17,6 +18,10 @@ $(document).ready(function() {
 
 	$("#btnBuscar").on("click", function () {
 		loadNotificacionesPag();
+	});
+
+   $("#btnLayout").on("click", function () {
+		vm_carga_layout();
 	});
 
 	$("#btnNuevo").on("click", function () {
@@ -57,6 +62,16 @@ const recargaPaginadoPrincipal = () => {
    table.parametros = $("#frmNotificaciones").serialize();
    table.loadJSON(table.pagina);
 }
+//!
+const recargaPagPrincipalSinLoading = () => {
+   table.loading = false;
+   table.parametros = $("#frmNotificaciones").serialize();
+   table.loadJSON(table.pagina);
+}
+//!
+socket.on('refresh_cambio_estatus', async(data) => {
+   recargaPagPrincipalSinLoading();
+});
 //!
 const keyEvent = (event) => {
    let tecla = (event.all) ? event.keyCode : event.which;

@@ -79,6 +79,7 @@ const cerrar_vm_registro = () => {
 //!
 function cargaComboRegistro(async,inicializar,pid_paquete,id_usuario_notificador) {
 	let tar,spin;
+   let contador = 0;
 	$.ajax({
       type: 'post',
       url: contexto+nameController+'/getComboRegistro',
@@ -100,7 +101,7 @@ function cargaComboRegistro(async,inicializar,pid_paquete,id_usuario_notificador
          });
 
          if(data.listOficios.length == 0) {
-            $(".dual-listbox__selected").empty();
+            contador++;
          }
          else {
             $(data.listOficios).each(function(i, v) {
@@ -119,14 +120,17 @@ function cargaComboRegistro(async,inicializar,pid_paquete,id_usuario_notificador
          if(inicializar) {
             comboListado();
          }
+         if(parseInt(contador) > 0) {
+            $(".dual-listbox__selected").empty();
+         }
       }
    });
 }
 //!
 const comboListado = () => {
    let dlb2 = new DualListbox(".selectList", {
-      availableTitle: "Notificaciones Dispobibles",
-      selectedTitle: "Notificaciones Asignadas",
+      availableTitle: "Oficios Dispobibles",
+      selectedTitle: "Oficios Asignados",
       addButtonText: ">",
       removeButtonText: "<",
       addAllButtonText: ">>",
@@ -134,13 +138,6 @@ const comboListado = () => {
       searchPlaceholder: "Num. Oficio",
       enableDoubleClick: false
    });
-   
-   /*dlb2.addEventListener("added", function(event) {
-      document.querySelector(".changed-element").innerHTML = event.addedElement.outerHTML;
-   });
-   dlb2.addEventListener("removed", function(event) {
-      document.querySelector(".changed-element").innerHTML = event.removedElement.outerHTML;
-   });*/
 }
 //!
 const limpiarFrmRegistro = () => {
@@ -151,8 +148,7 @@ const limpiarFrmRegistro = () => {
 	$("#vm_fecha_programada").val(fAct.fecha2);
 	$("#divUserNotificador").removeClass("has-valid");
 	$("#divUserNotificador").removeClass("has-error");
-   cargaComboRegistro(false,false,pid_paquete,null);
-   //$(".selectList").find('option').prop('selected', false);
+   cargaComboRegistro(false,true,pid_paquete,null);
 }
 //!
 const validRegistro = () => {

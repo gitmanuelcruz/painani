@@ -19,13 +19,18 @@ const detalle = (reg) => {
                            <div class="ms-2 me-auto col-sm-12"><div class="fw-bold">- Referencia de Ubicaci&oacute;n</div>&nbsp;&nbsp;&nbsp;${reg.referencia_ubicacion}</div>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-start">
-                           <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Estatus</div>&nbsp;&nbsp;&nbsp;${reg.nombre_estatus_notificacion}</div>`;
+                           <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Estatus</div>&nbsp;&nbsp;&nbsp;${reg.nombre_estatus_notificacion.toUpperCase()}</div>`;
+   if(reg.id_paquete != '') {
+      html +=  `           <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- No. Paquete</div>&nbsp;&nbsp;&nbsp;${reg.id_paquete}</div>`;
+   }
    if(reg.fnotificado != '') {
-      html +=  `           <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Fecha Notificado</div>&nbsp;&nbsp;&nbsp;${reg.fnotificado}</div>`;
+      html +=  `           <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Fecha Notificaci&oacute;n</div>&nbsp;&nbsp;&nbsp;${reg.fnotificado}</div>`;
    }
-   if(reg.id_paquete_notificacion != '') {
-      html +=  `           <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- No. Paquete</div>&nbsp;&nbsp;&nbsp;${reg.id_paquete_notificacion}</div>`;
-   }
+   html +=  `           </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-start">`;
+   if(reg.notificador != '') {
+      html +=  `           <div class="ms-2 me-auto col-sm-12"><div class="fw-bold">- Notificador</div>&nbsp;&nbsp;&nbsp;${reg.notificador.toUpperCase()}</div>`;
+   }                     
    html +=  `           </li>
                      </ol>
                   </div>

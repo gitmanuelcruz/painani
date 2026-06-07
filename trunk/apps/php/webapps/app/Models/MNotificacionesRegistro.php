@@ -13,9 +13,10 @@ class MNotificacionesRegistro extends Model
 					ntf.id_notificacion,
 					ntf.num_oficio,
 					(CASE WHEN pno.id_paquete_notificacion IS NOT NULL
-						THEN CONCAT(ntf.num_oficio,'<br><span class=''badge bg-light-info text-info fs-1 fw-bold''>No. Paquete',pno.id_paquete,'</span>')
+						THEN CONCAT(ntf.num_oficio,'<br><span class=''badge bg-light-info text-info fs-1 fw-bold''>No. Paquete &raquo; ',pno.id_paquete,'</span>')
 						ELSE ntf.num_oficio
 					END) AS desc_num_oficio,
+					pno.id_paquete,
 					pno.id_paquete_notificacion,
 					ntf.fecha_oficio,
 					TO_CHAR(ntf.fecha_oficio,'dd/mm/yyyy') AS foficio,
@@ -26,9 +27,10 @@ class MNotificacionesRegistro extends Model
 					ntf.id_estatus_notificacion,
 					eno.nombre_estatus_notificacion,
 					(CASE WHEN COALESCE(pno.notificado,FALSE) = TRUE
-						THEN CONCAT(eno.nombre_estatus_notificacion,'<br><span class=''badge bg-light-info text-info fs-1 fw-bold''>',TO_CHAR(ntf.fecha_hora_notificado,'dd/mm/yyyy hh24:mi'),'</span>')
+						THEN CONCAT(eno.nombre_estatus_notificacion,'<br><span class=''badge bg-light-primary text-primary fs-1 fw-bold''>',TO_CHAR(ntf.fecha_hora_notificado,'dd/mm/yyyy hh24:mi'),'</span>')
 						ELSE eno.nombre_estatus_notificacion
 					END) AS desc_estatus,
+					pno.notificador,
 					1 AS band,
 					1 AS band_detalle,
 					(CASE WHEN COALESCE($iconEditar,0) > 0 AND ntf.id_estatus_notificacion = 'POR_ASIGNAR' THEN 1 ELSE 0 END) AS icon_editar,
@@ -39,7 +41,19 @@ class MNotificacionesRegistro extends Model
 					'#ea4335' AS color_red
 				FROM notificaciones ntf 
 				INNER JOIN estatus_notificacion eno ON ntf.id_estatus_notificacion = eno.id_estatus_notificacion
-				LEFT JOIN paquetes_notificaciones pno ON ntf.id_notificacion = pno.id_notificacion
+				LEFT JOIN (
+					SELECT
+						MAX(a.id_paquete_notificacion) AS id_paquete_notificacion,
+						a.id_paquete,
+						a.id_notificacion,
+						a.notificado,
+						c.nombre_completo AS notificador
+					FROM paquetes_notificaciones a
+					INNER JOIN paquetes b ON a.id_paquete = b.id_paquete
+					INNER JOIN usuarios c ON b.id_usuario_notificador = c.id_usuario
+					WHERE id_estatus_notificacion NOT IN('NO_LOCALIZADO','CANCELADO')
+					GROUP BY a.id_paquete,a.id_notificacion,a.notificado,c.nombre_completo
+				) pno ON ntf.id_notificacion = pno.id_notificacion
 				WHERE 1=1 ";
 		if(!empty($idNumOficio)) {
 			$sql .="AND parse_text(ntf.num_oficio) LIKE parse_text('%".trim($idNumOficio)."%') ";
@@ -50,7 +64,7 @@ class MNotificacionesRegistro extends Model
 		if (!empty($idEstatus)) {
 			$sql .="AND ntf.id_estatus_notificacion = '$idEstatus' ";
 		}
-		$sql .="ORDER BY ntf.fecha_oficio,ntf.id_notificacion";
+		$sql .="ORDER BY COALESCE(pno.id_paquete,0),ntf.fecha_oficio,ntf.id_notificacion";
 
 		return $sql;
    }
@@ -108,6 +122,64 @@ class MNotificacionesRegistro extends Model
 			return array(false, 'ERROR AL ACTUALIZAR LA NOTIFICACION',0);
 		}
 	}
+	// TODO: Proceso de registro de layout
+   public function deleteNotificacionesTmp($usuario) {
+      $sql ="DELETE FROM notificaciones_tmp WHERE usuario = ?";
+      $this->db->query($sql,[$usuario]);
+      if ($this->db->transStatus()) {
+         return array(true, 'El proceso se ha realizado correctamente');
+      }
+      else {
+         return array(false, 'ERROR AL RESETEAR TBL DE OFICIOS TMP',0);
+      }
+   }
+   //
+   public function insertNotificacionesTmp(
+      $consecutivo,$usuario,$num_oficio,$fecha_oficio,$domicilio,$referencia_ubicacion) {
+      $sql ="INSERT INTO notificaciones_tmp
+                  (id_notificacion_tmp,consecutivo,usuario,num_oficio,fecha_oficio,domicilio,referencia_ubicacion)
+               VALUES
+                  (NEXTVAL('seq_notificaciones_tmp'),?,?,?,?,?,?)";
+
+      $this->db->query($sql,[
+         $consecutivo,$usuario,trim($num_oficio),trim($fecha_oficio),trim($domicilio),trim($referencia_ubicacion)]);
+      if($this->db->transStatus()) {
+         return array(true,'El proceso se ha realizado correctamente');
+      }
+      else {
+         return array(false,'ERROR AL REGISTRAR LOS OFICIOS POR LAYOUT');
+      }
+   }
+   //
+   public function getValidLayoutProcedimiento($usuario,$idNivelUsuario) {
+      $sql ="SELECT fn_valid_oficios(?,?) AS ret_valid";
+      return $this->db->query($sql,[$usuario,$idNivelUsuario]);
+   }
+   //
+   public function getProcedureMigrar($usuario,$ip) {
+      $sql = "CALL proc_carga_oficios(?,?)";
+      $this->db->query($sql,[$usuario,$ip]);
+      if ($this->db->transStatus()) {
+         return array(true, 'El proceso se ha realizado correctamente');
+      }
+      else {
+         return array(false, 'ERROR AL MIGRAR LOS OFICIOS POR LAYOUT');
+      }
+   }
+   //
+   public function getObservOficiosTmp($usuario) {
+      $sql ="SELECT
+               a.id_notificacion_tmp AS id,
+               a.consecutivo,
+               a.num_oficio,
+               SUBSTRING(a.observaciones FROM 1 FOR LENGTH(a.observaciones) - 1) AS observaciones
+            FROM notificaciones_tmp a
+            WHERE LENGTH(a.observaciones) > 0
+            AND a.usuario = '$usuario'
+            ORDER BY 1";
+
+      return $sql;
+   }
 	//
 	public function updateCancelacion($id_notificacion,$estatus,$usuario,$ip) {
 		$sql ="UPDATE notificaciones SET 

@@ -36,11 +36,11 @@ const loadPaquetesPag = () => {
 	table.setTablaHTML("gridPaquetes");
 	table.setUrl(contexto+nameController+"/paquetesPag");
 	table.setRegistrosPagina(10);
-	table.setColumnas("id_paquete,notificador,fprogramada,fapertura,fcierre,total_notificaciones,band");
-	table.setColTipos("text,text,text,text,text,numeroSD,dropdown");
-	table.setAlineacion("left,left,center,center,center,center,center");
+	table.setColumnas("id_paquete,notificador,fprogramada,fapertura,fcierre,total_notificaciones,total_notificado,total_no_localizado,total_cancelado,band");
+	table.setColTipos("text,text,text,text,text,numeroSD,numeroSD,numeroSD,numeroSD,dropdown");
+	table.setAlineacion("left,left,center,center,center,center,center,center,center,center");
 	let dropdown = {
-      "col7": {
+      "col10": {
          "opciones": [
             {"etiqueta":"", "titulo": "Opc. Paquete", "icono": "fa-solid fa-list-ul fa-lg", "tooltip": "Lista de opciones", "tipoicono": "i",
                "menu":[
@@ -62,6 +62,24 @@ const recargaPaginadoPrincipal = () => {
    table.parametros = $("#frmPaquetes").serialize();
    table.loadJSON(table.pagina);
 }
+//!
+const recargaPagPrincipalSinLoading = () => {
+   table.loading = false;
+   table.parametros = $("#frmPaquetes").serialize();
+   table.loadJSON(table.pagina);
+}
+//!
+socket.on('refresh_apertura_operacion', async(data) => {
+   recargaPagPrincipalSinLoading();
+});
+//!
+socket.on('refresh_cierre_operacion', async(data) => {
+   recargaPagPrincipalSinLoading();
+});
+//!
+socket.on('refresh_cambio_estatus', async(data) => {
+   recargaPagPrincipalSinLoading();
+});
 //!
 const keyEvent = (event) => {
    let tecla = (event.all) ? event.keyCode : event.which;
@@ -88,7 +106,7 @@ const validCombos = (id,id2) => {
 const editarPaquete = (reg) =>{
    vmRegistro(reg.id_paquete,'E');
    $("#vm_fecha_programada").val(reg.fecha_programada);
-   cargaComboRegistro(true,true,reg.id_paquete,reg.id_notificador);
+   cargaComboRegistro(true,reg.id_paquete,reg.id_notificador);
 }
 // TODO: Proceso de cancelacion
 const eliminarPaquete = (reg) => {

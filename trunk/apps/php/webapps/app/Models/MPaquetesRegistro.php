@@ -21,6 +21,9 @@ class MPaquetesRegistro extends Model
 					paq.fecha_hora_cierre_operacion,
 					TO_CHAR(paq.fecha_hora_cierre_operacion,'dd/mm/yyyy hh24:mi') AS fcierre,
 					COALESCE(pno.total_notificaciones,0) AS total_notificaciones,
+					COALESCE(pno.total_notificado,0) AS total_notificado,
+					COALESCE(pno.total_no_localizado,0) AS total_no_localizado,
+					COALESCE(pno.total_cancelado,0) AS total_cancelado,
 					1 AS band,
 					1 AS band_detalle,
 					(CASE WHEN COALESCE($iconEditar,0) > 0 AND paq.fecha_hora_apertura_operacion IS NOT NULL THEN 0 ELSE 1 END) AS icon_editar,
@@ -35,7 +38,10 @@ class MPaquetesRegistro extends Model
 				LEFT JOIN (
 					SELECT
 						id_paquete,
-						COUNT(*) AS total_notificaciones
+						COUNT(*) AS total_notificaciones,
+						SUM(CASE WHEN id_estatus_notificacion = 'NOTIFICADO' THEN 1 ELSE 0 END) AS total_notificado,
+						SUM(CASE WHEN id_estatus_notificacion = 'NO_LOCALIZADO' THEN 1 ELSE 0 END) AS total_no_localizado,
+						SUM(CASE WHEN id_estatus_notificacion = 'CANCELADO' THEN 1 ELSE 0 END) AS total_cancelado
 					FROM paquetes_notificaciones
 					GROUP BY id_paquete
 				) pno ON paq.id_paquete = pno.id_paquete
@@ -85,7 +91,13 @@ class MPaquetesRegistro extends Model
 					pno.id_estatus_notificacion,
 					(CASE WHEN COALESCE(pno.notificado,FALSE) = TRUE
 						THEN CONCAT(UPPER(eno.nombre_estatus_notificacion),'<br><span class=''badge bg-light-primary text-primary fs-1 fw-bold''>',TO_CHAR(pno.fecha_hora_notificacion,'dd/mm/yyyy hh24:mi'),'</span>')
-						ELSE UPPER(eno.nombre_estatus_notificacion)
+						ELSE 
+							(CASE WHEN pno.id_estatus_notificacion = 'NO_LOCALIZADO'
+								THEN CONCAT('<span class=''text-orange fw-bold''>',UPPER(eno.nombre_estatus_notificacion),'</span>')
+								WHEN pno.id_estatus_notificacion = 'CANCELADO'
+								THEN CONCAT('<span class=''text-danger fw-bold''>',UPPER(eno.nombre_estatus_notificacion),'</span>')
+								ELSE UPPER(eno.nombre_estatus_notificacion)
+							END)
 					END) AS desc_estatus,
 					(CASE WHEN COALESCE(sno.total_soportes,0) > 0 THEN 1 ELSE 0 END) AS icon_soportes,
 					'#145dbd' AS color_blue
@@ -101,7 +113,7 @@ class MPaquetesRegistro extends Model
 					GROUP BY id_notificacion,id_paquete_notificacion
 				) sno ON ntf.id_notificacion = sno.id_notificacion AND pno.id_paquete_notificacion = sno.id_paquete_notificacion
 				WHERE pno.id_paquete = $idPaquete
-				ORDER BY ntf.num_oficio,ntf.fecha_oficio,pno.id_paquete_notificacion";
+				ORDER BY eno.num_orden,ntf.num_oficio,ntf.fecha_oficio,pno.id_paquete_notificacion";
 
 		return $sql;
    }
@@ -146,7 +158,8 @@ class MPaquetesRegistro extends Model
 					a.* 
 				FROM paquetes_notificaciones b
 				INNER JOIN notificaciones a ON b.id_notificacion = a.id_notificacion
-				WHERE b.id_paquete <> ?
+				WHERE b.id_estatus_notificacion NOT IN('NO_LOCALIZADO','CANCELADO')
+				AND b.id_paquete <> ?
 				AND b.id_notificacion IN ?
 				ORDER BY a.num_oficio";
 
@@ -188,12 +201,17 @@ class MPaquetesRegistro extends Model
 					b.id_paquete,
 					(CASE WHEN a.id_notificacion = b.id_notificacion THEN 'selected' ELSE '' END) AS seleccion
 				FROM notificaciones a
-				LEFT JOIN paquetes_notificaciones b ON a.id_notificacion = b.id_notificacion
+				LEFT JOIN (
+					SELECT *
+					FROM paquetes_notificaciones
+					WHERE id_estatus_notificacion NOT IN('NO_LOCALIZADO','CANCELADO')
+				) b ON a.id_notificacion = b.id_notificacion
 				WHERE a.id_estatus_notificacion IN('POR_ASIGNAR','ASIGNADO')
 				AND NOT EXISTS (
 					SELECT NULL
 					FROM paquetes_notificaciones x
 					WHERE x.id_notificacion = a.id_notificacion
+					AND x.id_estatus_notificacion NOT IN('NO_LOCALIZADO','CANCELADO')
 					AND x.id_paquete <> ?
 				)
 				ORDER BY a.fecha_oficio,a.num_oficio";

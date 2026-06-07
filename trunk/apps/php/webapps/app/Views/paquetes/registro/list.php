@@ -82,16 +82,22 @@
 			</div>
 		</div>
 		<div class="table-responsive-sm">
-			<table class="table table-striped table-hover" id="gridPaquetes" style="width: 100%;">
+			<table class="table table-sm-2 table-striped table-hover" id="gridPaquetes" style="width: 100%;">
 				<thead class="table-dark">
 					<tr class="p-font-msg-09">
-						<th width="10%" class="text-start">ID</th>
-						<th width="20%" class="text-start">Notificador</th>
-						<th width="13%" class="text-center">Fecha Programda</th>
-						<th width="13%" class="text-center">Fecha Apertura</th>
-						<th width="13%" class="text-center">Fecha Cierre</th>
-						<th width="13%" class="text-center">Total Notificaciones</th>
-						<th width="5%"  class="text-center">Acciones</th>
+						<th width="8%" class="text-start"   rowspan="4">ID</th>
+						<th width="20%" class="text-start"  rowspan="4">Notificador</th>
+						<th width="13%" class="text-center" rowspan="4">Fecha Programada</th>
+						<th width="13%" class="text-center" rowspan="4">Fecha Apertura</th>
+						<th width="13%" class="text-center" rowspan="4">Fecha Cierre</th>
+						<th width="20%" class="text-center" colspan="4">OFICIOS</th>
+						<th width="1%"  class="text-center" rowspan="4">Acciones</th>
+					</tr>
+					<tr class="p-font-msg-09">
+						<th width="5%" class="text-center fw-bold text-info">Total</th>
+						<th width="5%" class="text-center fw-bold text-success">Notificado</th>
+						<th width="5%" class="text-center fw-bold text-orange">No Loc.</th>
+						<th width="5%" class="text-center fw-bold text-danger">Cancelado</th>
 					</tr>
 				</thead>
 				<tbody></tbody>

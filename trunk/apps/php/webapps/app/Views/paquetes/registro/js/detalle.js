@@ -18,7 +18,7 @@ const detalle = (reg) => {
       html +=  `           <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Fecha Apertura</div>&nbsp;&nbsp;&nbsp;${reg.fapertura}</div>`;
    }
    if(reg.fcierre != '') {
-      html +=  `           <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Fecha Cierre</div>&nbsp;&nbsp;&nbsp;${reg.fcierre}</div>`;
+      html +=  `           <div class="ms-2 me-auto col-sm-8"><div class="fw-bold">- Fecha Cierre</div>&nbsp;&nbsp;&nbsp;${reg.fcierre}</div>`;
    }
    html +=  `           </li>
                      </ol>

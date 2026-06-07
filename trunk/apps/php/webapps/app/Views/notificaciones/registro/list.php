@@ -45,7 +45,7 @@
 										<option value="">[Todos]</option>
 										<?php
 										foreach($estatus as $key) {
-											$select = ($key->id == "POR_NOTIFICAR") ? "selected":"";
+											$select = ($key->id == "POR_ASIGNAR") ? "selected":"";
 											echo '<option value="'.$key->id.'" '.$select.'>'.$key->descripcion.'</option>';
 										}
 										?>
@@ -60,8 +60,15 @@
 									<i class="fa-solid fa-magnifying-glass me-2"></i>Buscar
 								</button>
 								<?php
+								if($btn_layout) {
+									echo  '<button type="button" class="btn btn-sm btn-info" id="btnLayout" btn="btn">'.
+											'  <i class="fa-solid fa-upload  me-2"></i>Subir Layout'.
+											'</button>';
+								}
+								?>
+								<?php
 								if($btn_nuevo) {
-									echo  '<button type="button" class="btn btn-sm btn-info me-1" id="btnNuevo" btn="btn">'.
+									echo  '<button type="button" class="btn btn-sm btn-info" id="btnNuevo" btn="btn">'.
 											'  <i class="fa-solid fa-plus me-2"></i>Nuevo Registro'.
 											'</button>';
 								}
@@ -93,6 +100,7 @@
 <?=$this->section("js")?>
 	<script src="<?php echo base_url(); ?>app/Views/notificaciones/registro/js/list.js?version=<?php echo time(); ?>" type="text/javascript"></script>
 	<script src="<?php echo base_url(); ?>app/Views/notificaciones/registro/js/create.js?version=<?php echo time(); ?>" type="text/javascript"></script>
+	<script src="<?php echo base_url(); ?>app/Views/notificaciones/registro/js/layout.js?version=<?php echo time(); ?>" type="text/javascript"></script>
 	<script src="<?php echo base_url(); ?>app/Views/notificaciones/registro/js/detalle.js?version=<?php echo time(); ?>" type="text/javascript"></script>
 <?=$this->endSection()?>
 <?=$this->extend("layout/main")?>
