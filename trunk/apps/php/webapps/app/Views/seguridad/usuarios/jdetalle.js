@@ -11,7 +11,7 @@ function detalleUser(reg) {
       beforeSend(xhr){
          $('button[btn="btn"]').prop('disabled',true);
          $("#overlayprincipal").show();
-         targetPrincipal = document.getElementById('fusuario');
+         targetPrincipal = document.getElementById('frmprincipal');
          spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
       success: function (data) {
@@ -158,7 +158,7 @@ function detalleUser(reg) {
          botones +=  `<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn">
                         <i class="fa-solid fa-xmark me-2"></i>Cerrar
                      </button>`;
-         modalLG('fusuario', titulo, html, 'formlg_scrollable', botones, null);
+         modalLG('frmprincipal', titulo, html, 'formlg_scrollable', botones, null);
       }
    });
 }

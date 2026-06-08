@@ -1,7 +1,4 @@
 
-$(document).ready(function() {
-	manuales();
-});
 //!
 function manuales() {
 	let contador = 0;
@@ -36,12 +33,12 @@ function manuales() {
 	});
 }
 //!
-function MdlManuales(titulo, nameArchivo) {
+function MdlManuales(titulo,nameArchivo) {
 	$.jAlert({
 		'title': titulo,
 		'theme':'green',
 		'size':'lg',
 		'iframeHeight':'500px',
-		'iframe': contexto+'/manuales/'+nameArchivo
+		'iframe': contexto+'manuales/'+nameArchivo
 	});
 }
