@@ -1,5 +1,5 @@
 DROP FUNCTION fn_valid_oficios;
-CREATE OR REPLACE FUNCTION fn_valid_oficios(p_usuario VARCHAR,p_ip VARCHAR, p_nivel_usuario INTEGER) 
+CREATE OR REPLACE FUNCTION fn_valid_oficios(p_usuario VARCHAR, p_nivel_usuario INTEGER) 
 RETURNS INTEGER AS $$
 DECLARE
 	v_ejem_fecha VARCHAR := 'DIA-MES-AÑO';
@@ -14,7 +14,7 @@ BEGIN
 	AND a.usuario = p_usuario;
 
 	UPDATE notificaciones_tmp a SET
-		observaciones = COALESCE(a.observaciones,'')||'El número de oficio esta duplicado en el archivo, '
+		observaciones = COALESCE(a.observaciones,'')||'El número de oficio ('||a.num_oficio||') esta duplicado en el archivo, '
 	WHERE LENGTH(a.num_oficio) > 0
 	AND EXISTS (
 		SELECT NULL
@@ -27,7 +27,7 @@ BEGIN
 	AND a.usuario = p_usuario;
 
 	UPDATE notificaciones_tmp a SET
-		observaciones = COALESCE(a.observaciones,'')||'El número de oficio ya existe, '
+		observaciones = COALESCE(a.observaciones,'')||'El número de oficio ('||a.num_oficio||') ya se encuentra registrado, '
 	WHERE LENGTH(a.num_oficio) > 0
 	AND EXISTS (
 		SELECT NULL
