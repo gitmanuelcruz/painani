@@ -444,6 +444,21 @@ function vModalXL(id_Body,titulo,mensaje,estilo,button,funcion) {
          "	</div>" +
          "</div>");
    }
+   if (stile == 'formxl_scrollable_error') {
+      $("#" + id_Body + "").before(
+         "<div class='modal fade' id='vModalXL' data-bs-backdrop='static' data-bs-keyboard='false' tabindex='-1' aria-labelledby='myModalLabel' aria-hidden='true'>" +
+         "	<div class='modal-dialog modal-xl modal-dialog-scrollable'>" +
+         "	    <div class='modal-content'>" +
+         "	    	<div class='modal-header bg-danger-800'>" +
+         "	    	    <h4 class='modal-title fs-5' style='color: #f5fbfb;'>" + title + "</h4>" +
+         "	    	    " + botonx + " " +
+         "	    	</div>" +
+         "	    	<div class='modal-body' style='max-height:510px;' id='divModalXL'>" + message + "</div>" +
+         "	    	<div class='modal-footer'>" + opcionbtn + "</div>" +
+         "	    </div>" +
+         "	</div>" +
+         "</div>");
+   }
 }
 
 function closeModalXL() {
