@@ -7,17 +7,19 @@
 	<parameter name="pid_paquete" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT 
-			id_paquete ,
-			id_usuario_notificador,
-			to_char(fecha_programada,'dd/mm/yyyy') AS fecha_programada,
+			a.id_paquete ,
+			a.id_usuario_notificador,
+			UPPER(b.nombre_completo) AS notificador,
+			to_char(a.fecha_programada,'dd/mm/yyyy') AS fecha_programada,
 			(CASE 
-					 WHEN fecha_hora_apertura_operacion IS NULL THEN  'PENDIENTE' ELSE  to_char(fecha_hora_apertura_operacion,'dd/mm/yyyy hh24:mi')
+					 WHEN a.fecha_hora_apertura_operacion IS NULL THEN  'PENDIENTE' ELSE  to_char(a.fecha_hora_apertura_operacion,'dd/mm/yyyy hh24:mi')
 			END) AS fecha_hora_apertura_operacion,
 			(CASE 
-					 WHEN fecha_hora_cierre_operacion IS NULL THEN  'PENDIENTE' ELSE  to_char(fecha_hora_cierre_operacion,'dd/mm/yyyy hh24:mi')
+					 WHEN a.fecha_hora_cierre_operacion IS NULL THEN  'PENDIENTE' ELSE  to_char(a.fecha_hora_cierre_operacion,'dd/mm/yyyy hh24:mi')
 			END) AS fecha_hora_cierre_operacion
-FROM paquetes 
-WHERE id_paquete =  $P!{pid_paquete} ]]>
+FROM paquetes a
+LEFT JOIN usuarios b ON a.id_usuario_notificador = b.id_usuario
+WHERE a.id_paquete =  $P!{pid_paquete}]]>
 	</queryString>
 	<field name="id_paquete" class="java.lang.Long">
 		<property name="com.jaspersoft.studio.field.name" value="id_paquete"/>
@@ -28,6 +30,10 @@ WHERE id_paquete =  $P!{pid_paquete} ]]>
 		<property name="com.jaspersoft.studio.field.name" value="id_usuario_notificador"/>
 		<property name="com.jaspersoft.studio.field.label" value="id_usuario_notificador"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="paquetes"/>
+	</field>
+	<field name="notificador" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="notificador"/>
+		<property name="com.jaspersoft.studio.field.label" value="notificador"/>
 	</field>
 	<field name="fecha_programada" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="fecha_programada"/>
@@ -59,7 +65,7 @@ WHERE id_paquete =  $P!{pid_paquete} ]]>
 				<textElement textAlignment="Left">
 					<font size="15" isBold="true"/>
 				</textElement>
-				<text><![CDATA[FORMATO PAQUETE DE NOTIFICACIONES]]></text>
+				<text><![CDATA[FICHA PAQUETE DE NOTIFICACIONES]]></text>
 			</staticText>
 		</band>
 	</title>
@@ -83,71 +89,71 @@ WHERE id_paquete =  $P!{pid_paquete} ]]>
 			</staticText>
 			<staticText>
 				<reportElement x="18" y="23" width="75" height="20" forecolor="#1A252F" uuid="6256250b-e03d-4ecf-8c2e-288f8c502c6c"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="13" isBold="true"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Paquete ID:]]></text>
+				<text><![CDATA[PAQUETE ID:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="93" y="23" width="100" height="20" forecolor="#0D6EFD" uuid="cbe4d377-7546-4b3a-9c05-76892b0a3a1b"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="13" isBold="true"/>
+				<reportElement x="87" y="23" width="55" height="20" forecolor="#0D6EFD" uuid="cbe4d377-7546-4b3a-9c05-76892b0a3a1b"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{id_paquete} != null ? "#" + $F{id_paquete} : "#1024"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="18" y="52" width="115" height="12" forecolor="#6C757D" uuid="3761c4e2-f785-4086-be81-adbc5e0827e0"/>
+				<reportElement x="274" y="10" width="284" height="12" forecolor="#6C757D" uuid="3761c4e2-f785-4086-be81-adbc5e0827e0"/>
 				<textElement>
 					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[ID USUARIO NOTIFICADOR]]></text>
+				<text><![CDATA[NOTIFICADOR]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="18" y="64" width="115" height="15" forecolor="#212529" uuid="eb698ad1-376e-46ed-a7e8-40b0864eb416"/>
-				<textElement>
-					<font fontName="SansSerif" size="10" isBold="true"/>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="274" y="22" width="284" height="15" forecolor="#212529" uuid="eb698ad1-376e-46ed-a7e8-40b0864eb416"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="SansSerif" size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{id_usuario_notificador} != null ? $F{id_usuario_notificador} : "USR-8824"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{notificador}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="148" y="52" width="110" height="12" forecolor="#6C757D" uuid="39837c08-06f2-48f3-ba0c-263c0e869ce5"/>
+				<reportElement x="155" y="10" width="110" height="13" forecolor="#6C757D" uuid="39837c08-06f2-48f3-ba0c-263c0e869ce5"/>
 				<textElement>
 					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[FECHA PROGRAMADA]]></text>
 			</staticText>
 			<textField pattern="yyyy-MM-dd">
-				<reportElement x="148" y="64" width="110" height="15" forecolor="#212529" uuid="0f1a2b3c-4d5e-6f7a-8b9c-0d1e2f3a4b5c"/>
-				<textElement>
-					<font fontName="SansSerif" size="10" isBold="true"/>
+				<reportElement x="155" y="23" width="110" height="14" forecolor="#212529" uuid="0f1a2b3c-4d5e-6f7a-8b9c-0d1e2f3a4b5c"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="SansSerif" size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{fecha_programada} != null ? $F{fecha_programada} : new java.util.Date()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fecha_programada}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="273" y="52" width="130" height="12" forecolor="#6C757D" uuid="d24214ee-bf39-46d4-b99c-bcda02eef739"/>
+				<reportElement x="18" y="52" width="130" height="12" forecolor="#6C757D" uuid="d24214ee-bf39-46d4-b99c-bcda02eef739"/>
 				<textElement>
 					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[APERTURA DE OPERACIÓN]]></text>
 			</staticText>
 			<textField pattern="yyyy-MM-dd HH:mm:ss">
-				<reportElement x="273" y="64" width="130" height="15" forecolor="#212529" uuid="3d84f681-b4a1-45d4-9c15-e52212efaa09"/>
-				<textElement>
-					<font fontName="SansSerif" size="10" isBold="true"/>
+				<reportElement x="18" y="64" width="130" height="15" forecolor="#212529" uuid="3d84f681-b4a1-45d4-9c15-e52212efaa09"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="SansSerif" size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{fecha_hora_apertura_operacion} != null ? $F{fecha_hora_apertura_operacion} : new java.util.Date()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fecha_hora_apertura_operacion} != null ? $F{fecha_hora_apertura_operacion} : "Pendiente"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="418" y="52" width="125" height="12" forecolor="#6C757D" uuid="48954744-5157-4581-a329-bb02d99938af"/>
+				<reportElement x="155" y="52" width="110" height="12" forecolor="#6C757D" uuid="48954744-5157-4581-a329-bb02d99938af"/>
 				<textElement>
 					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[CIERRE DE OPERACIÓN]]></text>
 			</staticText>
 			<textField pattern="yyyy-MM-dd HH:mm:ss">
-				<reportElement x="418" y="64" width="125" height="15" forecolor="#212529" uuid="92b94e3c-306f-4382-9866-ba35a612c8f7"/>
-				<textElement>
-					<font fontName="SansSerif" size="10" isBold="true" isItalic="true"/>
+				<reportElement x="155" y="64" width="110" height="15" forecolor="#212529" uuid="92b94e3c-306f-4382-9866-ba35a612c8f7"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fecha_hora_cierre_operacion} != null ? $F{fecha_hora_cierre_operacion} : "Pendiente"]]></textFieldExpression>
 			</textField>
