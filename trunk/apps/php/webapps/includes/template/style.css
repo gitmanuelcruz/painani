@@ -44532,7 +44532,7 @@ input[type=range]::-webkit-slider-thumb {
 .filepond-file.filepond--root .filepond--drop-label,
 .filepond-1.filepond--root .filepond--drop-label {
   background-color: rgba(var(--white), 1) !important;
-  height: 200px;
+  height: 120px;
 }
 .filepond-file .filepond--credits,
 .filepond-1 .filepond--credits {

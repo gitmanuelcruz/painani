@@ -98,9 +98,9 @@
 </div>
 <?=$this->endSection()?>
 <?=$this->section("js")?>
-	<script src="<?php echo base_url(); ?>app/Views/notificaciones/registro/js/list.js?version=<?php echo time(); ?>" type="text/javascript"></script>
-	<script src="<?php echo base_url(); ?>app/Views/notificaciones/registro/js/create.js?version=<?php echo time(); ?>" type="text/javascript"></script>
-	<script src="<?php echo base_url(); ?>app/Views/notificaciones/registro/js/layout.js?version=<?php echo time(); ?>" type="text/javascript"></script>
-	<script src="<?php echo base_url(); ?>app/Views/notificaciones/registro/js/detalle.js?version=<?php echo time(); ?>" type="text/javascript"></script>
+	<script src="<?php echo base_url();?>app/Views/notificaciones/registro/js/list.js?version=<?php echo time(); ?>" type="text/javascript"></script>
+	<script src="<?php echo base_url();?>app/Views/notificaciones/registro/js/create.js?version=<?php echo time(); ?>" type="text/javascript"></script>
+	<script src="<?php echo base_url();?>app/Views/notificaciones/registro/js/layout.js?version=<?php echo time(); ?>" type="text/javascript"></script>
+	<script src="<?php echo base_url();?>app/Views/notificaciones/registro/js/detalle.js?version=<?php echo time(); ?>" type="text/javascript"></script>
 <?=$this->endSection()?>
 <?=$this->extend("layout/main")?>
