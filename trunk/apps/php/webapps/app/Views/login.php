@@ -57,7 +57,7 @@
                                  <div class="input-group" id="show_hide_password">
                                     <div class="g-recaptcha" 
                                        id="recaptcha"
-                                       data-sitekey="6LdEV_0rAAAAALLoECIeVUpZSqq1QMwsRCjknDM2"
+                                       data-sitekey="6LcmGRQtAAAAAIuTsf6zb4hs1hLQxAGKW7kn5tr6"
                                        data-callback="login"
                                        data-size="invisible"></div>
                                  </div>

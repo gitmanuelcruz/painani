@@ -90,7 +90,7 @@
 						<th width="13%" class="text-center" rowspan="4">Fecha Programada</th>
 						<th width="13%" class="text-center" rowspan="4">Fecha Apertura</th>
 						<th width="13%" class="text-center" rowspan="4">Fecha Cierre</th>
-						<th width="20%" class="text-center" colspan="4">OFICIOS</th>
+						<th width="20%" class="text-center" colspan="4">OFICIOS<hr class="mb-0 mt-0 text-white"></th>
 						<th width="1%"  class="text-center" rowspan="4">Acciones</th>
 					</tr>
 					<tr class="p-font-msg-09">

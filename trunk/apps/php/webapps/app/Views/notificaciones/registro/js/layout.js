@@ -74,35 +74,9 @@ const cerrarVMRegistroxLayout = () => {
 }
 //!
 const descargar_formato_layout = () => {
-   $('button[btn="btn"]').prop('disabled',true);
-   $("#overlayprincipal").show();
-   $("#bt_descargar_formatoxlayout").html('<i class="fa-solid fa-circle-notch me-2 fa-spin"></i>Descargar Formato de Layout');
-   targetPrincipal = document.getElementById('frmNotificaciones');
-   spinnerPrincipal = new Spinner().spin(targetPrincipal);
-   let urlInforme = contexto+nameController+'/descargarFormatoLayoutConciliacion';
-   let xhr = new XMLHttpRequest();
-   xhr.open('post', urlInforme, true);
-   xhr.responseType = 'blob';
-   xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded; charset=utf-8');
-   xhr.onload = function () {
-      let blob = new Blob([this.response], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-      if(window.navigator && window.navigator.msSaveOrOpenBlob){
-         window.navigator.msSaveOrOpenBlob(blob);
-         return;
-      }
-      let downloadURL = URL.createObjectURL(blob);
-      let a = document.createElement("a");
-      a.href = downloadURL;
-      a.download = 'layout_referencia_oficios.xlsx';
-      a.click();
-      window.URL.revokeObjectURL(downloadURL);
-      a.remove();
-      $('button[btn="btn"]').prop('disabled',false);
-      spinnerPrincipal.stop();
-      $("#overlayprincipal").hide();
-      $("#bt_descargar_formatoxlayout").html('<i class="fa-solid fa-download me-2"></i>Descargar Formato de Layout');
-   }
-   xhr.send();
+   document.forms["frmNotificaciones"].action = contexto+nameController+"/descargarFormatoLayout";
+   document.forms["frmNotificaciones"].target = "";
+   document.forms["frmNotificaciones"].submit();
 }
 //!
 const cleanFrmxLayout = () => {
@@ -183,7 +157,7 @@ const guardarLayout = () => {
       processData: false,
       contentType: false,
       dataType:'JSON',
-      data: new FormData($("#frmRegLayoutConciliacion")[0]),
+      data: new FormData($("#frmRegLayout")[0]),
       beforeSend(xhr) {
          $('button[btn="btn"]').prop('disabled', true);
          $("#overlayprincipal").show();
@@ -197,7 +171,7 @@ const guardarLayout = () => {
                $('button[btn="btn"]').prop('disabled',false);
                spinnerPrincipal.stop();
                $("#overlayprincipal").hide();
-               modalError(data.usuario);
+               vmObservacionesLayout(data.usuario);
             }
             else if(parseInt(data.error) == 2) {
                Swal.fire({
@@ -257,20 +231,20 @@ const guardarLayout = () => {
    });
 }
 //!
-const modalError = (usuario) => {
-   let html = "";
-   let botones = "";
+const vmObservacionesLayout = (usuario) => {
+   let html = '';
+   let botones = '';
    const titulo = 'Observaciones de la Carga del Layout de Oficios';
    $("#overlay2").show();
    //
    html +=  `<input type="hidden" id="hid_user_reg" value="${usuario}"/>
             <div class="row">
-               <div class="col-md-12">
+               <div class="col-sm-12">
                   <div class="table-responsive-sm">
-                     <table class="table table-sm table-hover" width="100%" id="tblObservaciones">
+                     <table class="table table-sm table-hover" id="tblObservaciones" width="100%">
                         <thead class="table-secondary">
                            <tr class="p-font-msg-09">
-                              <th width="5%" class="text-center">#</th>
+                              <th width="5%"  class="text-center">#</th>
                               <th width="90%" class="text-start">Observaciones</th>
                            </tr>
                         </thead>
@@ -301,7 +275,7 @@ const cerrarVMObservaciones = () => {
 const getConsultaObservacionesPag = () => {
    const usuarioRegistro = $("#hid_user_reg").val();
    tblObservLayout.setTablaHTML("tblObservaciones");
-   tblObservLayout.setUrl(contexto+nameController+"/getObsLayoutConciliacionCtasBancarias");
+   tblObservLayout.setUrl(contexto+nameController+"/observacionesLayoutPag");
    tblObservLayout.setRegistrosPagina(10);
    tblObservLayout.setColumnas("consecutivo,observaciones");
    tblObservLayout.setColTipos("text,text");

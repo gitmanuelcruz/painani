@@ -1,5 +1,7 @@
 <?php
 namespace App\Controllers;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use App\Models\MNotificacionesRegistro;
 use App\Models\MServicios;
 
@@ -24,7 +26,7 @@ class NotificacionesRegistro extends BaseController
             $data['titulo'] = "Registro";
             $data['titulo2'] = "Registro de Notificaciones";
             $data['btn_nuevo'] = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_NVO_NOTIFICACION","PRIVILEGIO");
-            $data['btn_layout'] = 1;//$this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_NVO_NOTIFICACION","PRIVILEGIO");
+            $data['btn_layout'] = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_CARGALAYOUT_NOTIFICACION","PRIVILEGIO");
             $data['estatus'] = $this->MServicios->getEstatusNotificacion()->getResult();
 				return view('notificaciones/registro/list', $data);
          }
@@ -128,6 +130,15 @@ class NotificacionesRegistro extends BaseController
       return $this->response->setJSON($response);
    }
    // TODO: Proceso de carga de layout de notificaciones (oficios)
+   public function descargarFormatoLayout(){
+      $filename = "FORMATO_LAYOUT_OFICIOS.xlsx";
+      $file = $this->utilerias->urlFiles().'formato_layout_oficios/'.$filename;
+      $extension = mb_strtolower($this->utilerias->getFileExtension($file), 'UTF-8');
+      header("Content-disposition: attachment; filename=".$filename."");
+      header("Content-type: application/".$extension."");
+      readfile($file);
+   }
+   //
    public function guardarLayout() {
       ini_set('max_execution_time', 0);
       if ($this->session->get("logueado") != true) {
@@ -139,12 +150,12 @@ class NotificacionesRegistro extends BaseController
          $usuario     = $this->session->get("usuario");
          $ip          = $this->session->get("ip");
          $anio        = date("Y",now());
-         $rutaLayout  = "layout/oficios/".$usuario;
+         $urlDefault  = $this->utilerias->urlFiles();
+         $rutaLayout  = "notificaciones/layout/".$usuario;
          $path_excel  = "";
          $caracteres  = array('$',',',' ','-');
          $caracteresNew  = array('_','_','_','_');
-         $consecutivo   = 0;
-         $contadorFiles = 0;
+         $consecutivo   = 1;
          $contador = 0;
          $contadorProceso = 0;
          $this->db->transBegin();
@@ -178,14 +189,13 @@ class NotificacionesRegistro extends BaseController
             for ($row = 2; $row <= $highestRow; ++$row) {
                if($worksheet->getCellByColumnAndRow(1, $row)->getValue() != "") {
                   $consecutivo++;
-                  $rfcEmpresa    = substr(trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()),0,15);
-                  $codigoBanco   = substr(trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()),0,10);
-                  $numCuenta     = substr(trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()),0,15);
-                  $codigoMomento = substr(trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()),0,15);
+                  $numOficio     = substr(trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()),0,49);
+                  $fechaOficio   = substr(trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()),0,15);
+                  $domicilio     = substr(trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()),0,4000);
+                  $referenciaUbi = substr(trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()),0,4000);
                   //
-                  $result = $this->Modelo->insertConciliacionCtaBancariaTmp(
-                     $consecutivo,$usuario,$rfcEmpresa,$codigoBanco,$numCuenta,$codigoMomento,$fecha,$hora,$importe,$observacion,
-                     $nombreComprobante,$urlComprobante,$extensionComprobante);
+                  $result = $this->Modelo->insertNotificacionesTmp(
+                     $consecutivo,$usuario,$numOficio,$fechaOficio,$domicilio,$referenciaUbi);
                   if(!$result[0]) {
                      $contadorProceso++;
                      $this->db->transRollback();
@@ -199,76 +209,34 @@ class NotificacionesRegistro extends BaseController
             $this->utilerias->removeFile($path_excel);
             $contadorProceso++;
          }
-
+         //
          if($contador == 0 && $contadorProceso == 0) {
-            $contadorValidFile = 0;
-            $msjValidFile = "";
-            if((int)$consecutivo == (int)$contadorFiles) {
-               
-               //?
-               if((int)$contadorValidFile == 0) {
-                  $total_validado = $this->Modelo->getValidLayoutProcedimiento($usuario,$idNivelUsuario)->getRow()->ret_valid;
-                  if($total_validado) {
-                     $this->db->transCommit();
-                     $this->utilerias->removeFile($path_excel);
-                     $this->utilerias->removeDirectorioFile($urlDefault.$rutaCompTmp);
-                     $response = array('respuesta' => false, 'mensaje' => '', 'usuario' => $usuario, 'error' => 1);
-                  }
-                  else {
-                     $result = $this->Modelo->getProcedureMigrarConciliacionCtaBancaria($codigoxLayout,$usuario,$ip);
-                     if($result[0]) {
-                        $msjValidFile = "";
-                        $contadorMigrarFile = 0;
-                        $dataFiles = $this->Modelo->getDatosConcilacionMigrarFiles($codigoxLayout,$usuario)->getResult();
-                        foreach($dataFiles as $keyMFile) {
-                           $rutaNueva = "conciliaciones_bancarias/".$anio."/empresas/soporte/".$keyMFile->id_conciliacion_empresa_cuenta;
-                           $nameNuevo = $keyMFile->nombre_soporte;
-                           $migrarFile = $this->utilerias->copyFile($keyMFile->ruta_comprobante,$rutaNueva,$nameNuevo);
-                           if(!$migrarFile[0]) {
-                              $contadorMigrarFile++;
-                              $msjValidFile .= '<span class="text-dark fw-bold fs-2">'.$keyMFile->rfc_empresa.'</span> - <span class="text-dark fs-2">'.$keyMFile->num_cuenta.'</span><br>';
-                           }
-                        }
-                        //*
-                        if((int)$contadorMigrarFile == 0) {
-                           $this->Modelo->deleteConciliacionTmp($usuario);
-                           $this->db->transCommit();
-                           $this->utilerias->removeDirectorioFile($urlDefault.$rutaCompTmp);
-                           $response = array('respuesta' => true, 'mensaje' => $result[1]);
-                        }
-                        else {
-                           $this->db->transRollback();
-                           $this->utilerias->removeFile($path_excel);
-                           $this->utilerias->removeDirectorioFile($urlDefault.$rutaCompTmp);
-                           $response = array('respuesta' => false, 'mensaje' => 'No se pudo migrar los comprobantes de los siguiente registro del layout:<br>'.$msjValidFile, 'error' => 2);
-                        }
-                     }
-                     else {
-                        $this->db->transRollback();
-                        $this->utilerias->removeFile($path_excel);
-                        $this->utilerias->removeDirectorioFile($urlDefault.$rutaCompTmp);
-                        $response = array('respuesta' => false, 'mensaje' => $result[1], 'error' => 0);
-                     }
-                  }
+            $total_validado = $this->Modelo->getValidLayoutProcedimiento($usuario,$idNivelUsuario)->getRow()->ret_valid;
+            if($total_validado) {
+               $this->db->transCommit();
+               $this->utilerias->removeFile($path_excel);
+               $this->utilerias->removeDirectorioFile($urlDefault.$rutaLayout);
+               $response = array('respuesta' => false, 'mensaje' => '', 'usuario' => $usuario, 'error' => 1);
+            }
+            else {
+               $result = $this->Modelo->getProcedureMigrar($usuario,$ip);
+               if($result[0]) {
+                  $this->db->transCommit();
+                  $this->utilerias->removeDirectorioFile($urlDefault.$rutaLayout);
+                  $response = array('respuesta' => true, 'mensaje' => $result[1]);
                }
                else {
                   $this->db->transRollback();
                   $this->utilerias->removeFile($path_excel);
-                  $this->utilerias->removeDirectorioFile($urlDefault.$rutaCompTmp);
-                  $response = array('respuesta' => false, 'mensaje' => 'La nomenclatura del nombre de los comprobantes que no coinciden con los siguiente registro del layout:<br>'.$msjValidFile, 'error' => 2);
+                  $this->utilerias->removeDirectorioFile($urlDefault.$rutaLayout);
+                  $response = array('respuesta' => false, 'mensaje' => $result[1], 'error' => 0);
                }
-            }
-            else {
-               $this->db->transRollback();
-               $this->utilerias->removeFile($path_excel);
-               $this->utilerias->removeDirectorioFile($urlDefault.$rutaCompTmp);
-               $response = array('respuesta' => false, 'mensaje' => 'No coinciden los registro del layout con los archivos seleccionados', 'error' => 2);
             }
          }
          else {
             $this->db->transRollback();
             $this->utilerias->removeFile($path_excel);
-            $this->utilerias->removeDirectorioFile($urlDefault.$rutaCompTmp);
+            $this->utilerias->removeDirectorioFile($urlDefault.$rutaLayout);
             $response = array('respuesta' => false, 'mensaje' => $result[1], 'error' => 0);
          }
       }
@@ -276,7 +244,7 @@ class NotificacionesRegistro extends BaseController
       return $this->response->setJSON($response);
    }
    //
-   public function getObsLayoutConciliacionCtasBancarias() {
+   public function observacionesLayoutPag() {
       $usuario = $this->request->getPost("user_registro");
       $pagina  = 0;
       $resultados = 0;
@@ -286,7 +254,7 @@ class NotificacionesRegistro extends BaseController
       if (!empty($this->request->getPost("resultados")))
          $resultados = $this->request->getPost("resultados");
 
-      $query = $this->Modelo->getObservConciliacionCtaBancTmp($usuario);
+      $query = $this->Modelo->getObservNotificacionesOficiosTmp($usuario);
       $results = $this->utilerias->loadJSON($query, $pagina, $resultados);
       return $this->response->setJSON($results);
    }

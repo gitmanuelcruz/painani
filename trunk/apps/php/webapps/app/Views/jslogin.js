@@ -81,6 +81,8 @@ function login() {
          }
          else {
             contador++;
+            $('button[btn="btn"]').prop('disabled', false);
+            $(".inptlogin").prop('disabled', false);
             Swal.fire({
                title: data.title,
                html: '<p class="p-font-msg-1-2">'+data.message+'</p>',
@@ -93,6 +95,8 @@ function login() {
       },
       error: function (xhr, ajaxOptions, thrownError) {
          contador++;
+         $('button[btn="btn"]').prop('disabled', false);
+         $(".inptlogin").prop('disabled', false);
          Swal.fire({
             title: 'HA OCURRIDO UN ERROR!',
             html: '<p class="p-font-msg text-danger">'+thrownError+'</p>',
@@ -103,8 +107,6 @@ function login() {
          });
       },
       complete(xhr, status) {
-         $(".inptlogin").prop('disabled', false);
-         $('button[btn="btn"]').prop('disabled', false);
          $("#btn_login").html('Iniciar Sesi&oacute;n');
       }
    });

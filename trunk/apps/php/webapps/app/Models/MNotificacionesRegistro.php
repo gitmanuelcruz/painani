@@ -64,7 +64,7 @@ class MNotificacionesRegistro extends Model
 		if (!empty($idEstatus)) {
 			$sql .="AND ntf.id_estatus_notificacion = '$idEstatus' ";
 		}
-		$sql .="ORDER BY COALESCE(pno.id_paquete,0),ntf.fecha_oficio,ntf.id_notificacion";
+		$sql .="ORDER BY eno.num_orden,COALESCE(pno.id_paquete,0),ntf.fecha_oficio,ntf.num_oficio";
 
 		return $sql;
    }
@@ -167,7 +167,7 @@ class MNotificacionesRegistro extends Model
       }
    }
    //
-   public function getObservOficiosTmp($usuario) {
+   public function getObservNotificacionesOficiosTmp($usuario) {
       $sql ="SELECT
                a.id_notificacion_tmp AS id,
                a.consecutivo,
