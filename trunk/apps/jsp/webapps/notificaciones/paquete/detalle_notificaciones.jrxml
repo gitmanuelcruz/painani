@@ -94,7 +94,7 @@ ORDER BY nt.num_oficio]]>
 			<staticText>
 				<reportElement x="13" y="0" width="85" height="25" forecolor="#FFFFFF" uuid="590e7349-e312-4afa-902b-103f99e29c1e"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7.5" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[# / NUM. OFICIO]]></text>
 			</staticText>
@@ -103,37 +103,37 @@ ORDER BY nt.num_oficio]]>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7.5" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[FECHA OFICIO]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="150" y="0" width="210" height="25" forecolor="#FFFFFF" uuid="6d93795e-0cfb-436e-b690-a526a6fff2c6"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7.5" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[DOMICILIO Y REFERENCIA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="364" y="0" width="67" height="25" forecolor="#FFFFFF" uuid="fffaf323-4978-41a0-97e4-05073b7a9ae0">
+				<reportElement x="360" y="0" width="71" height="25" forecolor="#FFFFFF" uuid="fffaf323-4978-41a0-97e4-05073b7a9ae0">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7.5" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[F. HORA NOTIFIC.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="431" y="0" width="50" height="25" forecolor="#FFFFFF" uuid="b3e1c814-4b63-4970-8ea0-7db3f074c801"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7.5" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[SOPORTES]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="476" y="0" width="82" height="25" forecolor="#FFFFFF" uuid="c9848f8b-55c1-4d10-8c25-df2d34c9f2d8"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7.5" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[ESTATUS]]></text>
 			</staticText>
@@ -148,49 +148,49 @@ ORDER BY nt.num_oficio]]>
 			<textField>
 				<reportElement x="8" y="3" width="85" height="14" forecolor="#0D6EFD" uuid="64e322e6-d4ff-4f71-b882-d9105fb20aa6"/>
 				<textElement>
-					<font fontName="SansSerif" size="8" isBold="true"/>
+					<font fontName="SansSerif" size="7.5" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fila}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement stretchType="ElementGroupHeight" x="8" y="17" width="85" height="14" forecolor="#6C757D" uuid="bc1ca1ed-855b-411e-b01b-6046ea179747"/>
 				<textElement>
-					<font fontName="SansSerif" size="8"/>
+					<font fontName="SansSerif" size="7.5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{num_oficio}]]></textFieldExpression>
 			</textField>
 			<textField pattern="yyyy-MM-dd" isBlankWhenNull="true">
 				<reportElement x="93" y="3" width="55" height="14" uuid="e29a585c-bff8-478f-b8a9-dfcf3e2524e9"/>
 				<textElement textAlignment="Left">
-					<font fontName="SansSerif" size="8"/>
+					<font fontName="SansSerif" size="7.5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fecha_oficio}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement x="150" y="3" width="210" height="14" isPrintWhenDetailOverflows="true" uuid="0b6177aa-721f-4f71-96dd-cf71200183b4"/>
 				<textElement textAlignment="Justified">
-					<font fontName="SansSerif" size="8"/>
+					<font fontName="SansSerif" size="7.5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{domicilio}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="150" y="18" width="210" height="14" isPrintWhenDetailOverflows="true" forecolor="#6C757D" uuid="c157d5ab-494c-4db1-8281-a1f7f9105d7c"/>
 				<textElement textAlignment="Justified">
-					<font fontName="SansSerif" size="8" isItalic="true"/>
+					<font fontName="SansSerif" size="7.5" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{referencia_ubicacion}]]></textFieldExpression>
 			</textField>
 			<textField pattern="yyyy-MM-dd HH:mm:ss" isBlankWhenNull="true">
-				<reportElement x="363" y="3" width="68" height="14" uuid="19186355-5c26-40c4-9160-bfd275f07c47"/>
-				<textElement>
-					<font fontName="SansSerif" size="8"/>
+				<reportElement x="360" y="3" width="71" height="14" uuid="19186355-5c26-40c4-9160-bfd275f07c47"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="SansSerif" size="7.5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fecha_hora_notificado}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="431" y="3" width="50" height="14" uuid="56de7e2c-e041-460d-ba68-a5c3cd8d753b"/>
-				<textElement textAlignment="Center">
-					<font fontName="SansSerif" size="8" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="SansSerif" size="7.5" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_evidencias}]]></textFieldExpression>
 			</textField>
@@ -198,8 +198,8 @@ ORDER BY nt.num_oficio]]>
 				<reportElement x="481" y="3" width="77" height="14" uuid="6aac372e-aa84-4d54-a574-90e5eff8ddc7">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center">
-					<font fontName="SansSerif" size="8" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="SansSerif" size="7.5" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{id_estatus_notificacion}]]></textFieldExpression>
 			</textField>
