@@ -17,11 +17,18 @@ const getMiPaqueteNotificacion = async (idUsuario, idPaquete) => {
             (CASE WHEN pqn.id_estatus_notificacion = 'POR_NOTIFICAR' THEN  1
                 WHEN pqn.id_estatus_notificacion = 'NO_LOCALIZADO' THEN 2
                 WHEN pqn.id_estatus_notificacion = 'NOTIFICADO' THEN 3 
-                ELSE 4 END )::integer ordenamiento
+                ELSE 4 END )::integer ordenamiento,
+            sop.soportes
             FROM paquetes_notificaciones pqn
             INNER JOIN paquetes p ON pqn.id_paquete = p.id_paquete 
             INNER JOIN notificaciones n ON pqn.id_notificacion = n.id_notificacion 
             INNER JOIN estatus_notificacion en ON pqn.id_estatus_notificacion = en.id_estatus_notificacion
+             LEFT JOIN (
+            	SELECT id_notificacion,count(*) soportes
+            	FROM soportes_notificacion sn 
+            	WHERE creado_por = $1
+            	GROUP BY id_notificacion
+            ) sop ON n.id_notificacion = sop.id_notificacion
         WHERE p.id_usuario_notificador =$1
         AND p.fecha_programada = current_date
         AND p.id_paquete = $2
@@ -47,6 +54,7 @@ const getMiPaqueteNotificacion = async (idUsuario, idPaquete) => {
         notificado: row.notificado,
         comentarios: row.comentarios,        
         ordenamiento: Number(row.ordenamiento),
+        soportes:Number(row.soportes)
       };
 
       oficios.push(reg);
