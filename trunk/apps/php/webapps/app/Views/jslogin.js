@@ -72,6 +72,8 @@ function login() {
       },
       success: function (data) {
          if (data.band) {
+            localStorage.setItem('socket_user_id', $('#usuario').val());
+
             contador++;
             $("#usuario_t").val(user);
             $("#contador").val(contador);
