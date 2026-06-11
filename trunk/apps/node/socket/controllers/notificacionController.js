@@ -110,7 +110,7 @@ const iniciarRuta = async (req, res) => {
 
     return res.status(200).json({
       ok: true,
-      message: "Paquete abierto e iniciado ruta de entrega",
+      message: "Paquete abierto e iniciada la ruta de entrega",
     });
   } catch (error) {
     console.log(error.toString());
