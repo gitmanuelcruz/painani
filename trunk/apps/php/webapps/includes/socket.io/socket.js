@@ -1,5 +1,10 @@
+const userIdGuardado = localStorage.getItem('socket_user_id');
 //const socket = io('http://143.202.156.43:3031');
-const socket = io('http://74.208.35.147:3031');
+const socket = io('http://74.208.35.147:3036',{
+    auth: {
+        userId: userIdGuardado
+    },
+    transports: ['websocket']});
 //const socket = io('http://localhost:3031');
 /***********************************************/
 /* socket.emit("notifica_supervisor",{
