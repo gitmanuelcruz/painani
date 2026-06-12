@@ -144,8 +144,8 @@ const setMarcarOficioPaquete = async (
 const getPaquetesHoy = async (usuario) => {
   const sql = `SELECT p.id_paquete,
                     to_char(p.fecha_programada,'YYYY-MM-DD') fecha,
-                    fecha_hora_apertura_operacion,
-                    fecha_hora_cierre_operacion,
+                    to_char(fecha_hora_apertura_operacion,'YYYY-mm-dd hh12:mi:ss am') fecha_apertura,
+                    to_char(fecha_hora_cierre_operacion,'YYYY-mm-dd hh12:mi:ss am') fecha_cierre,
                     u.nombre_completo
                 FROM paquetes p 
                     INNER JOIN usuarios u ON p.id_usuario_notificador = u.id_usuario
@@ -160,8 +160,8 @@ const getPaquetesHoy = async (usuario) => {
         key: Number(row.id_paquete),
         idPaquete: Number(row.id_paquete),
         fechaProgramada: row.fecha,
-        fechaApertura: row.fecha_hora_apertura_operacion,
-        fechaCierre: row.fecha_hora_cierre_operacion,
+        fechaApertura: row.fecha_apertura,
+        fechaCierre: row.fecha_cierre,
         asignadoA:row.nombre_completo
       };
 
