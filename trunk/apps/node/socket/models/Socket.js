@@ -33,7 +33,14 @@ class Sockets {
         if(userId){
           console.log(`El usuario ${userId} ha finalizado su ruta`);
         }
-      })
+      });
+
+      socket.on('marcaNotificador',async(payload)=>{
+        const userId = socket.userId;
+        if(userId){
+          console.log(`El usuario ${userId} ha actualizado sus oficios`);
+        }
+      });
 	  
       // TODO: Proceso de registro de movimiento en almacen
       socket.on("new-movimiento-almacen", async (payload) => {
