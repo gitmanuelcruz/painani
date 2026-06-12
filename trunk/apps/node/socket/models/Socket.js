@@ -10,10 +10,30 @@ class Sockets {
       const { userId } = socket.handshake.auth;
 
       if (userId) {
+        socket.userId = userId;
+
         socket.join(`user:${userId}`);
       }
 
-	  console.log(`Usuario ${userId} conectado`);
+	  console.log(`El usuario ${userId} conectado`);
+
+      socket.on('iniciarRuta',async(payload)=>{
+        console.log(payload);
+
+        const userId = socket.userId;
+        console.log(userId);
+
+        if(userId){
+          console.log(`El usuario ${userId} ha Iniciado su ruta`);
+        }
+      });
+
+      socket.on('finalizarRuta',async(payloaad)=>{
+        const userId = socket.userId;
+        if(userId){
+          console.log(`El usuario ${userId} ha finalizado su ruta`);
+        }
+      })
 	  
       // TODO: Proceso de registro de movimiento en almacen
       socket.on("new-movimiento-almacen", async (payload) => {
@@ -25,6 +45,18 @@ class Sockets {
       socket.on("close-session", async (payload) => {
         this.io.emit(payload.refresh, payload);
       });
+
+      socket.on('disconnect',(reason)=>{
+        const usuarioDesconectado = socket.userId;
+
+        if(usuarioDesconectado){
+          console.log(`El usuario [${usuarioDesconectado}] se ha desconectado, motivo: ${reason}`);
+        }
+        else{
+          console.log(`Un cliente anónimo (sin registrar) se ha desconectado.n Motivo ${reson}`);
+        }
+      });
+
     });
   }
 }
