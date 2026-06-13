@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const pool = require("../config/db");
 
 const getMiPaqueteNotificacion = async (idUsuario, idPaquete) => {
@@ -46,19 +48,19 @@ const getMiPaqueteNotificacion = async (idUsuario, idPaquete) => {
         idNotificacion: row.id_notificacion,
         idPaqueteNotificacion: Number(row.id_paquete_notificacion),
         idEstatusNotificacionPaquete: row.id_estatus_notificacion,
-        nombreEstatusNotificacion:row.nombre_estatus,
+        nombreEstatusNotificacion: row.nombre_estatus,
         numOficio: row.num_oficio,
         domicilio: row.domicilio,
         referenciaUbicacion: row.referencia_ubicacion,
         idEstatusOficio: row.estatus_oficio,
         idPaquete: row.idPaquete,
-        fechaOficio:row.fecha_oficio,
+        fechaOficio: row.fecha_oficio,
         fechaHoraNotificado: row.fechaHoraNotificado,
         notificado: row.notificado,
-        comentarios: row.comentarios,        
+        comentarios: row.comentarios,
         ordenamiento: Number(row.ordenamiento),
-        soportes:Number(row.soportes),
-        bloqueado:row.bloqueado
+        soportes: Number(row.soportes),
+        bloqueado: row.bloqueado,
       };
 
       oficios.push(reg);
@@ -115,10 +117,7 @@ const setMarcarOficioNotificado = async (usuario, idNotificacion) => {
                     notificado_por = $1
                 WHERE id_notificacion = $2`;
 
-  await pool.query(sql, [
-    usuario,
-    idNotificacion,
-  ]);
+  await pool.query(sql, [usuario, idNotificacion]);
 };
 
 const setMarcarOficioPaquete = async (
@@ -128,7 +127,7 @@ const setMarcarOficioPaquete = async (
   notificado,
   comentarios,
 ) => {
-  console.log("idStatus",idStatus);
+  console.log("idStatus", idStatus);
   const sql = `UPDATE paquetes_notificaciones SET comentarios = $1,
                     fecha_hora_notificacion = now(),
                     notificado = $2,
@@ -166,7 +165,7 @@ const getPaquetesHoy = async (usuario) => {
         fechaProgramada: row.fecha,
         fechaApertura: row.fecha_apertura,
         fechaCierre: row.fecha_cierre,
-        asignadoA:row.nombre_completo
+        asignadoA: row.nombre_completo,
       };
 
       paquetes.push(reg);
@@ -174,6 +173,63 @@ const getPaquetesHoy = async (usuario) => {
   });
 
   return paquetes;
+};
+
+const getEvidenciasNotificacion = async (idPaqueteNotificacion, usuario) => {
+  const sql = `SELECT sn.id_soporte_notificacion,
+                sn.ruta_soporte,
+                sn.extension_archivo,
+                to_char(sn.fecha_registro,'YYYY-mm-dd hh24:mi:ss') fecha_registro 
+              FROM soportes_notificacion sn 
+              WHERE sn.id_paquete_notificacion = $1
+              AND creado_por = $2
+              ORDER BY sn.fecha_registro`;
+  let evidencias = [];
+
+  try {
+    const resultadoBD = await pool.query(sql, [idPaqueteNotificacion, usuario]);
+    const filas = resultadoBD.rows || [];
+
+    const UPLOAD_FOLDER = process.env.UPLOAD_FOLDER;
+
+    evidencias = filas
+      .map((fila) => {
+        const rutaInterna = fila.ruta_soporte.replace(
+          "../painani_archivos",
+          "",
+        );
+        const rutaAbsoluta = path.join(UPLOAD_FOLDER, rutaInterna);
+
+        if (fs.existsSync(rutaAbsoluta)) {
+          const bitmap = fs.readFileSync(rutaAbsoluta);
+          const base64String = Buffer.from(bitmap).toString("base64");
+
+          const ext = fila.extension_archivo.toLowerCase();
+          const mimeType =
+            ext === "jpeg" || ext === "jpg" ? "image/jpeg" : `image/${ext}`;
+          const fotoBase64 = `data:${mimeType};base64,${base64String}`;
+
+          return {
+            idSoporteNotificacion: fila.id_soporte_notificacion,
+            foto: fotoBase64,
+            extensionArchivo: fila.extension_archivo,
+            fecha: fila.fecha_registro,
+          };
+        } else {
+          console.log(`Archivo no encontrado físicamente en: ${rutaAbsoluta}`);
+          return null;
+        }
+      })
+      .filter((item) => item !== null);
+  } catch (error) {
+    console.error(
+      "Error al obtener evidencias en getEvidenciasNotificacion:",
+      error,
+    );
+    throw error;
+  }
+
+  return evidencias;
 };
 
 module.exports = {
@@ -184,4 +240,5 @@ module.exports = {
   setMarcarOficioNotificado,
   setMarcarOficioPaquete,
   getPaquetesHoy,
+  getEvidenciasNotificacion,
 };

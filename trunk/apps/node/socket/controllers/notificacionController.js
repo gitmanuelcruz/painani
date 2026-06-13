@@ -8,6 +8,7 @@ const {
   cerrarRutaNotificacion,
   setMarcarOficioNotificado,
   setMarcarOficioPaquete,
+  getEvidenciasNotificacion,
 } = require("../services/notificacionService");
 const { getDateTime } = require("./comun");
 
@@ -62,8 +63,11 @@ const uploadSoporteNotificacion = async (req, res) => {
     const rutaSoporte =
       `../${process.env.FOLDER_PRINCIPAL_UPLOAD}/` +
       filePath.replace(/\\/g, "/").substring(position, filePath.length);
-    
-    const nombreOrginal = originalname.substring(0, originalname.lastIndexOf('.'));
+
+    const nombreOrginal = originalname.substring(
+      0,
+      originalname.lastIndexOf("."),
+    );
 
     const resultado = await guardarSoporte(
       idNotificacion,
@@ -172,7 +176,7 @@ const marcarOficioPaquete = async (req, res) => {
   const notificado = idStatus === "NOTIFICADO" ? true : false;
 
   try {
-    console.log(notificado,idStatus);
+    console.log(notificado, idStatus);
     await setMarcarOficioPaquete(
       usuario,
       idPaqueteNotificacion,
@@ -180,7 +184,6 @@ const marcarOficioPaquete = async (req, res) => {
       notificado,
       comentarios,
     );
-
 
     if (notificado) {
       await setMarcarOficioNotificado(usuario, idNotificacion);
@@ -198,20 +201,42 @@ const marcarOficioPaquete = async (req, res) => {
   }
 };
 
-const getPaquetesNotificacion = async(req,res)=>{
-    const {usuario} = req.body;
+const getPaquetesNotificacion = async (req, res) => {
+  const { usuario } = req.body;
 
-    try{
-        const paquetes = await getPaquetesHoy(usuario);
+  try {
+    const paquetes = await getPaquetesHoy(usuario);
 
-        return res.status(200).json({ok:true,paquetes});
-    }
-    catch(error){
-        console.log(error.toString());
+    return res.status(200).json({ ok: true, paquetes });
+  } catch (error) {
+    console.log(error.toString());
 
-        return res.status(500).json({ok:false,error:error.toString(),message:error.toString()});
-    }
-}
+    return res
+      .status(500)
+      .json({ ok: false, error: error.toString(), message: error.toString() });
+  }
+};
+
+const obtenerEvidencias = async (req, res) => {
+  try {
+    const { idPaqueteNotificacion, usuario } = req.body;
+
+    const evidencias = await getEvidenciasNotificacion(
+      idPaqueteNotificacion,
+      usuario,
+    );
+
+    return res.status(200).json({
+      ok: true,
+      archivos: evidencias
+    });
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      message: "Error al procesar las evidencias del paquete.",
+    });
+  }
+};
 
 module.exports = {
   getPaquetesNotificacion,
@@ -221,5 +246,6 @@ module.exports = {
   iniciarRuta,
   finalizarRutaNotificacion,
   marcarOficioNotificado,
-  marcarOficioPaquete
+  marcarOficioPaquete,
+  obtenerEvidencias
 };

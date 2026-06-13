@@ -7,7 +7,8 @@ const { listadoOficiosNotificar,
     iniciarRuta, 
     finalizarRutaNotificacion,
     marcarOficioPaquete, 
-    marcarOficioNotificado 
+    marcarOficioNotificado, 
+    obtenerEvidencias
 } = require('../controllers/notificacionController');
 const router = Router();
 
@@ -18,5 +19,6 @@ router.post('/finalizar-ruta',validarApiKey,validarToken,finalizarRutaNotificaci
 router.post('/marcar-oficio-paquete',validarApiKey,validarToken,marcarOficioPaquete);
 router.post('/marcar-oficio-notificado',validarApiKey,validarToken,marcarOficioPaquete);
 router.post('/upload-soporte',validarApiKey,validarToken,uploadSoporteNotificacion);
+router.post('/obtener-evidencias',validarApiKey,validarToken,obtenerEvidencias);
 
 module.exports = router;
