@@ -18,7 +18,10 @@ const getMiPaqueteNotificacion = async (idUsuario, idPaquete) => {
                 WHEN pqn.id_estatus_notificacion = 'NO_LOCALIZADO' THEN 2
                 WHEN pqn.id_estatus_notificacion = 'NOTIFICADO' THEN 3 
                 ELSE 4 END )::integer ordenamiento,
-            sop.soportes
+            sop.soportes,
+            (CASE WHEN p.fecha_hora_apertura_operacion IS NOT NULL 
+            	AND p.fecha_hora_cierre_operacion IS NOT NULL 
+            	THEN TRUE ELSE FALSE END ) bloqueado
             FROM paquetes_notificaciones pqn
             INNER JOIN paquetes p ON pqn.id_paquete = p.id_paquete 
             INNER JOIN notificaciones n ON pqn.id_notificacion = n.id_notificacion 
@@ -54,7 +57,8 @@ const getMiPaqueteNotificacion = async (idUsuario, idPaquete) => {
         notificado: row.notificado,
         comentarios: row.comentarios,        
         ordenamiento: Number(row.ordenamiento),
-        soportes:Number(row.soportes)
+        soportes:Number(row.soportes),
+        bloqueado:row.bloqueado
       };
 
       oficios.push(reg);
