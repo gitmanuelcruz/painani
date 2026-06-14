@@ -126,20 +126,26 @@ const setMarcarOficioPaquete = async (
   idStatus,
   notificado,
   comentarios,
+  latitud,
+  longitud
 ) => {
   console.log("idStatus", idStatus);
   const sql = `UPDATE paquetes_notificaciones SET comentarios = $1,
                     fecha_hora_notificacion = now(),
                     notificado = $2,
                     id_estatus_notificacion = $3,
-                    modificado_por = $4
-                WHERE id_paquete_notificacion = $5`;
+                    modificado_por = $4,
+                    latitud=$5,
+                    longitud=$6
+                WHERE id_paquete_notificacion = $7`;
 
   await pool.query(sql, [
     comentarios,
     notificado,
     idStatus,
     usuario,
+    latitud,
+    longitud,
     idPaqueteNotificacion,
   ]);
 };

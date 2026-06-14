@@ -169,9 +169,9 @@ const marcarOficioPaquete = async (req, res) => {
     idPaqueteNotificacion,
     idStatus,
     comentarios,
+    latitud,
+    longitud
   } = req.body;
-
-  console.log(req.body);
 
   const notificado = idStatus === "NOTIFICADO" ? true : false;
 
@@ -183,6 +183,8 @@ const marcarOficioPaquete = async (req, res) => {
       idStatus,
       notificado,
       comentarios,
+      latitud,
+      longitud
     );
 
     if (notificado) {
