@@ -26,13 +26,17 @@ class Sockets {
         if(userId){
           console.log(`El usuario ${userId} ha Iniciado su ruta`);
         }
+
+        this.io.emit('refresh_apertura_operacion',payload);
       });
 
-      socket.on('finalizarRuta',async(payloaad)=>{
+      socket.on('finalizarRuta',async(payload)=>{
         const userId = socket.userId;
         if(userId){
           console.log(`El usuario ${userId} ha finalizado su ruta`);
         }
+
+        this.io.emit('refresh_cierre_operacion',payload);
       });
 
       socket.on('marcaNotificador',async(payload)=>{
@@ -40,14 +44,9 @@ class Sockets {
         if(userId){
           console.log(`El usuario ${userId} ha actualizado sus oficios`);
         }
+        this.io.emit('refresh_cambio_estatus',payload);
       });
 	  
-      // TODO: Proceso de registro de movimiento en almacen
-      socket.on("new-movimiento-almacen", async (payload) => {
-        //console.log("se ha insertado un nuevo movimiento de almacen");
-        this.io.emit("new-movimiento", payload);
-      });
-
       // TODO: Proceso donde se obliga a salir de la plataforma
       socket.on("close-session", async (payload) => {
         this.io.emit(payload.refresh, payload);
