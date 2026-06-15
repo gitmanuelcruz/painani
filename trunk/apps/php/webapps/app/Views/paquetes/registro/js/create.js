@@ -100,15 +100,10 @@ function cargaComboRegistro(async,inicializar,pid_paquete,id_usuario_notificador
             $("#vm_id_usuario_notificador").append('<option value="'+v.id+'">'+v.descripcion+'</option>');
          });
 
-         if(data.listOficios.length == 0) {
-            contador++;
-         }
-         else {
-            $(data.listOficios).each(function(i, v) {
-               $("#vm_listado").append('<option value="'+v.id+'" '+v.seleccion+'>'+v.descripcion+'</option>');
-            });
-         }
-
+         $(data.listOficios).each(function(i, v) {
+            $("#vm_listado").append('<option value="'+v.id+'" '+v.seleccion+'>'+v.descripcion+'</option>');
+         });
+      
          if(id_usuario_notificador != '' && id_usuario_notificador != null) {
             $("#vm_id_usuario_notificador").val(id_usuario_notificador);
          }
@@ -120,9 +115,7 @@ function cargaComboRegistro(async,inicializar,pid_paquete,id_usuario_notificador
          if(inicializar) {
             comboListado();
          }
-         if(parseInt(contador) > 0) {
-            $(".dual-listbox__selected").empty();
-         }
+         $(".dual-listbox__selected").empty();
       }
    });
 }
@@ -148,7 +141,7 @@ const limpiarFrmRegistro = () => {
 	$("#vm_fecha_programada").val(fAct.fecha2);
 	$("#divUserNotificador").removeClass("has-valid");
 	$("#divUserNotificador").removeClass("has-error");
-   cargaComboRegistro(false,true,pid_paquete,null);
+   cargaComboRegistro(false,false,pid_paquete,null);
 }
 //!
 const validRegistro = () => {
@@ -270,12 +263,12 @@ const guardarRegistro = () => {
                confirmButtonText: 'Aceptar',
             }).then((result) => {
                if (result.isConfirmed) {
-                  if($("#vm_tipo").val() == 'E') {
+                  //if($("#vm_tipo").val() == 'E') {
                      cerrar_vm_registro();
-                  }
+                  /*}
                   else {
                      limpiarFrmRegistro();
-                  }
+                  }*/
                }
             });
          }
