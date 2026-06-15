@@ -63,6 +63,7 @@ function MTable() {
    this.dropdown = {}; //objetos que almacenara los menus segun su tipo
    this.atributos = {}; //objetos que almacenara atributos
    this.hayAtributos = false;
+   this.loading = true;
    this.colorColumn = {}; //objetos que almacenara el color en las columnas segun su tipo
    this.hayColorColumn = false;
 
@@ -265,7 +266,8 @@ MTable.prototype.loadJSON = function (mipagina) {
    this.parametros2 += (this.parametros !== "") ? ("&pagina=" + this.pagina + "&resultados=" + this.registrosPagina) : ("pagina=" + this.pagina + "&resultados=" + this.registrosPagina);
 
    var obj = this;
-   var spinner = new Spinner().spin(this.tableELement.parentNode); // inicia el loading
+   var targetPag,spinnerPag = '';//new Spinner().spin(this.tableELement.parentNode); // inicia el loading
+   targetPag = this.tableELement.parentNode;
    var btn = document.getElementsByClassName('btn');
    for (var i = 0; i < btn.length; i++) {
       btn[i].setAttribute("disabled", "disabled");
@@ -274,9 +276,12 @@ MTable.prototype.loadJSON = function (mipagina) {
       url: this.url,
       type: this.method,
       //headers: {'Authorization': 'Bearer '+this.token+''},
-      async: true,
+      async: this.loading,
       dataType: 'json',
       data: this.parametros2,
+      beforeSend(xhr) {
+         spinnerPag = new Spinner().spin(targetPag); // inicia el loading
+      },
       success: function (data) {
          obj.setJson(data);
          obj.procesaJSON();
@@ -289,7 +294,7 @@ MTable.prototype.loadJSON = function (mipagina) {
       },
       complete(xhr, status) {
          for (var i = 0; i < btn.length; i++) { btn[i].removeAttribute("disabled"); }
-         spinner.stop();
+         spinnerPag.stop();
          $(".tooltip_icon_pag").tooltip();
       }
    });

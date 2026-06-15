@@ -211,7 +211,6 @@ class MPaquetesRegistro extends Model
 					SELECT NULL
 					FROM paquetes_notificaciones x
 					WHERE x.id_notificacion = a.id_notificacion
-					AND x.id_estatus_notificacion NOT IN('NO_LOCALIZADO','CANCELADO')
 					AND x.id_paquete <> ?
 				)
 				ORDER BY a.fecha_oficio,a.num_oficio";
