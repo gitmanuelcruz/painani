@@ -122,9 +122,9 @@ class MUsuarios extends Model
                      theme_css,id_idioma,fecha_vigencia_inicio,fecha_vigencia_fin,correo_electronico,num_celular,
                      num_telefono_fijo,path_foto,creado_por,ip_registro)
 					VALUES
-							(TRIM(?::text),NEXTVAL('seq_usuarios'),TRIM(?),TRIM(?),?,COALESCE(?::numeric,0),?,TRIM(?),
-                     TRIM(?),TO_DATE(?,'yyyy-mm-dd'),TO_DATE(?, 'yyyy-mm-dd'),TRIM(?),TRIM(?::text),TRIM(?::text),
-                     TRIM(?),TRIM(?),TRIM(?),TRIM(?))";
+							(?,NEXTVAL('seq_usuarios'),TRIM(?),TRIM(?),?,?,COALESCE(?::numeric,0),TRIM(?),TRIM(?),
+                     TO_DATE(?,'yyyy-mm-dd'),TO_DATE(?,'yyyy-mm-dd'),TRIM(?),TRIM(?::text),TRIM(?::text),
+                     TRIM(?),TRIM(?),TRIM(?))";
 
       $this->db->transBegin();
       $this->db->query($sql,[

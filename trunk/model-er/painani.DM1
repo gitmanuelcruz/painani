@@ -31,7 +31,7 @@ VersionId,Version_ID,Copyright,Global_User_ID,Row_Time_Stamp
 
 Diagram
 DiagramId,Version_ID,VersionId,LastUpdate,CreateDate,ActiveModel,ActiveSubmodel,VSplitterPosition,X,Y,Width,Height,DiagramNameId,AuthorId,CompanyId,VersionNoId,CopyrightStringId,DefinitionId,UnificationOptionId,FileNameId,CopyrightYearStringId,DiagramName,CodePage,SignatureGUID,ReleaseName,Flags,Global_User_ID,Row_Time_Stamp
-1,1,1900,06/14/2026 22:35:51G,06/02/2026 22:53:13G,1,2,180,0,0,0,0,34,0,0,0,0,0,35,34,0,painani.DM1,1252,NULL,NULL,0,1,0
+1,1,1900,06/15/2026 00:03:42G,06/02/2026 22:53:13G,1,2,180,0,0,0,0,34,0,0,0,0,0,35,34,0,painani.DM1,1252,NULL,NULL,0,1,0
 
 GraphManager_Properties
 GraphManager_Properties_ID,DiagramId,FixedSize,FixedPosition,HorizontalSpacingBetweenEdges,HorizontalSpacingBetweenNodes,VerticalSpacingBetweenEdges,VerticalSpacingBetweenNodes,ApplyStyleDeeply,DrawingFitting,HorizontalSpacingBetweenIntergraphEdges,VerticalSpacingBetweenIntergraphEdges,Global_User_ID
@@ -2734,7 +2734,7 @@ Identity_Value_ID,Table_Name,Column_Name,Next_Valid_Value,Global_User_ID,Row_Tim
 16,BusDataObjectDisplay,BusDataObjectDisplay_ID,1,0,0
 17,CheckConstraints,CheckConstraints_ID,1,0,0
 18,Circular_Layout,Circular_Layout_ID,4,0,0
-19,ColorDefault,ColorDefault_ID,669,0,0
+19,ColorDefault,ColorDefault_ID,672,0,0
 20,Column_Usage,Column_Usage_ID,1,0,0
 21,Components_Layout,Components_Layout_ID,4,0,0
 22,Configuration_Option,Configuration_Option_ID,1,0,0
