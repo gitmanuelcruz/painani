@@ -176,7 +176,6 @@ const marcarOficioPaquete = async (req, res) => {
   const notificado = idStatus === "NOTIFICADO" ? true : false;
 
   try {
-    console.log(notificado, idStatus);
     await setMarcarOficioPaquete(
       usuario,
       idPaqueteNotificacion,
@@ -187,9 +186,9 @@ const marcarOficioPaquete = async (req, res) => {
       longitud
     );
 
-    if (notificado) {
-      await setMarcarOficioNotificado(usuario, idNotificacion);
-    }
+   // if (notificado) {
+    await setMarcarOficioNotificado(usuario, idNotificacion,idStatus);
+   // }
 
     return res
       .status(200)
