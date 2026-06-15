@@ -111,13 +111,13 @@ const cerrarRutaNotificacion = async (usuario, idPaquete) => {
   await pool.query(sql, [usuario, idPaquete]);
 };
 
-const setMarcarOficioNotificado = async (usuario, idNotificacion) => {
+const setMarcarOficioNotificado = async (usuario, idNotificacion,idStatus) => {
   const sql = `UPDATE notificaciones SET fecha_hora_notificado = now(),
                     modificado_por = $1,
-                    notificado_por = $1
-                WHERE id_notificacion = $2`;
+                    id_estatus_notificacion=$2
+                WHERE id_notificacion = $3`;
 
-  await pool.query(sql, [usuario, idNotificacion]);
+  await pool.query(sql, [usuario, idStatus,idNotificacion]);
 };
 
 const setMarcarOficioPaquete = async (
