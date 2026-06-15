@@ -193,13 +193,14 @@ class MPaquetesRegistro extends Model
       return $this->db->query($sql);
    }
    //
-   public function getListOficiosNotificacion($idPaquete) {
+   public function getListOficiosNotificacion($idPaquete,$fechaProgramada) {
 		if(empty($idPaquete)) { $idPaquete = 0; }
 		$sql ="SELECT
 					a.id_notificacion AS id,
 					CONCAT(a.num_oficio,' - ',TO_CHAR(a.fecha_oficio,'dd/mm/yyyy')) AS descripcion,
 					b.id_paquete,
-					(CASE WHEN a.id_notificacion = b.id_notificacion THEN 'selected' ELSE '' END) AS seleccion
+					(CASE WHEN a.id_notificacion = b.id_notificacion THEN 'selected' ELSE '' END) AS seleccion,
+					(CASE WHEN a.id_notificacion = b.id_notificacion THEN 1 ELSE 0 END) AS apl_seleccion
 				FROM notificaciones a
 				LEFT JOIN (
 					SELECT *
@@ -207,6 +208,7 @@ class MPaquetesRegistro extends Model
 					WHERE id_estatus_notificacion NOT IN('NO_LOCALIZADO','CANCELADO')
 				) b ON a.id_notificacion = b.id_notificacion
 				WHERE a.id_estatus_notificacion IN('POR_ASIGNAR','ASIGNADO')
+				AND a.fecha_oficio >= TO_DATE(?,'yyyy-mm-dd')
 				AND NOT EXISTS (
 					SELECT NULL
 					FROM paquetes_notificaciones x
@@ -215,7 +217,7 @@ class MPaquetesRegistro extends Model
 				)
 				ORDER BY a.fecha_oficio,a.num_oficio";
 			
-		return $this->db->query($sql,[trim($idPaquete)]);
+		return $this->db->query($sql,[$fechaProgramada,$idPaquete]);
 	}
 	//
 	public function insertPaquete($id_usuario_notificador,$fecha_programada,$usuario,$ip) {

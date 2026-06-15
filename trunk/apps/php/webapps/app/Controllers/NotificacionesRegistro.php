@@ -62,6 +62,14 @@ class NotificacionesRegistro extends BaseController
 		return $this->response->setJSON($results);
 	}
 	// TODO: Proceso de registro o edicion
+   public function getComboRegistro() {
+      $results = array(
+         'prioridades' => $this->Modelo->getPrioridades()->getResult()
+      );
+
+      return $this->response->setJSON($results);
+   }
+   //
 	public function existeOficio() {
 		$numOficio   = $this->request->getPost("num_oficio");
 		$total  = $this->Modelo->getExisteOficio($numOficio)->getRow()->total;
@@ -79,6 +87,7 @@ class NotificacionesRegistro extends BaseController
          $idNotificacion = $this->request->getPost("vm_id_notificacion");
          $numOficio   = $this->request->getPost("vm_num_oficio");
          $fechaOficio = $this->request->getPost("vm_fecha_oficio");
+         $idPrioridad = $this->request->getPost("vm_id_prioridad");
          $domicilio   = $this->request->getPost("vm_domicilio");
          $referenciaUbicacion = $this->request->getPost("vm_referencia_ubicacion");
          $usuario = $this->session->get("usuario");
@@ -101,11 +110,11 @@ class NotificacionesRegistro extends BaseController
          if((int)$exist == 0) {
             if(empty($idNotificacion)){
                $result = $this->Modelo->insertNotificacion(
-                  $numOficio,$fechaOficio,$domicilio,$referenciaUbicacion,$idEstatus,$usuario,$ip);
+                  $numOficio,$fechaOficio,$idPrioridad,$domicilio,$referenciaUbicacion,$idEstatus,$usuario,$ip);
             }
             else{
                $result = $this->Modelo->updateNotificacion(
-                  $idNotificacion,$numOficio,$fechaOficio,$domicilio,$referenciaUbicacion,$usuario,$ip);
+                  $idNotificacion,$numOficio,$idPrioridad,$fechaOficio,$domicilio,$referenciaUbicacion,$usuario,$ip);
             }
          }
          else {
@@ -191,11 +200,12 @@ class NotificacionesRegistro extends BaseController
                   $consecutivo++;
                   $numOficio     = substr(trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()),0,49);
                   $fechaOficio   = substr(trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()),0,15);
-                  $domicilio     = substr(trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()),0,4000);
-                  $referenciaUbi = substr(trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()),0,4000);
+                  $prioridad     = substr(trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()),0,19);
+                  $domicilio     = substr(trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()),0,4000);
+                  $referenciaUbi = substr(trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()),0,4000);
                   //
                   $result = $this->Modelo->insertNotificacionesTmp(
-                     $consecutivo,$usuario,$numOficio,$fechaOficio,$domicilio,$referenciaUbi);
+                     $consecutivo,$usuario,$numOficio,$fechaOficio,$prioridad,$domicilio,$referenciaUbi);
                   if(!$result[0]) {
                      $contadorProceso++;
                      $this->db->transRollback();

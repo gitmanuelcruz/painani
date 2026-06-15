@@ -10,18 +10,28 @@ const vmRegistro = (id_notificacion,tipo) => {
                <input type="hidden" id="vm_tipo" value="${tipo}">
                <input type="hidden" id="vm_contador_valid">
                <div class="row mb-2">                                     
-                  <div class="col-sm-6">
+                  <div class="col-sm-4">
                      <label class="form-label">Num. Oficio</label>
                      <input type="text" class="form-control" id="vm_num_oficio" name="vm_num_oficio" maxlength="49" 
                         style="height: 40px" required>
                      <div class="invalid-feedback">Num. Oficio requerido</div>
                   </div>
-                  <div class="col-sm-6">
+                  <div class="col-sm-4">
 							<label class="form-label">Fecha Oficio</label>
 							<input type="date" class="form-control" id="vm_fecha_oficio" name="vm_fecha_oficio" style="height: 40px;"
                         required value="${fAct.fecha2}">
                      <div class="invalid-feedback">Fecha oficio requerido</div>        
 						</div>
+                  <div class="col-sm-4">
+                     <label class="form-label">Prioridad</label>
+                     <div class="form-group" id="divPrioridad">
+                        <select class="form-control selectpicker" id="vm_id_prioridad" name="vm_id_prioridad" required
+                           onchange="validCombos(this.id,'divPrioridad')">
+                           <option value="">[Seleccione una opci&oacute;n]</option>'+
+                        </select>
+                        <div class="invalid-feedback">Prioridad requerido</div>
+							</div>
+                  </div>
                </div>
                <div class="row mb-2">   
                   <div class="col-sm-12">
@@ -51,6 +61,9 @@ const vmRegistro = (id_notificacion,tipo) => {
 
    modalLG('frmNotificaciones', titulo, html, 'formlg_scrollable', botones, 'cerrar_vm_registro()');
    $(".selectpicker").select2({dropdownParent: $("#vModalLG")});
+   if(tipo == 'N') {
+      cargaComboRegistro(true,null);
+   }
    //
    $("#bt_guardar").on("click", function () {
       validRegistro();
@@ -70,14 +83,48 @@ const cerrar_vm_registro = () => {
    recargaPaginadoPrincipal()
 }
 //!
+const cargaComboRegistro = (async,id_prioridad) => {
+	let tar,spin;
+   let contador = 0;
+	$.ajax({
+      type: 'post',
+      url: contexto+nameController+'/getComboRegistro',
+      async: async,
+      dataType: 'JSON',
+      beforeSend(xhr){
+         $('button[btn="btn"]').prop('disabled',true);
+         $("#overlayprincipal").show();
+         tar = document.getElementById('frmNotificaciones');
+         spin = new Spinner().spin(tar);
+      },
+      success: function (data) {
+         $("#vm_id_prioridad").html('<option value="">[Seleccione una opci&oacute;n]</option>');
+         $(data.prioridades).each(function(i, v) {
+            $("#vm_id_prioridad").append('<option value="'+v.id+'">'+v.descripcion+'</option>');
+         });
+      
+         if(id_prioridad != '' && id_prioridad != null) {
+            $("#vm_id_prioridad").val(id_prioridad);
+         }
+      },
+      complete(xhr, status) {
+         $('button[btn="btn"]').prop('disabled',false);
+         spin.stop();
+         $("#overlayprincipal").hide();
+      }
+   });
+}
+//!
 const limpiarFrmRegistro = () => {
    const fAct = fechaActual();
 	$("#frmRegistro").removeClass('frm-modal-reg was-validated').addClass('frm-modal-reg');
    $("#vm_contador_valid").val(0);
    $("#vm_num_oficio").val('');
 	$("#vm_fecha_oficio").val(fAct.fecha2);
+   $("#vm_id_prioridad").val('').trigger('change');
 	$("#vm_domicilio,#vm_referencia_ubicacion").val('');
-
+   $("#divPrioridad").removeClass('has-valid');
+	$("#divPrioridad").removeClass('has-error');
 }
 //!
 const validRegistro = () => {
@@ -89,12 +136,19 @@ const validRegistro = () => {
    Array.prototype.slice.call(forms)
    .forEach(function (form) {
       if (!form.checkValidity()) {
-         contador++; 
+         contador++;
+         if($("#vm_id_prioridad").val() == '') {
+				$("#divPrioridad").removeClass('has-valid').addClass('has-error');
+			}
+			else {
+				$("#divPrioridad").removeClass('has-error').addClass('has-valid');
+			}
       }
       form.classList.add('was-validated');
    });
    
    if(contador == 0) {
+      $("#divPrioridad").removeClass('has-error').addClass('has-valid');
       confirmarcionRegistro();
    }
 }

@@ -97,10 +97,17 @@ class PaquetesRegistro extends BaseController
 	}
 	// TODO: Proceso de registro o edicion
    public function getComboRegistro() {
-      $idPaquete   = $this->request->getPost("id_paquete");
       $result = array(
-         'userNotificadores'=> $this->Modelo->getNotificadores()->getResult(),
-         'listOficios'=> $this->Modelo->getListOficiosNotificacion($idPaquete)->getResult()
+         'userNotificadores'=> $this->Modelo->getNotificadores()->getResult()
+      );
+      return $this->response->setJSON($result);    
+   }
+   //
+   public function getListOficios() {
+      $idPaquete   = $this->request->getPost("id_paquete");
+      $fechaProgramada   = $this->request->getPost("fecha_programada");
+      $result = array(
+         'listOficios'=> $this->Modelo->getListOficiosNotificacion($idPaquete,$fechaProgramada)->getResult()
       );
       return $this->response->setJSON($result);    
    }

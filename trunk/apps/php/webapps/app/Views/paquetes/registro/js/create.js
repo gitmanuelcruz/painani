@@ -1,8 +1,10 @@
+let dlb2;
 const vmRegistro = (id_paquete,tipo) => {
 	let html = '';
    let botones = '';
    const titulo = (id_paquete == '') ? 'Registro de Paquete':'Edici&oacute;n del Paquete con ID &raquo; <span class="fw-bold">'+id_paquete+'</span>';
    const fAct = fechaActual();
+   const idPaq = (id_paquete == '') ? 0:id_paquete;
    //
    html +=  `<form method="post" class="app-form frm-modal-reg" id="frmRegistro" name="frmRegistro" novalidate onsubmit="return false">
                <input type="hidden" id="vm_id_paquete" name="vm_id_paquete" value="${id_paquete}">
@@ -12,7 +14,7 @@ const vmRegistro = (id_paquete,tipo) => {
                   <div class="col-sm-6">
 							<label class="form-label">Fecha Programaci&oacute;n</label>
 							<input type="date" class="form-control" id="vm_fecha_programada" name="vm_fecha_programada" style="height: 40px;"
-                        required value="${fAct.fecha2}">
+                        onchange="cargaListOficios(true,${idPaq},this.value)" required value="${fAct.fecha2}">
                      <div class="invalid-feedback">Fecha programada requerido</div>        
 						</div>
                </div>
@@ -56,7 +58,9 @@ const vmRegistro = (id_paquete,tipo) => {
    modalLG('frmPaquetes', titulo, html, 'formlg_scrollable', botones, 'cerrar_vm_registro()');
    $(".selectpicker").select2({dropdownParent: $("#vModalLG")});
    if(tipo == 'N') {
-      cargaComboRegistro(true,true,id_paquete,null);
+      cargaComboRegistro(true,null);
+      cargaListOficios(false,0,fAct.fecha2);
+      inicializarListado();
    }
    //
    $("#bt_guardar").on("click", function () {
@@ -77,51 +81,8 @@ const cerrar_vm_registro = () => {
    recargaPaginadoPrincipal()
 }
 //!
-function cargaComboRegistro(async,inicializar,pid_paquete,id_usuario_notificador) {
-	let tar,spin;
-   let contador = 0;
-	$.ajax({
-      type: 'post',
-      url: contexto+nameController+'/getComboRegistro',
-      async: async,
-      dataType: 'JSON',
-		data: {
-         id_paquete:pid_paquete
-      },
-      beforeSend(xhr){
-         $('button[btn="btn"]').prop('disabled',true);
-         $("#overlayprincipal").show();
-         tar = document.getElementById('frmPaquetes');
-         spin = new Spinner().spin(tar);
-      },
-      success: function (data) {
-         $("#vm_id_usuario_notificador").html('<option value="">[Seleccione una opci&oacute;n]</option>');
-         $(data.userNotificadores).each(function(i, v) {
-            $("#vm_id_usuario_notificador").append('<option value="'+v.id+'">'+v.descripcion+'</option>');
-         });
-
-         $(data.listOficios).each(function(i, v) {
-            $("#vm_listado").append('<option value="'+v.id+'" '+v.seleccion+'>'+v.descripcion+'</option>');
-         });
-      
-         if(id_usuario_notificador != '' && id_usuario_notificador != null) {
-            $("#vm_id_usuario_notificador").val(id_usuario_notificador);
-         }
-      },
-      complete(xhr, status) {
-         $('button[btn="btn"]').prop('disabled',false);
-         spin.stop();
-         $("#overlayprincipal").hide();
-         if(inicializar) {
-            comboListado();
-         }
-         $(".dual-listbox__selected").empty();
-      }
-   });
-}
-//!
-const comboListado = () => {
-   let dlb2 = new DualListbox(".selectList", {
+const inicializarListado = () => {
+   dlb2 = new DualListbox("#vm_listado",{
       availableTitle: "Oficios Dispobibles",
       selectedTitle: "Oficios Asignados",
       addButtonText: ">",
@@ -133,15 +94,99 @@ const comboListado = () => {
    });
 }
 //!
+const cargaComboRegistro = (async,id_usuario_notificador) => {
+	let tar,spin;
+   let contador = 0;
+	$.ajax({
+      type: 'post',
+      url: contexto+nameController+'/getComboRegistro',
+      async: async,
+      dataType: 'JSON',
+      beforeSend(xhr){
+         $('button[btn="btn"]').prop('disabled',true);
+         $("#overlayprincipal").show();
+         tar = document.getElementById('frmPaquetes');
+         spin = new Spinner().spin(tar);
+      },
+      success: function (data) {
+         $("#vm_id_usuario_notificador").html('<option value="">[Seleccione una opci&oacute;n]</option>');
+         $(data.userNotificadores).each(function(i, v) {
+            $("#vm_id_usuario_notificador").append('<option value="'+v.id+'">'+v.descripcion+'</option>');
+         });
+      
+         if(id_usuario_notificador != '' && id_usuario_notificador != null) {
+            $("#vm_id_usuario_notificador").val(id_usuario_notificador);
+         }
+      },
+      complete(xhr, status) {
+         $('button[btn="btn"]').prop('disabled',false);
+         spin.stop();
+         $("#overlayprincipal").hide();
+      }
+   });
+}
+//!
+const cargaListOficios = (async,pid_paquete,pfecha_programada) => {
+   if(pfecha_programada != '') {
+      let tar,spin;
+      $.ajax({
+         type: 'post',
+         url: contexto+nameController+'/getListOficios',
+         async: async,
+         dataType: 'JSON',
+         data: {
+            id_paquete:pid_paquete,
+            fecha_programada:pfecha_programada
+         },
+         beforeSend(xhr){
+            $('button[btn="btn"]').prop('disabled',true);
+            $("#overlayprincipal").show();
+            tar = document.getElementById('frmPaquetes');
+            spin = new Spinner().spin(tar);
+         },
+         success: function (data) {
+            let $select = $("#vm_listado");
+            $select.empty();
+            //
+            $(data.listOficios).each(function(i, v) {
+               let isSelected = (parseInt(v.apl_seleccion) > 0) ? 'selected':'';
+               $select.append('<option value="'+v.id+'" '+isSelected+'>'+v.descripcion+'</option>');
+            });
+            //
+            if (typeof dlb2 != 'undefined' && dlb2 != null) {
+               dlb2.options = Array.from($select[0].options); 
+               dlb2.redraw();
+            }
+         },
+         complete(xhr, status) {
+            $('button[btn="btn"]').prop('disabled',false);
+            spin.stop();
+            $("#overlayprincipal").hide();
+         }
+      });
+   }
+   else {
+       Swal.fire({
+			title: 'Validación',
+			html: '<p class="p-font-msg-1-2">Se requiere que seleccione la fecha de programaci&oacute;n</p>',
+			icon: 'warning',
+			showDenyButton: true,
+			denyButtonText: "Aceptar",
+			showConfirmButton: false
+		});
+   }
+}
+//!
 const limpiarFrmRegistro = () => {
    const pid_paquete = 0;
    const fAct = fechaActual();
 	$("#frmRegistro").removeClass('frm-modal-reg was-validated').addClass('frm-modal-reg');
    $("#vm_contador_valid").val(0);
 	$("#vm_fecha_programada").val(fAct.fecha2);
+   $("#vm_id_usuario_notificador").val('').trigger('change');
 	$("#divUserNotificador").removeClass("has-valid");
 	$("#divUserNotificador").removeClass("has-error");
-   cargaComboRegistro(false,false,pid_paquete,null);
+   cargaListOficios(false,0,fAct.fecha2);
 }
 //!
 const validRegistro = () => {
@@ -158,14 +203,14 @@ const validRegistro = () => {
 				$("#divUserNotificador").removeClass('has-valid').addClass('has-error');
 			}
 			else {
-				$("#divUserNotificador").removeClass('has-erro').addClass('has-valid');
+				$("#divUserNotificador").removeClass('has-error').addClass('has-valid');
 			}
       }
       form.classList.add('was-validated');
    });
    
    if(contador == 0) {
-      $("#divUserNotificador").removeClass('has-erro').addClass('has-valid');
+      $("#divUserNotificador").removeClass('has-error').addClass('has-valid');
       confirmarcionRegistro();
    }
 }
@@ -263,12 +308,12 @@ const guardarRegistro = () => {
                confirmButtonText: 'Aceptar',
             }).then((result) => {
                if (result.isConfirmed) {
-                  //if($("#vm_tipo").val() == 'E') {
+                  if($("#vm_tipo").val() == 'E') {
                      cerrar_vm_registro();
-                  /*}
+                  }
                   else {
                      limpiarFrmRegistro();
-                  }*/
+                  }
                }
             });
          }

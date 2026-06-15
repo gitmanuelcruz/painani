@@ -36,11 +36,11 @@ const loadPaquetesPag = () => {
 	table.setTablaHTML("gridPaquetes");
 	table.setUrl(contexto+nameController+"/paquetesPag");
 	table.setRegistrosPagina(10);
-	table.setColumnas("id_paquete,notificador,fprogramada,fapertura,fcierre,total_notificaciones,total_notificado,total_no_localizado,total_cancelado,band");
-	table.setColTipos("text,text,text,text,text,numeroSD,numeroSD,numeroSD,numeroSD,dropdown");
-	table.setAlineacion("left,left,center,center,center,center,center,center,center,center");
+	table.setColumnas("id_paquete,notificador,fprogramada,fapertura,fcierre,total_notificaciones,total_notificado,total_no_localizado,band");
+	table.setColTipos("text,text,text,text,text,numeroSD,numeroSD,numeroSD,dropdown");
+	table.setAlineacion("left,left,center,center,center,center,center,center,center");
 	let dropdown = {
-      "col10": {
+      "col9": {
          "opciones": [
             {"etiqueta":"", "titulo": "Opc. Paquete", "icono": "fa-solid fa-list-ul fa-lg", "tooltip": "Lista de opciones", "tipoicono": "i",
                "menu":[
@@ -106,7 +106,9 @@ const validCombos = (id,id2) => {
 const editarPaquete = (reg) =>{
    vmRegistro(reg.id_paquete,'E');
    $("#vm_fecha_programada").val(reg.fecha_programada);
-   cargaComboRegistro(true,reg.id_paquete,reg.id_notificador);
+   cargaComboRegistro(true,reg.id_notificador);
+   cargaListOficios(false,reg.id_paquete,reg.fecha_programada);
+   inicializarListado();
 }
 // TODO: Proceso de cancelacion
 const eliminarPaquete = (reg) => {

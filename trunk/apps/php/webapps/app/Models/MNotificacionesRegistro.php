@@ -13,13 +13,23 @@ class MNotificacionesRegistro extends Model
 					ntf.id_notificacion,
 					ntf.num_oficio,
 					(CASE WHEN pno.id_paquete_notificacion IS NOT NULL
-						THEN CONCAT(ntf.num_oficio,'<br><span class=''badge bg-light-info text-info fs-1 fw-bold''>No. Paquete &raquo; ',pno.id_paquete,'</span>')
+						THEN CONCAT(ntf.num_oficio,'<br><span class=''badge bg-light-primary text-primary fs-1 fw-bold''>No. Paquete &raquo; ',pno.id_paquete,'</span>')
 						ELSE ntf.num_oficio
 					END) AS desc_num_oficio,
 					pno.id_paquete,
 					pno.id_paquete_notificacion,
 					ntf.fecha_oficio,
 					TO_CHAR(ntf.fecha_oficio,'dd/mm/yyyy') AS foficio,
+					ntf.id_prioridad,
+					pri.nombre_prioridad,
+					(CASE WHEN ntf.id_prioridad = 'NIVEL_A'
+						THEN CONCAT(TO_CHAR(ntf.fecha_oficio,'dd/mm/yyyy'),'<br><span class=''badge bg-light-danger fs-1 fw-bold''>Prioridad &raquo; ',pri.nombre_prioridad,'</span>')
+						WHEN ntf.id_prioridad = 'NIVEL_B'
+						THEN CONCAT(TO_CHAR(ntf.fecha_oficio,'dd/mm/yyyy'),'<br><span class=''badge bg-light-warning fs-1 fw-bold''>Prioridad &raquo; ',pri.nombre_prioridad,'</span>')
+						WHEN ntf.id_prioridad = 'NIVEL_C'
+						THEN CONCAT(TO_CHAR(ntf.fecha_oficio,'dd/mm/yyyy'),'<br><span class=''badge bg-light-info fs-1 fw-bold''>Prioridad &raquo; ',pri.nombre_prioridad,'</span>')
+						ELSE TO_CHAR(ntf.fecha_oficio,'dd/mm/yyyy')
+					END) AS desc_fofico,
 					ntf.domicilio AS domicilio,
 					ntf.referencia_ubicacion AS referencia_ubicacion,
 					ntf.fecha_hora_notificado,
@@ -40,6 +50,7 @@ class MNotificacionesRegistro extends Model
 					'#66bb6a' AS color_green,
 					'#ea4335' AS color_red
 				FROM notificaciones ntf 
+				INNER JOIN prioridades pri ON ntf.id_prioridad = pri.id_prioridad
 				INNER JOIN estatus_notificacion eno ON ntf.id_estatus_notificacion = eno.id_estatus_notificacion
 				LEFT JOIN (
 					SELECT
@@ -83,16 +94,28 @@ class MNotificacionesRegistro extends Model
 		return $this->db->query($sql,[trim($num_oficio)]);
 	}
 	//
-	public function insertNotificacion($num_oficio,$fecha_oficio,$domicilio,$referencia_ubicacion,$id_estatus,$usuario,$ip) {
+	public function getPrioridades() {
+		$sql ="SELECT
+					id_prioridad AS id,
+					nombre_prioridad AS descripcion
+				FROM prioridades 
+				ORDER BY num_orden";
+			
+		return $this->db->query($sql);
+	}
+	//
+	public function insertNotificacion(
+		$num_oficio,$fecha_oficio,$id_prioridad,$domicilio,$referencia_ubicacion,$id_estatus,$usuario,$ip) {
 		$sql ="INSERT INTO notificaciones
-						(num_oficio,fecha_oficio,domicilio,referencia_ubicacion,id_estatus_notificacion,
+						(num_oficio,fecha_oficio,id_prioridad,domicilio,referencia_ubicacion,id_estatus_notificacion,
 						creado_por,ip_registro)
 					VALUES
-						(?,TO_DATE(?,'yyyy-mm-dd'),UPPER(?),UPPER(?),?,TRIM(?),TRIM(?)) 
+						(?,TO_DATE(?,'yyyy-mm-dd'),?,UPPER(?),UPPER(?),?,TRIM(?),TRIM(?)) 
 					RETURNING id_notificacion";
 
 		$result = $this->db->query($sql,[
-			trim($num_oficio),$fecha_oficio,trim($domicilio),trim($referencia_ubicacion),$id_estatus,$usuario,$ip])->getResultArray();
+			trim($num_oficio),$fecha_oficio,$id_prioridad,trim($domicilio),trim($referencia_ubicacion),
+			$id_estatus,$usuario,$ip])->getResultArray();
 		$id = $result[0]["id_notificacion"];
 		if ($this->db->transStatus()) {
 			return array(true, 'El proceso se ha realizado correctamente', $id);
@@ -102,10 +125,12 @@ class MNotificacionesRegistro extends Model
 		}
 	}
 	//
-	public function updateNotificacion($id_notificacion,$num_oficio,$fecha_oficio,$domicilio,$referencia_ubicacion,$usuario,$ip) {
+	public function updateNotificacion(
+		$id_notificacion,$num_oficio,$fecha_oficio,$id_prioridad,$domicilio,$referencia_ubicacion,$usuario,$ip) {
 		$sql ="UPDATE notificaciones SET 
 					num_oficio = ?,
 					fecha_oficio = TO_DATE(?,'yyyy-mm-dd'),
+					id_prioridad = ?,
 					domicilio = UPPER(?),
 					referencia_ubicacion = UPPER(?),
 					fecha_ultimo_cambio = CURRENT_TIMESTAMP,
@@ -114,7 +139,8 @@ class MNotificacionesRegistro extends Model
 			   WHERE id_notificacion = ? ";
 
 		$this->db->query($sql,[
-			trim($num_oficio),$fecha_oficio,trim($domicilio),trim($referencia_ubicacion),$usuario,$ip,$id_notificacion]);
+			trim($num_oficio),$fecha_oficio,$id_prioridad,trim($domicilio),trim($referencia_ubicacion),$usuario,
+			$ip,$id_notificacion]);
 		if ($this->db->transStatus()) {
 			return array(true, 'El proceso se ha realizado correctamente',$id_notificacion);
 		}
@@ -135,14 +161,16 @@ class MNotificacionesRegistro extends Model
    }
    //
    public function insertNotificacionesTmp(
-      $consecutivo,$usuario,$num_oficio,$fecha_oficio,$domicilio,$referencia_ubicacion) {
+      $consecutivo,$usuario,$num_oficio,$fecha_oficio,$prioridad,$domicilio,$referencia_ubicacion) {
       $sql ="INSERT INTO notificaciones_tmp
-                  (id_notificacion_tmp,consecutivo,usuario,num_oficio,fecha_oficio,domicilio,referencia_ubicacion)
+                  (id_notificacion_tmp,consecutivo,usuario,num_oficio,fecha_oficio,prioridad,
+						domicilio,referencia_ubicacion)
                VALUES
-                  (NEXTVAL('seq_notificaciones_tmp'),?,?,?,?,?,?)";
+                  (NEXTVAL('seq_notificaciones_tmp'),?,?,?,?,?,?,?)";
 
       $this->db->query($sql,[
-         $consecutivo,$usuario,trim($num_oficio),trim($fecha_oficio),trim($domicilio),trim($referencia_ubicacion)]);
+         $consecutivo,$usuario,trim($num_oficio),trim($fecha_oficio),$prioridad,trim($domicilio),
+			trim($referencia_ubicacion)]);
       if($this->db->transStatus()) {
          return array(true,'El proceso se ha realizado correctamente');
       }

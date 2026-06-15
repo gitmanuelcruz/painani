@@ -11,12 +11,13 @@ const detalle = (reg) => {
                         <li class="list-group-item d-flex justify-content-between align-items-start">
                            <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Num. Oficio</div>&nbsp;&nbsp;&nbsp;${reg.num_oficio}</div>
                            <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Fecha Oficio</div>&nbsp;&nbsp;&nbsp;${reg.foficio}</div>
+                           <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Prioridad</div>&nbsp;&nbsp;&nbsp;${reg.nombre_prioridad.toUpperCase()}</div>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-start">
-                           <div class="ms-2 me-auto col-sm-12"><div class="fw-bold">- Domicilio</div>&nbsp;&nbsp;&nbsp;${reg.domicilio}</div>
+                           <div class="ms-2 me-auto col-sm-12"><div class="fw-bold">- Domicilio</div>&nbsp;&nbsp;&nbsp;${reg.domicilio.toUpperCase()}</div>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-start">
-                           <div class="ms-2 me-auto col-sm-12"><div class="fw-bold">- Referencia de Ubicaci&oacute;n</div>&nbsp;&nbsp;&nbsp;${reg.referencia_ubicacion}</div>
+                           <div class="ms-2 me-auto col-sm-12"><div class="fw-bold">- Referencia de Ubicaci&oacute;n</div>&nbsp;&nbsp;&nbsp;${reg.referencia_ubicacion.toUpperCase()}</div>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-start">
                            <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Estatus</div>&nbsp;&nbsp;&nbsp;${reg.nombre_estatus_notificacion.toUpperCase()}</div>`;

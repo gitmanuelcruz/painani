@@ -37,8 +37,8 @@ const loadNotificacionesPag = () => {
 	table.setTablaHTML("gridNotificaciones");
 	table.setUrl(contexto+nameController+"/notificacionesPag");
 	table.setRegistrosPagina(10);
-	table.setColumnas("desc_num_oficio,foficio,domicilio,referencia_ubicacion,desc_estatus,band");
-	table.setColTipos("textHTML,text,text,text,textHTML,dropdown");
+	table.setColumnas("desc_num_oficio,desc_fofico,domicilio,referencia_ubicacion,desc_estatus,band");
+	table.setColTipos("textHTML,textHTML,text,text,textHTML,dropdown");
 	table.setAlineacion("left,center,left,left,center,center");
 	let dropdown = {
       "col6": {
@@ -97,6 +97,7 @@ const validCombos = (id,id2) => {
 // TODO: Proceso de edicion
 const editarNotificacion = (reg) =>{
    vmRegistro(reg.id_notificacion,'E');
+   cargaComboRegistro(false,reg.id_prioridad);
    $("#vm_num_oficio").val(reg.num_oficio);
    $("#vm_fecha_oficio").val(reg.fecha_oficio);
    $("#vm_domicilio").val(reg.domicilio);
