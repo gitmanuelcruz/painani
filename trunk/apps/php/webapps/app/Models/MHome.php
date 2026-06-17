@@ -202,20 +202,17 @@ class MHome
    // TODO: Proceso de cambiar contraseña
    public function actualizaPassword($id_usuario,$contrasenia,$usuario_session,$ip) {
       $sql ="UPDATE usuarios SET
-                     contrasenia = TRIM(?),
-                     fecha_ultimo_cambio = CURRENT_TIMESTAMP,
-                     modificado_por = TRIM(?),
-                     ip_modifico = TRIM(?)
+                  contrasenia = TRIM(?),
+                  fecha_ultimo_cambio = CURRENT_TIMESTAMP,
+                  modificado_por = TRIM(?),
+                  ip_modifico = TRIM(?)
             WHERE parse_text(id_usuario) = parse_text(?)";
 
-      $this->db->transBegin();
       $this->db->query($sql,[$contrasenia,$usuario_session,$ip,$id_usuario]);
       if($this->db->transStatus()) {
-         $this->db->transCommit();
          return array(true);
       }
       else {
-         $this->db->transRollback();
          return array(false);
       }
    }

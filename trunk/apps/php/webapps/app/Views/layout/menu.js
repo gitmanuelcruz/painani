@@ -29,7 +29,7 @@ socket.on("exitSession",async(data) => {
    }
 });
 //!
-function loadMenu(){
+const loadMenu = () =>{
    let vmenu = '';
    let menu = '';
 	$.ajax({
@@ -48,7 +48,7 @@ function loadMenu(){
 	});
 }
 //!
-function minimizarMenu() {
+const minimizarMenu = () => {
    var closeCollaps = document.querySelectorAll('.main-nav li a[colapsar="colapsar"]');
    closeCollaps.forEach(function (element) {
       element.addEventListener('click', function () {
@@ -73,21 +73,21 @@ const cambioPassword = () => {
    let botones = '';
 	let titulo = 'Cambio de Contrase&ntilde;a';
    //
-   html +=  `<form method="post" class="frm-modal-password" id="frmodalpass" name="frmodalpass" novalidate onsubmit="return false">
-               <div class="row app-form">
+   html +=  `<form method="post" class="app-form frm-modal-password" id="frmodalpass" name="frmodalpass" novalidate onsubmit="return false">
+               <div class="row">
             	   <div class="col-sm-12">
             		   <div class="card-body">
-                    	   <p class="lead text-center text-primary fw-bold">Est&aacute; a solo un paso de su nueva contrase&ntilde;a</p>
+                    	   <p class="lead text-center text-info fw-bold">Est&aacute; a solo un paso de su nueva contrase&ntilde;a</p>
 							   <hr style="margin-top:0">
-                        <div class="row">
+                        <div class="row mb-2">
                     	      <div class="col-sm-12">
 				        		      <label class="form-label">Nueva Contrase&ntilde;a</label>
                               <div class="input-group">
-                                 <input type="password" class="form-control" id="passnvo" name="passnvo" maxlength="20" required>
-                                 <button type="button" class="btn btn-info tooltip_icon_cpassword" data-bs-toggle="tooltip" data-bs-html="true"
+                                 <input type="password" class="form-control p-font-msg" id="passnvo" name="passnvo" maxlength="30" style="height:40px;" required>
+                                 <span class="input-group-text bg-light-info b-1-info tooltip_icon_cpassword" data-bs-toggle="tooltip" data-bs-html="true"
                                     data-bs-placement="top" data-bs-title="Ver Contrase&ntilde;a" onclick="viewPass(1)">
                                     <i class="fa-solid fa-eye-slash" id="npass"></i>
-                                 </button>
+                                 </span>
                                  <div class="invalid-feedback">Nueva contrase&ntilde;a requerido</div>
                               </div>
                            </div>
@@ -96,11 +96,11 @@ const cambioPassword = () => {
                            <div class="col-sm-12">
                               <label class="form-label">Confirmar Nueva Contrase&ntilde;a</label>
                               <div class="input-group">
-                                 <input type="password" class="form-control" id="passconfnvo" name="passconfnvo" maxlength="20" required>
-                                 <button type="button" class="btn btn-info tooltip_icon_cpassword" data-bs-toggle="tooltip" data-bs-html="true"
+                                 <input type="password" class="form-control p-font-msg" id="passconfnvo" name="passconfnvo" maxlength="30" style="height:40px;" required>
+                                 <span class="input-group-text bg-light-info b-1-info tooltip_icon_cpassword" data-bs-toggle="tooltip" data-bs-html="true"
                                     data-bs-placement="top" data-bs-title="Ver Contrase&ntilde;a" onclick="viewPass(2)">
                                     <i class="fa-solid fa-eye-slash" id="cnpass"></i>
-                                 </button>
+                                 </span>
                                  <div class="invalid-feedback">Confirmar nueva contrase&ntilde;a requerido</div>
                               </div>
                            </div>
@@ -110,7 +110,7 @@ const cambioPassword = () => {
                </div>
             </form>`;
 
-   botones +=  `<button type="button" class="btn btn-primary me-1" btn="btn" id="bt_guardar_cam_pass">
+   botones +=  `<button type="button" class="btn btn-info me-1" btn="btn" id="bt_guardar_cam_pass">
                   <i class="fa-solid fa-floppy-disk me-2"></i>Guardar
                </button>`;
    botones +=  `<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn">
@@ -187,19 +187,22 @@ const confirmacionPass = () => {
    if (validacion.length > 0) {
       Swal.fire({
          title: 'Dato Requerido',
-         html: "<ul class='p-font-msg-1-2 text-dark'>"+validacion+"</ul>",
+         html: "<ul class='p-font-msg-1-2'>"+validacion+"</ul>",
          icon: 'warning',
-         showDenyButton: true,
-         denyButtonText: "aceptar",
-         showConfirmButton: false
+         showDenyButton: false,
+         showCancelButton: false,
+         confirmButtonColor: '#3085d6',
+         confirmButtonText: "Aceptar"
       });
    }
    else {
       Swal.fire({
          title: 'Confirmaci&oacute;n',
-         html: '<p class="p-font-msg-1-2 text-dark">\u{BF}Confirma aplicar el cambio de Contrase&ntilde;a?</p>',
+         html: '<p class="p-font-msg-1-2">\u{BF}Confirma aplicar el cambio de Contrase&ntilde;a?</p>',
          icon: 'warning',
          showCancelButton: true,
+         cancelButtonColor: '#d33',
+         confirmButtonColor: '#3085d6',
          cancelButtonText: 'Cancelar',
          confirmButtonText: 'Si, confirmar',
       }).then((result) => {
@@ -226,7 +229,7 @@ const guardarCambioPass = () => {
       beforeSend(xhr) {
          $('button[btn="btn"]').prop('disabled', true);
          $("#overlayprincipal").show();
-         $("#bt_guardar_cam_pass").html('<i class="fa fa-sync fa-spin me-2"></i>Guardar Cambio');
+         $("#bt_guardar_cam_pass").html('<i class="fa fa-sync fa-spin me-2"></i>Guardar');
          targetPrincipal = document.getElementById('frmprincipal');
          spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
@@ -244,12 +247,14 @@ const guardarCambioPass = () => {
          else {
             Swal.fire({
                title: '¡ P r o c e s o &nbsp;&nbsp; E x i t o s o !',
-               html: '<p class="p-font-msg-1-2 text-dark">'+data.mensaje+'</p>',
+               html: '<p class="p-font-msg-1-2">'+data.mensaje+'</p>',
                icon: 'success',
                showCancelButton: false,
                allowOutsideClick: false,
                allowEscapeKey: false,
                allowEnterKey: false,
+               cancelButtonColor: '#d33',
+               confirmButtonColor: '#3085d6',
                confirmButtonText: 'Aceptar',
             }).then((result) => {
                if (result.isConfirmed) {
@@ -270,7 +275,7 @@ const guardarCambioPass = () => {
       },
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled',false);
-         $("#bt_guardar_cam_pass").html('<i class="fa-solid fa-floppy-disk me-2"></i>Guardar Cambio');
+         $("#bt_guardar_cam_pass").html('<i class="fa-solid fa-floppy-disk me-2"></i>Guardar');
          spinnerPrincipal.stop();
          $("#overlayprincipal").hide();
       }

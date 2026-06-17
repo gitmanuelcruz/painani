@@ -119,12 +119,15 @@ class Home extends BaseController
          $passwordNew = $this->request->getPost("password");
          $usuarioSession = $this->session->get("usuario");
          $ip = $this->session->get("ip");
-
+         $this->db->transBegin();
+         //
          $result = $this->Modelo->actualizaPassword($id_usuario,$passwordNew,$usuarioSession,$ip);
          if($result[0]) {
+            $this->db->transCommit();
             $response = array('respuesta' => true, 'mensaje' => 'El proceso se ha realizado correctamente');
          }
          else {
+            $this->db->transRollback();
             $response = array('respuesta' => false, 'mensaje' => 'ERROR AL ACTUALIZAR LA CONSTRASE&Ntilde;A');
          }
       }
