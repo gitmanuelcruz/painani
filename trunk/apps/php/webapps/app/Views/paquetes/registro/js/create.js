@@ -83,13 +83,13 @@ const cerrar_vm_registro = () => {
 //!
 const inicializarListado = () => {
    dlb2 = new DualListbox("#vm_listado",{
-      availableTitle: "Oficios Dispobibles",
-      selectedTitle: "Oficios Asignados",
+      availableTitle: "Num. Orden Dispobibles",
+      selectedTitle: "Num. Orden Asignados",
       addButtonText: ">",
       removeButtonText: "<",
       addAllButtonText: ">>",
       removeAllButtonText: "<<",
-      searchPlaceholder: "Num. Oficio",
+      searchPlaceholder: "Num. Orden",
       enableDoubleClick: false
    });
 }
@@ -220,7 +220,7 @@ const validacionRegistro = () => {
    const totalSeleccionados = $("#vm_listado option:selected").length;
 
    if (totalSeleccionados == 0) {
-      msg += `<li>Se requiere que se asigne n&uacute;mero de oficio</li>`;
+      msg += `<li>Se requiere que se asigne n&uacute;mero de orden</li>`;
    }
 
    return msg;

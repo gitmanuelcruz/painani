@@ -32,11 +32,11 @@
 						<form method="post" class="app-form" id="frmNotificaciones" name="frmNotificaciones" onsubmit="return false">
 							<div class="row">
 								<div class="col-sm-3">
-									<label class="form-label">ID / Num. Oficio</label>
+									<label class="form-label">ID / Num. Orden</label>
 									<input type="text" class="form-control" id="txt_id_num_oficio" name="txt_id_num_oficio" style="height: 40px;">
 								</div>
 								<div class="col-sm-3">
-									<label class="form-label">Fecha Oficio</label>
+									<label class="form-label">Fecha Orden</label>
 									<input type="date" class="form-control" id="txt_fecha_oficio" name="txt_fecha_oficio" style="height: 40px;">
 								</div>							
 								<div class="col-sm-3">
@@ -83,8 +83,8 @@
 			<table class="table table-striped table-hover" id="gridNotificaciones" style="width: 100%;">
 				<thead class="table-dark">
 					<tr class="p-font-msg-09">
-						<th width="10%" class="text-start">Num. Oficio</th>
-						<th width="13%" class="text-center">Fecha Oficio</th>
+						<th width="10%" class="text-start">Num. Orden</th>
+						<th width="13%" class="text-center">Fecha Orden</th>
 						<th width="25%" class="text-start">Domicilio</th>
 						<th width="25%" class="text-start">Referencia</th>
 						<th width="10%" class="text-center">Estatus</th>

@@ -119,10 +119,10 @@ class NotificacionesRegistro extends BaseController
          }
          else {
             if((int)$bandEstatus == 0) {
-               $result = array(false,"El n&uacute;mero de oficio (<b>".$numOficio."</b>) ya se encuentra registrado",1);
+               $result = array(false,"El n&uacute;mero de orden (<b>".$numOficio."</b>) ya se encuentra registrado",1);
             }
             else {
-               $result = array(false,"El n&uacute;mero de oficio (<b>".$numOficio."</b>) ya se encuentra asignado a un paquete, ya no se puede modificar",1);
+               $result = array(false,"El n&uacute;mero de orden (<b>".$numOficio."</b>) ya se encuentra asignado a un paquete, ya no se puede modificar",1);
             }
          }
          //
@@ -140,8 +140,8 @@ class NotificacionesRegistro extends BaseController
    }
    // TODO: Proceso de carga de layout de notificaciones (oficios)
    public function descargarFormatoLayout(){
-      $filename = "FORMATO_LAYOUT_OFICIOS.xlsx";
-      $file = $this->utilerias->urlFiles().'formato_layout_oficios/'.$filename;
+      $filename = "FORMATO_LAYOUT_NUM_ORDEN.xlsx";
+      $file = $this->utilerias->urlFiles().'formato_layout_num_orden/'.$filename;
       $extension = mb_strtolower($this->utilerias->getFileExtension($file), 'UTF-8');
       header("Content-disposition: attachment; filename=".$filename."");
       header("Content-type: application/".$extension."");
@@ -287,7 +287,7 @@ class NotificacionesRegistro extends BaseController
             $result = $this->Modelo->updateCancelacion($idNotificacion,$estatus,$usuario,$ip);
          }
          else {
-            $result = array(false,"El n&uacute;mero de oficio (<b>".$numOficio."</b>) ya se encuentra asignado a un paquete, ya no se puede <b class='text-danger'>CANCELAR</b>",1);
+            $result = array(false,"El n&uacute;mero de orden (<b>".$numOficio."</b>) ya se encuentra asignado a un paquete, ya no se puede <b class='text-danger'>CANCELAR</b>",1);
          }
          //
          if ($result[0]) {

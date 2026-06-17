@@ -11,16 +11,16 @@ const vmRegistro = (id_notificacion,tipo) => {
                <input type="hidden" id="vm_contador_valid">
                <div class="row mb-2">                                     
                   <div class="col-sm-4">
-                     <label class="form-label">Num. Oficio</label>
+                     <label class="form-label">Num. Orden</label>
                      <input type="text" class="form-control" id="vm_num_oficio" name="vm_num_oficio" maxlength="49" 
                         style="height: 40px" required>
-                     <div class="invalid-feedback">Num. Oficio requerido</div>
+                     <div class="invalid-feedback">Num. Orden requerido</div>
                   </div>
                   <div class="col-sm-4">
-							<label class="form-label">Fecha Oficio</label>
+							<label class="form-label">Fecha Orden</label>
 							<input type="date" class="form-control" id="vm_fecha_oficio" name="vm_fecha_oficio" style="height: 40px;"
                         required value="${fAct.fecha2}">
-                     <div class="invalid-feedback">Fecha oficio requerido</div>        
+                     <div class="invalid-feedback">Fecha orden requerido</div>        
 						</div>
                   <div class="col-sm-4">
                      <label class="form-label">Prioridad</label>
@@ -163,7 +163,7 @@ const validacionRegistro = () => {
 		function (data) {
 			existeOficio = parseInt(data.total);
 			if(existeOficio > 0){
-				msg += `<li>El n&uacute;mero de oficio (<b>${numOficio}</b>) ya se encuentra registrado</li>`;
+				msg += `<li>El n&uacute;mero de orden (<b>${numOficio}</b>) ya se encuentra registrado</li>`;
 			}
 		});
 	}

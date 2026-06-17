@@ -106,7 +106,7 @@ const editarNotificacion = (reg) =>{
 // TODO: Proceso de cancelacion
 const cancelarNotificacion = (reg) => {
    $('.tooltip_icon_pag').tooltip('hide');
-   let titulo =   `Confirma <span class="fw-bold text-danger">CANCELAR</span> la notificaci&oacute;n con el Num. Oficio
+   let titulo =   `Confirma <span class="fw-bold text-danger">CANCELAR</span> la notificaci&oacute;n con el Num. Orden
                   <span class="fw-bold">${reg.num_oficio}</span>`;
    Swal.fire({
       title: 'Confirmaci&oacute;n',

@@ -8,8 +8,8 @@ const vm_carga_layout = () => {
                      <h5><i class="fa-solid fa-info-circle me-2"></i>Formato del Archivo</h5>
                      <p class="mb-2 text-dark">El archivo debe contener las siguientes columnas en este orden:</p>
                      <ol class="mb-2">
-                        <li class="text-dark"><span class="fw-bold">Num. Oficio:</span> El n&uacute;mero de oficio debe ser unico (<b>NO debe existir en la plataforma</b>)</li>
-                        <li class="text-dark"><span class="fw-bold">Fecha del Oficio:</span> La fecha del oficio debe llevar este formato <b>"dd-mm-yyyy"</b></li>
+                        <li class="text-dark"><span class="fw-bold">Num. Orden:</span> El n&uacute;mero de orden debe ser unico (<b>NO debe existir en la plataforma</b>)</li>
+                        <li class="text-dark"><span class="fw-bold">Fecha Num. Orden:</span> La fecha del n&uacute;mero de orden debe llevar el siguiente formato <b>"dd-mm-yyyy"</b></li>
                         <li class="text-dark"><span class="fw-bold">Prioridad:</span> Es la prioridad del n&uacute;mero de oficio</li>
                         <li class="text-dark"><span class="fw-bold">Domicilio:</span> Es el domicilio donde se notificar&aacute;</li>
                         <li class="text-dark"><span class="fw-bold">Referencia Ubicaci&oacute;n:</span> Es la referencia de la ubicaci&oacute;n a notificar</li>
@@ -31,10 +31,10 @@ const vm_carga_layout = () => {
             <form method="post" class="app-form frm-modal-rlc" id="frmRegLayout" name="frmRegLayout" novalidate onsubmit="return false">
                <div class="row mb-2">
                   <div class="col-sm-12">
-                     <label class="form-label">Layout de Oficios</label>
+                     <label class="form-label">Layout de Num. Orden</label>
                      <input type="file" class="form-control" id="vm_archivo_layout" name="vm_archivo_layout"
                         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required/>
-                     <div class="invalid-feedback">Layout de oficios requerido</div>
+                     <div class="invalid-feedback">Layout de Num. Orden requerido</div>
             		</div>
                </div>
             </form>
@@ -235,7 +235,7 @@ const guardarLayout = () => {
 const vmObservacionesLayout = (usuario) => {
    let html = '';
    let botones = '';
-   const titulo = 'Observaciones de la Carga del Layout de Oficios';
+   const titulo = 'Observaciones de la Carga del Layout de Num. Orden';
    $("#overlay2").show();
    //
    html +=  `<input type="hidden" id="hid_user_reg" value="${usuario}"/>

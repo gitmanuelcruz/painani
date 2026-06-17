@@ -33,8 +33,8 @@ const detalle = (reg) => {
                            <table class="table table-sm table-striped table-hover" id="gridNotifAsignadas" style="width: 100%;">
                               <thead class="table-secondary">
                                  <tr class="p-font-msg-08">
-                                    <th width="10%" class="text-start">Num. Oficio</th>
-                                    <th width="13%" class="text-center">Fecha Oficio</th>
+                                    <th width="10%" class="text-start">Num. Orden</th>
+                                    <th width="13%" class="text-center">Fecha Orden</th>
                                     <th width="20%" class="text-start">Domicilio</th>
                                     <th width="10%" class="text-center">Estatus</th>
                                     <th width="5%"  class="text-center"></th>
@@ -97,7 +97,7 @@ function soportesNotificacion(reg) {
                      <blockquote class="blockquote">
                         <p class="p-font-weight-500 p-font-msg-09">${reg.num_oficio}</p>
                      </blockquote>
-                     <figcaption class="blockquote-footer fw-bold">Num. Oficio</figcaption>
+                     <figcaption class="blockquote-footer fw-bold">Num. Orden</figcaption>
                   </figure>
                </div>
                <div class="col-sm-9">

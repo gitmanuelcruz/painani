@@ -32,7 +32,7 @@
 						<form method="post" class="app-form" id="frmPaquetes" name="frmPaquetes" onsubmit="return false">
 							<div class="row mb-2">
 								<div class="col-sm-3">
-									<label class="form-label">ID / Num. Oficio</label>
+									<label class="form-label">ID / Num. Orden</label>
 									<input type="text" class="form-control" id="txt_id_num_oficio" name="txt_id_num_oficio" style="height: 40px;">
 								</div>
 								<div class="col-sm-3">
@@ -90,7 +90,7 @@
 						<th width="13%" class="text-center" rowspan="3">Fecha Programada</th>
 						<th width="13%" class="text-center" rowspan="3">Fecha Apertura</th>
 						<th width="13%" class="text-center" rowspan="3">Fecha Cierre</th>
-						<th width="20%" class="text-center" colspan="3">OFICIOS<hr class="mb-0 mt-0 text-white"></th>
+						<th width="20%" class="text-center" colspan="3">NUM. ORDENES<hr class="mb-0 mt-0 text-white"></th>
 						<th width="1%"  class="text-center" rowspan="3">Acciones</th>
 					</tr>
 					<tr class="p-font-msg-09">
