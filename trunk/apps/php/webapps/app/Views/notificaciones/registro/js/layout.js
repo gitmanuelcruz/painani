@@ -9,8 +9,8 @@ const vm_carga_layout = () => {
                      <p class="mb-2 text-dark">El archivo debe contener las siguientes columnas en este orden:</p>
                      <ol class="mb-2">
                         <li class="text-dark"><span class="fw-bold">Num. Orden:</span> El n&uacute;mero de orden debe ser unico (<b>NO debe existir en la plataforma</b>)</li>
-                        <li class="text-dark"><span class="fw-bold">Fecha Num. Orden:</span> La fecha del n&uacute;mero de orden debe llevar el siguiente formato <b>"dd-mm-yyyy"</b></li>
-                        <li class="text-dark"><span class="fw-bold">Prioridad:</span> Es la prioridad del n&uacute;mero de oficio</li>
+                        <li class="text-dark"><span class="fw-bold">Fecha Orden:</span> La fecha de orden debe llevar el siguiente formato (<b>dd-mm-yyyy</b>)</li>
+                        <li class="text-dark"><span class="fw-bold">Prioridad:</span> Es la prioridad del n&uacute;mero de orden</li>
                         <li class="text-dark"><span class="fw-bold">Domicilio:</span> Es el domicilio donde se notificar&aacute;</li>
                         <li class="text-dark"><span class="fw-bold">Referencia Ubicaci&oacute;n:</span> Es la referencia de la ubicaci&oacute;n a notificar</li>
                      </ol>

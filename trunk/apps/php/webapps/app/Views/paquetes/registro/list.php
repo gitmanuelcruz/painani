@@ -64,7 +64,7 @@
 								<?php
 									if($btn_inf_excel) {
 										echo '<button type="button" class="btn btn-success btn-sm" btn="btn" id="btn_inf_detalle_notif">
-													<i class="fa-solid fa-file-excel me-2"></i>Inf. Notificaciones
+													<i class="fa-solid fa-file-excel me-2"></i>Inf. Num. Ordenes
 												</button>';
 									}
 								?>
