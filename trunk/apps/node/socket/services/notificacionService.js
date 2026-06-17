@@ -114,6 +114,7 @@ const cerrarRutaNotificacion = async (usuario, idPaquete) => {
 const setMarcarOficioNotificado = async (usuario, idNotificacion,idStatus) => {
   const sql = `UPDATE notificaciones SET fecha_hora_notificado = now(),
                     modificado_por = $1,
+                    notificado_por = $1,
                     id_estatus_notificacion=$2
                 WHERE id_notificacion = $3`;
 
