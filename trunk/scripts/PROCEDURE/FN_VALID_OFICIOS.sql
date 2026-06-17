@@ -9,12 +9,12 @@ DECLARE
 BEGIN
 	/*-------------VALIDACION ----------------*/
 	UPDATE notificaciones_tmp a SET
-		observaciones = COALESCE(a.observaciones,'')||'El número de oficio es requerido, '
+		observaciones = COALESCE(a.observaciones,'')||'El número de orden es requerido, '
 	WHERE LENGTH(a.num_oficio) = 0
 	AND a.usuario = p_usuario;
 
 	UPDATE notificaciones_tmp a SET
-		observaciones = COALESCE(a.observaciones,'')||'El número de oficio ('||a.num_oficio||') esta duplicado en el archivo, '
+		observaciones = COALESCE(a.observaciones,'')||'El número de orden ('||a.num_oficio||') esta duplicado en el archivo, '
 	WHERE LENGTH(a.num_oficio) > 0
 	AND EXISTS (
 		SELECT NULL
@@ -27,7 +27,7 @@ BEGIN
 	AND a.usuario = p_usuario;
 
 	UPDATE notificaciones_tmp a SET
-		observaciones = COALESCE(a.observaciones,'')||'El número de oficio ('||a.num_oficio||') ya se encuentra registrado, '
+		observaciones = COALESCE(a.observaciones,'')||'El número de orden ('||a.num_oficio||') ya se encuentra registrado, '
 	WHERE LENGTH(a.num_oficio) > 0
 	AND EXISTS (
 		SELECT NULL
@@ -39,19 +39,19 @@ BEGIN
 
 	/*-------------VALIDACION DE FECHA OFICIO----------------*/
 	UPDATE notificaciones_tmp a SET
-		observaciones = COALESCE(a.observaciones,'')||'La fecha del oficio es requerido, '
+		observaciones = COALESCE(a.observaciones,'')||'La fecha del número de orden es requerido, '
 	WHERE LENGTH(a.fecha_oficio) = 0
 	AND a.usuario = p_usuario;
 
 	UPDATE notificaciones_tmp a SET
-		observaciones = COALESCE(a.observaciones,'')||'La fecha del oficio es invalido, el formato debe ser como el sig. ejemplo ('||v_ejem_fecha||'), '
+		observaciones = COALESCE(a.observaciones,'')||'La fecha del número de orden es invalido, el formato debe ser como el siguiente ('||v_ejem_fecha||'), '
 	WHERE LENGTH(a.fecha_oficio) > 0
 	AND (isvaliddate2(a.fecha_oficio) = 0 OR isNumerico(a.fecha_oficio) = TRUE)
 	AND a.usuario = p_usuario;
 
 	/*-------------VALIDACION DE PRIORIDAD----------------*/
 	UPDATE notificaciones_tmp a SET
-		observaciones = COALESCE(a.observaciones,'')||'La prioridad del oficio es requerido, '
+		observaciones = COALESCE(a.observaciones,'')||'La prioridad del número de orden es requerido, '
 	WHERE LENGTH(a.prioridad) = 0
 	AND a.usuario = p_usuario;
 

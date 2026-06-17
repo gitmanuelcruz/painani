@@ -1,0 +1,10 @@
+CREATE OR REPLACE FUNCTION isValidDate2(text)
+	RETURNS INTEGER AS $$
+	BEGIN
+		perform TO_DATE($1,'dd-mm-yyyy');
+		RETURN 1;
+		EXCEPTION
+			WHEN OTHERS THEN
+			RETURN 0;
+	END;
+	$$ LANGUAGE plpgsql;
