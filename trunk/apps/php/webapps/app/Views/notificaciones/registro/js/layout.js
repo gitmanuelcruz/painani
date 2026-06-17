@@ -8,10 +8,11 @@ const vm_carga_layout = () => {
                      <h5><i class="fa-solid fa-info-circle me-2"></i>Formato del Archivo</h5>
                      <p class="mb-2 text-dark">El archivo debe contener las siguientes columnas en este orden:</p>
                      <ol class="mb-2">
-                        <li class="text-dark"><span class="fw-bold">Num. Oficio:</span> Numero de oficio debe ser unico (NO debe existir en la plataforma)</li>
-                        <li class="text-dark"><span class="fw-bold">Fecha del Oficio:</span> la fecha del oficio debe llevar este formato <b>"dd-mm-yyyy"</b></li>
-                        <li class="text-dark"><span class="fw-bold">Domicilio:</span> Domicilio donde se notificar&aacute;</li>
-                        <li class="text-dark"><span class="fw-bold">Referencia Ubicaci&oacute;n:</span> Referencia de la ubicaci&oacute;n a notificar</li>
+                        <li class="text-dark"><span class="fw-bold">Num. Oficio:</span> El n&uacute;mero de oficio debe ser unico (<b>NO debe existir en la plataforma</b>)</li>
+                        <li class="text-dark"><span class="fw-bold">Fecha del Oficio:</span> La fecha del oficio debe llevar este formato <b>"dd-mm-yyyy"</b></li>
+                        <li class="text-dark"><span class="fw-bold">Prioridad:</span> Es la prioridad del n&uacute;mero de oficio</li>
+                        <li class="text-dark"><span class="fw-bold">Domicilio:</span> Es el domicilio donde se notificar&aacute;</li>
+                        <li class="text-dark"><span class="fw-bold">Referencia Ubicaci&oacute;n:</span> Es la referencia de la ubicaci&oacute;n a notificar</li>
                      </ol>
                      <hr>
                      <div class="row">
