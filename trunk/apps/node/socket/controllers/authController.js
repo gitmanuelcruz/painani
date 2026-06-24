@@ -23,4 +23,8 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { login };
+const validarTokenActivo = async(req,res)=>{
+  return res.status(200).json({ok:true,message:'Token Activo'});
+}
+
+module.exports = { login,validarTokenActivo };
