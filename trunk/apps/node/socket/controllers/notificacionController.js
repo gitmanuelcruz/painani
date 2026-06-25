@@ -9,6 +9,8 @@ const {
   setMarcarOficioNotificado,
   setMarcarOficioPaquete,
   getEvidenciasNotificacion,
+  cancelarOrdenesPorNotificar,
+  liberarOficiosParaReasignar,
 } = require("../services/notificacionService");
 const { getDateTime } = require("./comun");
 
@@ -130,6 +132,10 @@ const finalizarRutaNotificacion = async (req, res) => {
 
   try {
     await cerrarRutaNotificacion(usuario, idPaquete);
+
+    await cancelarOrdenesPorNotificar(usuario, idPaquete);
+
+    await liberarOficiosParaReasignar(usuario, idPaquete);
 
     return res
       .status(200)

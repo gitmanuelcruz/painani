@@ -113,6 +113,31 @@ const cerrarRutaNotificacion = async (usuario, idPaquete) => {
   await pool.query(sql, [usuario, idPaquete]);
 };
 
+const cancelarOrdenesPorNotificar = async(usuario, idPaquete)=>{
+ const sql = `UPDATE paquetes_notificaciones SET fecha_ultimo_cambio = now(),
+                    modificado_por = $1,
+                    id_estatus_notificacion = 'CANCELADO'
+                WHERE id_paquete =$2
+                AND id_estatus_notificacion = 'POR_NOTIFICAR' `;
+
+  await pool.query(sql, [usuario, idPaquete]);
+}
+
+const liberarOficiosParaReasignar = async(usuario, idPaquete)=>{
+ const sql = ` UPDATE notificaciones n
+                  SET
+                    fecha_ultimo_cambio = NOW(),
+                    modificado_por = $1,
+                    id_estatus_notificacion = 'POR_ASIGNAR'
+                  FROM paquetes_notificaciones pn
+                  WHERE pn.id_notificacion = n.id_notificacion
+                    AND pn.id_paquete = $2
+                    AND pn.id_estatus_notificacion IN ('NO_LOCALIZADO', 'CANCELADO')
+                 `;
+
+  await pool.query(sql, [usuario, idPaquete]);
+}
+
 const setMarcarOficioNotificado = async (usuario, idNotificacion,idStatus) => {
   const sql = `UPDATE notificaciones SET fecha_hora_notificado = now(),
                     modificado_por = $1,
@@ -250,4 +275,6 @@ module.exports = {
   setMarcarOficioPaquete,
   getPaquetesHoy,
   getEvidenciasNotificacion,
+  cancelarOrdenesPorNotificar,
+  liberarOficiosParaReasignar
 };
