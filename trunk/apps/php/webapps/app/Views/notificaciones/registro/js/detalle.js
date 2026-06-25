@@ -9,9 +9,15 @@ const detalle = (reg) => {
                   <div class="card-body">
                      <ol class="list-group">
                         <li class="list-group-item d-flex justify-content-between align-items-start">
-                           <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Num. Orden</div>&nbsp;&nbsp;&nbsp;${reg.num_oficio}</div>
-                           <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Fecha Orden</div>&nbsp;&nbsp;&nbsp;${reg.foficio}</div>
-                           <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Prioridad</div>&nbsp;&nbsp;&nbsp;${reg.nombre_prioridad.toUpperCase()}</div>
+                           <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Num. Orden</div>&nbsp;&nbsp;&nbsp;${reg.num_orden}</div>
+                           <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Num. Oficio</div>&nbsp;&nbsp;&nbsp;${reg.num_oficio}</div>
+                           <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Fecha Oficio</div>&nbsp;&nbsp;&nbsp;${reg.foficio}</div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                           <div class="ms-2 me-auto col-sm-3"><div class="fw-bold">- ID Insumo</div>&nbsp;&nbsp;&nbsp;${reg.id_insumo}</div>
+                           <div class="ms-2 me-auto col-sm-3"><div class="fw-bold">- ID Bloque</div>&nbsp;&nbsp;&nbsp;${reg.id_bloque}</div>
+                           <div class="ms-2 me-auto col-sm-3"><div class="fw-bold">- Imp. Presuntiva</div>&nbsp;&nbsp;&nbsp;${formatNumber(reg.monto_presuntiva)}</div>
+                           <div class="ms-2 me-auto col-sm-3"><div class="fw-bold">- Prioridad</div>&nbsp;&nbsp;&nbsp;${reg.nombre_prioridad.toUpperCase()}</div>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-start">
                            <div class="ms-2 me-auto col-sm-12"><div class="fw-bold">- Domicilio</div>&nbsp;&nbsp;&nbsp;${reg.domicilio.toUpperCase()}</div>

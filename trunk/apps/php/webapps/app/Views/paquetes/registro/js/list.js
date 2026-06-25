@@ -54,11 +54,13 @@ const loadPaquetesPag = () => {
       }
    }
 	table.setDropDown(dropdown);
+   table.loading = true;
 	table.setParametros($("#frmPaquetes").serialize());
 	table.loadJSON();
 }
 //!
 const recargaPaginadoPrincipal = () => {
+   table.loading = true;
    table.parametros = $("#frmPaquetes").serialize();
    table.loadJSON(table.pagina);
 }

@@ -9,18 +9,47 @@ const vmRegistro = (id_notificacion,tipo) => {
                <input type="hidden" id="vm_id_notificacion" name="vm_id_notificacion" value="${id_notificacion}">
                <input type="hidden" id="vm_tipo" value="${tipo}">
                <input type="hidden" id="vm_contador_valid">
-               <div class="row mb-2">                                     
+               <div class="row mb-2">
                   <div class="col-sm-4">
                      <label class="form-label">Num. Orden</label>
-                     <input type="text" class="form-control" id="vm_num_oficio" name="vm_num_oficio" maxlength="49" 
-                        style="height: 40px" required>
+                     <input type="text" class="form-control" id="vm_num_orden" name="vm_num_orden" maxlength="49" 
+                        style="height:40px" required>
                      <div class="invalid-feedback">Num. Orden requerido</div>
                   </div>
                   <div class="col-sm-4">
-							<label class="form-label">Fecha Orden</label>
-							<input type="date" class="form-control" id="vm_fecha_oficio" name="vm_fecha_oficio" style="height: 40px;"
+                     <label class="form-label">Num. Oficio</label>
+                     <input type="text" class="form-control" id="vm_num_oficio" name="vm_num_oficio" maxlength="49" 
+                        style="height:40px" required>
+                     <div class="invalid-feedback">Num. Oficio requerido</div>
+                  </div>
+                  <div class="col-sm-4">
+							<label class="form-label">Fecha Oficio</label>
+							<input type="date" class="form-control" id="vm_fecha_oficio" name="vm_fecha_oficio" style="height:40px;"
                         required value="${fAct.fecha2}">
-                     <div class="invalid-feedback">Fecha orden requerido</div>        
+                     <div class="invalid-feedback">Fecha oficio requerido</div>        
+						</div>
+               </div>
+               <div class="row mb-2">                                     
+                  <div class="col-sm-4">
+                     <label class="form-label">ID Insumo</label>
+                     <input type="text" class="form-control" id="vm_id_insumo" name="vm_id_insumo" maxlength="20"
+                        style="height:40px" onkeypress="return getKeyNumber(event);" required>
+                     <div class="invalid-feedback">ID insumo requerido</div>
+                  </div>
+                  <div class="col-sm-4">
+							<label class="form-label">ID Bloque</label>
+							<input type="text" class="form-control" id="vm_id_bloque" name="vm_id_bloque" maxlength="20"
+                        style="height:40px;" onkeypress="return getKeyNumber(event);" required>
+                     <div class="invalid-feedback">ID bloque requerido</div>        
+						</div>
+               </div>
+               <div class="row mb-2">
+                  <div class="col-sm-4">
+							<label class="form-label">Monto Presuntiva</label>
+							<input type="text" class="form-control" id="vm_monto_presuntiva" name="vm_monto_presuntiva" maxlength="20"
+                        style="height:40px;" onkeypress="return getKeyNumberDecimal(event);" onBlur="formateo(this)"
+                        onFocus="sinformateo(this)" required value="0.00">
+                     <div class="invalid-feedback">Monto presuntiva requerido</div>        
 						</div>
                   <div class="col-sm-4">
                      <label class="form-label">Prioridad</label>
@@ -36,14 +65,14 @@ const vmRegistro = (id_notificacion,tipo) => {
                <div class="row mb-2">   
                   <div class="col-sm-12">
 							<label class="form-label">Domicilio</label>
-							<textarea class="form-control text-uppercase" id="vm_domicilio" name="vm_domicilio" rows="4" required></textarea>
+							<textarea class="form-control text-uppercase" id="vm_domicilio" name="vm_domicilio" rows="3" required></textarea>
                      <div class="invalid-feedback">Domicilio requerido</div>  
 						</div>
                </div>
                <div class="row mb-2">   
                   <div class="col-sm-12">
 							<label class="form-label">Referencia de Ubicaci&oacute;n</label>
-							<textarea class="form-control text-uppercase" id="vm_referencia_ubicacion" name="vm_referencia_ubicacion" rows="4" required></textarea>
+							<textarea class="form-control text-uppercase" id="vm_referencia_ubicacion" name="vm_referencia_ubicacion" rows="3" required></textarea>
                      <div class="invalid-feedback">Referencia de ubicaci&oacute;n requerido</div>  
 						</div>
                </div>
@@ -119,8 +148,10 @@ const limpiarFrmRegistro = () => {
    const fAct = fechaActual();
 	$("#frmRegistro").removeClass('frm-modal-reg was-validated').addClass('frm-modal-reg');
    $("#vm_contador_valid").val(0);
-   $("#vm_num_oficio").val('');
+   $("#vm_num_oficio,#vm_num_orden").val('');
 	$("#vm_fecha_oficio").val(fAct.fecha2);
+   $("#vm_id_insumo,#vm_id_bloque").val('');
+   $("#vm_monto_presuntiva").val('0.00');
    $("#vm_id_prioridad").val('').trigger('change');
 	$("#vm_domicilio,#vm_referencia_ubicacion").val('');
    $("#divPrioridad").removeClass('has-valid');
@@ -156,14 +187,20 @@ const validRegistro = () => {
 const validacionRegistro = () => {
    let msg = '';
    let existeOficio = 0;
+   let existeOrden  = 0;
    const numOficio = $("#vm_num_oficio").val();
+   const numOrden  = $("#vm_num_orden").val();
    //
 	if($("#vm_tipo").val() == 'N') {
-		ajax(contexto+nameController+'/existeOficio', 'num_oficio='+numOficio,
+		ajax(contexto+nameController+'/existeOficio', 'num_oficio='+numOficio+'&num_orden='+numOrden,
 		function (data) {
-			existeOficio = parseInt(data.total);
+			existeOficio = parseInt(data.totalOficio);
+         existeOrden = parseInt(data.totalOrden);
 			if(existeOficio > 0){
-				msg += `<li>El n&uacute;mero de orden (<b>${numOficio}</b>) ya se encuentra registrado</li>`;
+				msg += `<li>El n&uacute;mero de oficio (<b>${numOficio}</b>) ya se encuentra registrado</li>`;
+			}
+         if(existeOrden > 0){
+				msg += `<li>El n&uacute;mero de orden (<b>${numOrden}</b>) ya se encuentra registrado</li>`;
 			}
 		});
 	}

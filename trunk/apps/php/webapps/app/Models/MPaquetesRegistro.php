@@ -53,7 +53,10 @@ class MPaquetesRegistro extends Model
 								FROM paquetes_notificaciones x
 								INNER JOIN notificaciones y ON x.id_notificacion = y.id_notificacion
 								WHERE x.id_paquete = paq.id_paquete
-								AND parse_text(y.num_oficio) LIKE parse_text('%".trim($idNumOficio)."%')
+								AND (
+									parse_text(y.num_orden) LIKE parse_text('%".trim($idNumOficio)."%') OR
+									parse_text(y.num_oficio) LIKE parse_text('%".trim($idNumOficio)."%')
+								)
 							)
 						) ";
 		}
@@ -79,7 +82,9 @@ class MPaquetesRegistro extends Model
 					pno.id_paquete,
 					pno.id_paquete_notificacion,
 					ntf.id_notificacion,
-					ntf.num_oficio,					
+					ntf.num_orden,
+					ntf.num_oficio,
+					CONCAT(ntf.num_oficio,'<br><span class=''badge bg-light-info text-info fs-1 fw-bold''>',ntf.num_orden,'</span>') AS desc_num_ofi_orden,
 					ntf.fecha_oficio,
 					TO_CHAR(ntf.fecha_oficio,'dd/mm/yyyy') AS foficio,
 					ntf.domicilio AS domicilio,
@@ -170,6 +175,7 @@ class MPaquetesRegistro extends Model
 		if(empty($idPaquete)) { $idPaquete = 0; }
 		$sql ="SELECT
 					b.id_paquete,
+					a.num_orden,
 					a.num_oficio,
 					TO_CHAR(a.fecha_oficio,'dd/mm/yyyy') AS foficio,
 					TO_CHAR(b.fecha_hora_notificacion,'dd/mm/yyyy hh24:mi') AS fnotificado
@@ -197,7 +203,10 @@ class MPaquetesRegistro extends Model
 		if(empty($idPaquete)) { $idPaquete = 0; }
 		$sql ="SELECT
 					a.id_notificacion AS id,
-					CONCAT(a.num_oficio,' - ',TO_CHAR(a.fecha_oficio,'dd/mm/yyyy')) AS descripcion,
+					(CASE WHEN a.num_orden IS NOT NULL
+						THEN CONCAT(a.num_orden,' - ',a.num_oficio)
+						ELSE CONCAT(a.num_oficio,' - ',TO_CHAR(a.fecha_oficio,'dd/mm/yyyy'))
+					END) AS descripcion,
 					b.id_paquete,
 					(CASE WHEN a.id_notificacion = b.id_notificacion THEN 'selected' ELSE '' END) AS seleccion,
 					(CASE WHEN a.id_notificacion = b.id_notificacion THEN 1 ELSE 0 END) AS apl_seleccion
@@ -332,12 +341,24 @@ class MPaquetesRegistro extends Model
 		}
 	}
 	//
-	public function deletePaquetes($id_paquete) {
+	public function deletePaquetes($id_paquete,$usuario,$ip) {
 		$sql ="DELETE FROM paquetes_notificaciones WHERE id_paquete = ?";
 		$sql2 ="DELETE FROM paquetes WHERE id_paquete = ?";
+		$sql3 ="UPDATE notificaciones a SET
+						id_estatus_notificacion = 'POR_ASIGNAR',
+						fecha_ultimo_cambio = CURRENT_TIMESTAMP,
+						modificado_por = TRIM(?),
+						ip_modifico = TRIM(?)
+				WHERE a.id_estatus_notificacion = 'ASIGNADO'
+				AND NOT EXISTS (
+					SELECT NULL
+					FROM paquetes_notificaciones b
+					WHERE b.id_notificacion = a.id_notificacion
+				)";
 
 		$this->db->query($sql,[$id_paquete]);
 		$this->db->query($sql2,[$id_paquete]);
+		$this->db->query($sql3,[$usuario,$ip]);
 		if ($this->db->transStatus()) {
 			return array(true, 'El proceso se ha realizado correctamente');
 		}

@@ -89,7 +89,7 @@ const inicializarListado = () => {
       removeButtonText: "<",
       addAllButtonText: ">>",
       removeAllButtonText: "<<",
-      searchPlaceholder: "Num. Orden",
+      searchPlaceholder: "Num. Orden o Oficio",
       enableDoubleClick: false
    });
 }

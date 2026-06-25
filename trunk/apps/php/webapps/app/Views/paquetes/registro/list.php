@@ -32,12 +32,13 @@
 						<form method="post" class="app-form" id="frmPaquetes" name="frmPaquetes" onsubmit="return false">
 							<div class="row mb-2">
 								<div class="col-sm-3">
-									<label class="form-label">ID / Num. Orden</label>
+									<label class="form-label">ID / Num. Orden o Oficio</label>
 									<input type="text" class="form-control" id="txt_id_num_oficio" name="txt_id_num_oficio" style="height: 40px;">
 								</div>
 								<div class="col-sm-3">
 									<label class="form-label">Fecha Programada</label>
-									<input type="date" class="form-control" id="txt_fecha_programada" name="txt_fecha_programada" style="height: 40px;">
+									<input type="date" class="form-control" id="txt_fecha_programada" name="txt_fecha_programada" style="height: 40px;"
+										value="<?php if(!empty($fecha_actual)) echo $fecha_actual;?>">
 								</div>
 								<div class="col-sm-3">
 									<label class="form-label">Fecha Apertura</label>

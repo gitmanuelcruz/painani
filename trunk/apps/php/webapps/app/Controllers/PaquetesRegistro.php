@@ -26,6 +26,8 @@ class PaquetesRegistro extends BaseController
             $data['titulo2'] = "Registro de Paquetes";
             $data['btn_nuevo'] = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_NVO_PAQUETE","PRIVILEGIO");
             $data['btn_inf_excel'] = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_INFOEXCEL_NOTPAQUETE","PRIVILEGIO");
+            $fechaMes = $this->utilerias->getDayInicioTermino("yyyy-mm-dd");
+            $data['fecha_actual']  = $fechaMes["fecha_actual"];
 				return view('paquetes/registro/list', $data);
          }
          else {
@@ -218,7 +220,9 @@ class PaquetesRegistro extends BaseController
          $response = array('respuesta' => false, 'mensaje' => 'Se terminó la sesión, vuelva a iniciar nuevamente');
       }
       else {
-         $idPaquete = $this->request->getPost("id_paquete");         
+         $idPaquete = $this->request->getPost("id_paquete");
+         $usuario = $this->session->get("usuario");
+         $ip      = $this->session->get("ip");
          $datos = $this->Modelo->getDatosPaquete($idPaquete)->getRow();
          $dataNotificados = $this->Modelo->getDatosOficiosNotificados($idPaquete);
          $msjValid = "";
@@ -248,7 +252,7 @@ class PaquetesRegistro extends BaseController
                $result = array(false,$msjValid,1);
             }
             else {
-               $result = $this->Modelo->deletePaquetes($idPaquete);
+               $result = $this->Modelo->deletePaquetes($idPaquete,$usuario,$ip);
             }
          }
          else {

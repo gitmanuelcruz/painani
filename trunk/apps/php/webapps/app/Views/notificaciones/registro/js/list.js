@@ -37,11 +37,11 @@ const loadNotificacionesPag = () => {
 	table.setTablaHTML("gridNotificaciones");
 	table.setUrl(contexto+nameController+"/notificacionesPag");
 	table.setRegistrosPagina(10);
-	table.setColumnas("desc_num_oficio,desc_fofico,domicilio,referencia_ubicacion,desc_estatus,band");
-	table.setColTipos("textHTML,textHTML,text,text,textHTML,dropdown");
-	table.setAlineacion("left,center,left,left,center,center");
+	table.setColumnas("num_orden,desc_num_oficio,desc_fofico,id_insumo,id_bloque,monto_presuntiva,desc_domicilio,desc_estatus,band");
+	table.setColTipos("text,textHTML,textHTML,text,text,numero,textHTML,textHTML,dropdown");
+	table.setAlineacion("left,left,center,center,center,center,left,center,center");
 	let dropdown = {
-      "col6": {
+      "col9": {
          "opciones": [
             {"etiqueta":"", "titulo": "Opc. Notificación", "icono": "fa-solid fa-list-ul fa-lg", "tooltip": "Lista de opciones", "tipoicono": "i",
                "menu":[
@@ -54,11 +54,13 @@ const loadNotificacionesPag = () => {
       }
    }
 	table.setDropDown(dropdown);
+   table.loading = true;
 	table.setParametros($("#frmNotificaciones").serialize());
 	table.loadJSON();
 }
 //!
 const recargaPaginadoPrincipal = () => {
+   table.loading = true;
    table.parametros = $("#frmNotificaciones").serialize();
    table.loadJSON(table.pagina);
 }
@@ -98,8 +100,12 @@ const validCombos = (id,id2) => {
 const editarNotificacion = (reg) =>{
    vmRegistro(reg.id_notificacion,'E');
    cargaComboRegistro(false,reg.id_prioridad);
+   $("#vm_num_orden").val(reg.num_orden);
    $("#vm_num_oficio").val(reg.num_oficio);
    $("#vm_fecha_oficio").val(reg.fecha_oficio);
+   $("#vm_id_insumo").val(reg.id_insumo);
+   $("#vm_id_bloque").val(reg.id_bloque);
+   $("#vm_monto_presuntiva").val(formatNumber(reg.monto_presuntiva));
    $("#vm_domicilio").val(reg.domicilio);
    $("#vm_referencia_ubicacion").val(reg.referencia_ubicacion);
 }
@@ -107,7 +113,7 @@ const editarNotificacion = (reg) =>{
 const cancelarNotificacion = (reg) => {
    $('.tooltip_icon_pag').tooltip('hide');
    let titulo =   `Confirma <span class="fw-bold text-danger">CANCELAR</span> la notificaci&oacute;n con el Num. Orden
-                  <span class="fw-bold">${reg.num_oficio}</span>`;
+                  <span class="fw-bold">${reg.num_orden}</span>`;
    Swal.fire({
       title: 'Confirmaci&oacute;n',
       html: '<p class="p-font-msg-1-2">\u{BF}'+titulo+'?</p>',

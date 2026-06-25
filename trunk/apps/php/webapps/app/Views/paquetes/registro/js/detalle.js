@@ -33,8 +33,8 @@ const detalle = (reg) => {
                            <table class="table table-sm table-striped table-hover" id="gridNotifAsignadas" style="width: 100%;">
                               <thead class="table-secondary">
                                  <tr class="p-font-msg-08">
-                                    <th width="10%" class="text-start">Num. Orden</th>
-                                    <th width="13%" class="text-center">Fecha Orden</th>
+                                    <th width="11%" class="text-start">Num. Oficio</th>
+                                    <th width="13%" class="text-center">Fecha Oficio</th>
                                     <th width="20%" class="text-start">Domicilio</th>
                                     <th width="10%" class="text-center">Estatus</th>
                                     <th width="5%"  class="text-center"></th>
@@ -69,8 +69,8 @@ function loadOficiosAsignados(idPaquete) {
 	tblOficiosAsignado.setTablaHTML("gridNotifAsignadas");
 	tblOficiosAsignado.setUrl(contexto+nameController+"/notificacionesAsigPag");
 	tblOficiosAsignado.setRegistrosPagina(10);
-	tblOficiosAsignado.setColumnas("num_oficio,foficio,desc_domicilio,desc_estatus,band");
-	tblOficiosAsignado.setColTipos("text,text,text,textHTML,icon");
+	tblOficiosAsignado.setColumnas("desc_num_ofi_orden,foficio,desc_domicilio,desc_estatus,band");
+	tblOficiosAsignado.setColTipos("textHTML,text,text,textHTML,icon");
 	tblOficiosAsignado.setAlineacion("left,center,left,center,center");
    let iconos = {
       "col5": {

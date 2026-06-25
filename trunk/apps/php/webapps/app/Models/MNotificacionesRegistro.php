@@ -11,15 +11,19 @@ class MNotificacionesRegistro extends Model
 	public function getNotificacionesPag($idNumOficio,$fechaOficio,$idEstatus,$iconEditar,$iconCancelar) {
       $sql ="SELECT
 					ntf.id_notificacion,
+					ntf.num_orden,
 					ntf.num_oficio,
 					(CASE WHEN pno.id_paquete_notificacion IS NOT NULL
 						THEN CONCAT(ntf.num_oficio,'<br><span class=''badge bg-light-primary text-primary fs-1 fw-bold''>No. Paquete &raquo; ',pno.id_paquete,'</span>')
 						ELSE ntf.num_oficio
 					END) AS desc_num_oficio,
+					ntf.id_insumo,
+					ntf.id_bloque,
 					pno.id_paquete,
 					pno.id_paquete_notificacion,
 					ntf.fecha_oficio,
 					TO_CHAR(ntf.fecha_oficio,'dd/mm/yyyy') AS foficio,
+					COALESCE(ntf.monto_presuntiva,0) AS monto_presuntiva,
 					ntf.id_prioridad,
 					pri.nombre_prioridad,
 					(CASE WHEN ntf.id_prioridad = 'NIVEL_A'
@@ -32,6 +36,7 @@ class MNotificacionesRegistro extends Model
 					END) AS desc_fofico,
 					ntf.domicilio AS domicilio,
 					ntf.referencia_ubicacion AS referencia_ubicacion,
+					CONCAT(UPPER(ntf.domicilio),'<br><span class=''badge bg-secondary fs-1 fw-bold''>Ref. &raquo; ',UPPER(ntf.referencia_ubicacion),'</span>') AS desc_domicilio,
 					ntf.fecha_hora_notificado,
 					TO_CHAR(ntf.fecha_hora_notificado,'dd/mm/yyyy hh24:mi') AS fnotificado,
 					ntf.id_estatus_notificacion,
@@ -67,7 +72,9 @@ class MNotificacionesRegistro extends Model
 				) pno ON ntf.id_notificacion = pno.id_notificacion
 				WHERE 1=1 ";
 		if(!empty($idNumOficio)) {
-			$sql .="AND parse_text(ntf.num_oficio) LIKE parse_text('%".trim($idNumOficio)."%') ";
+			$sql .="AND (parse_text(ntf.num_orden) LIKE parse_text('%".trim($idNumOficio)."%') OR
+							parse_text(ntf.num_oficio) LIKE parse_text('%".trim($idNumOficio)."%')
+						) ";
 		}
 		if (!empty($fechaOficio)) {
 			$sql .="AND ntf.fecha_oficio = TO_DATE('$fechaOficio','yyyy-mm-dd') ";
@@ -94,6 +101,15 @@ class MNotificacionesRegistro extends Model
 		return $this->db->query($sql,[trim($num_oficio)]);
 	}
 	//
+	public function getExisteOrden($num_orden) {
+		$sql ="SELECT count(*) AS total
+				FROM notificaciones 
+				WHERE id_estatus_notificacion <> 'CANCELADO'
+				AND parse_text(num_orden) = parse_text(?)";
+			
+		return $this->db->query($sql,[trim($num_orden)]);
+	}
+	//
 	public function getPrioridades() {
 		$sql ="SELECT
 					id_prioridad AS id,
@@ -105,17 +121,23 @@ class MNotificacionesRegistro extends Model
 	}
 	//
 	public function insertNotificacion(
-		$num_oficio,$fecha_oficio,$id_prioridad,$domicilio,$referencia_ubicacion,$id_estatus,$usuario,$ip) {
+		$num_oficio,$num_orden,$fecha_oficio,$id_insumo,$id_bloque,$monto_presuntiva,$id_prioridad,$domicilio,
+		$referencia_ubicacion,$id_estatus,$usuario,$ip) {
+		if(empty($monto_presuntiva)) { $monto_presuntiva = 0; }
+      $caracImp = array('$',',',' ');
+      $caracImpNew = array('','','');
+      $montoPresuntiva = str_replace($caracImp,$caracImpNew,trim($monto_presuntiva));
+
 		$sql ="INSERT INTO notificaciones
-						(num_oficio,fecha_oficio,id_prioridad,domicilio,referencia_ubicacion,id_estatus_notificacion,
-						creado_por,ip_registro)
+						(num_oficio,num_orden,fecha_oficio,id_insumo,id_bloque,monto_presuntiva,id_prioridad,domicilio,
+						referencia_ubicacion,id_estatus_notificacion,creado_por,ip_registro)
 					VALUES
-						(?,TO_DATE(?,'yyyy-mm-dd'),?,UPPER(?),UPPER(?),?,TRIM(?),TRIM(?)) 
+						(?,?,TO_DATE(?,'yyyy-mm-dd'),?,?,COALESCE(?::numeric,0),?,UPPER(?),UPPER(?),?,TRIM(?),TRIM(?)) 
 					RETURNING id_notificacion";
 
 		$result = $this->db->query($sql,[
-			trim($num_oficio),$fecha_oficio,$id_prioridad,trim($domicilio),trim($referencia_ubicacion),
-			$id_estatus,$usuario,$ip])->getResultArray();
+			trim($num_oficio),trim($num_orden),$fecha_oficio,$id_insumo,$id_bloque,$montoPresuntiva,$id_prioridad,
+			trim($domicilio),trim($referencia_ubicacion),$id_estatus,$usuario,$ip])->getResultArray();
 		$id = $result[0]["id_notificacion"];
 		if ($this->db->transStatus()) {
 			return array(true, 'El proceso se ha realizado correctamente', $id);
@@ -126,10 +148,20 @@ class MNotificacionesRegistro extends Model
 	}
 	//
 	public function updateNotificacion(
-		$id_notificacion,$num_oficio,$fecha_oficio,$id_prioridad,$domicilio,$referencia_ubicacion,$usuario,$ip) {
+		$id_notificacion,$num_oficio,$num_orden,$fecha_oficio,$id_insumo,$id_bloque,$monto_presuntiva,$id_prioridad,
+		$domicilio,$referencia_ubicacion,$usuario,$ip) {
+		if(empty($monto_presuntiva)) { $monto_presuntiva = 0; }
+      $caracImp = array('$',',',' ');
+      $caracImpNew = array('','','');
+      $montoPresuntiva = str_replace($caracImp,$caracImpNew,trim($monto_presuntiva));
+
 		$sql ="UPDATE notificaciones SET 
 					num_oficio = ?,
+					num_orden = ?,
 					fecha_oficio = TO_DATE(?,'yyyy-mm-dd'),
+					id_insumo = ?,
+					id_bloque = ?,
+					monto_presuntiva = COALESCE(?::numeric,0),
 					id_prioridad = ?,
 					domicilio = UPPER(?),
 					referencia_ubicacion = UPPER(?),
@@ -139,8 +171,8 @@ class MNotificacionesRegistro extends Model
 			   WHERE id_notificacion = ? ";
 
 		$this->db->query($sql,[
-			trim($num_oficio),$fecha_oficio,$id_prioridad,trim($domicilio),trim($referencia_ubicacion),$usuario,
-			$ip,$id_notificacion]);
+			trim($num_oficio),trim($num_orden),$fecha_oficio,$id_insumo,$id_bloque,$montoPresuntiva,$id_prioridad,
+			trim($domicilio),trim($referencia_ubicacion),$usuario,$ip,$id_notificacion]);
 		if ($this->db->transStatus()) {
 			return array(true, 'El proceso se ha realizado correctamente',$id_notificacion);
 		}
@@ -150,8 +182,10 @@ class MNotificacionesRegistro extends Model
 	}
 	// TODO: Proceso de registro de layout
    public function deleteNotificacionesTmp($usuario) {
-      $sql ="DELETE FROM notificaciones_tmp WHERE usuario = ?";
+		$sql ="DELETE FROM prioridades_rango_presuntiva_tmp WHERE usuario = ?";
+      $sql2 ="DELETE FROM notificaciones_tmp WHERE usuario = ?";
       $this->db->query($sql,[$usuario]);
+		$this->db->query($sql2,[$usuario]);
       if ($this->db->transStatus()) {
          return array(true, 'El proceso se ha realizado correctamente');
       }
@@ -159,18 +193,57 @@ class MNotificacionesRegistro extends Model
          return array(false, 'ERROR AL RESETEAR TBL DE OFICIOS TMP',0);
       }
    }
+	//
+	public function getPrioridadesxLayout() {
+		$sql ="SELECT 
+					id_prioridad AS id,
+					nombre_prioridad AS descripcion,
+					LAG(id_prioridad,1) OVER (ORDER BY num_orden ASC) AS id_siguiente,
+					LAG(id_prioridad,1) OVER (ORDER BY num_orden DESC) AS id_anterior
+				FROM prioridades
+				ORDER BY num_orden DESC";
+			
+		return $this->db->query($sql);
+	}
+	//
+	public function insertPrioridadRangoMontoTmp($usuario,$id_prioridad,$monto_minimo,$monto_maximo) {
+		if(empty($monto_minimo)) { $monto_minimo = 0; }
+		if(empty($monto_maximo)) { $monto_maximo = 0; }
+      $caracImp = array('$',',',' ');
+      $caracImpNew = array('','','');
+      $montoMinimo = str_replace($caracImp,$caracImpNew,trim($monto_minimo));
+		$montoMaximo = (!empty($monto_maximo) && (float)$monto_maximo > 0) ? str_replace($caracImp,$caracImpNew,trim($monto_maximo)):NULL;
+
+		$sql ="INSERT INTO prioridades_rango_presuntiva_tmp
+						(id_prioridad_rango_presuntiva_tmp,usuario,id_prioridad,monto_minimo,monto_maximo)
+					VALUES
+						(NEXTVAL('seq_prioridades_rango_presuntiva_tmp'),?,?,COALESCE(?::numeric,0),?)";
+
+		$this->db->query($sql,[$usuario,$id_prioridad,$montoMinimo,$montoMaximo]);
+		if ($this->db->transStatus()) {
+			return array(true, 'El proceso se ha realizado correctamente');
+		}
+		else {
+			return array(false, 'ERROR AL REGISTRAR EL RANGO DE MONTO X PRIORIDAD');
+		}
+	}
    //
    public function insertNotificacionesTmp(
-      $consecutivo,$usuario,$num_oficio,$fecha_oficio,$prioridad,$domicilio,$referencia_ubicacion) {
+      $consecutivo,$usuario,$num_orden,$num_oficio,$fecha_oficio,$id_insumo,$id_bloque,$monto_presuntiva,
+		$domicilio,$referencia_ubicacion) {
+		if(empty($monto_presuntiva)) { $monto_presuntiva = '0'; }
+      $caracImp = array('$',',',' ');
+      $caracImpNew = array('','','');
+      $montoPresuntiva = str_replace($caracImp,$caracImpNew,trim($monto_presuntiva));
       $sql ="INSERT INTO notificaciones_tmp
-                  (id_notificacion_tmp,consecutivo,usuario,num_oficio,fecha_oficio,prioridad,
-						domicilio,referencia_ubicacion)
+                  (id_notificacion_tmp,consecutivo,usuario,num_orden,num_oficio,fecha_oficio,id_insumo,
+						id_bloque,monto_presuntiva,domicilio,referencia_ubicacion)
                VALUES
-                  (NEXTVAL('seq_notificaciones_tmp'),?,?,?,?,?,?,?)";
+                  (NEXTVAL('seq_notificaciones_tmp'),?,?,?,?,?,?,?,?,?,?)";
 
       $this->db->query($sql,[
-         $consecutivo,$usuario,trim($num_oficio),trim($fecha_oficio),$prioridad,trim($domicilio),
-			trim($referencia_ubicacion)]);
+         $consecutivo,$usuario,trim($num_orden),trim($num_oficio),trim($fecha_oficio),$id_insumo,
+			$id_bloque,$montoPresuntiva,trim($domicilio),trim($referencia_ubicacion)]);
       if($this->db->transStatus()) {
          return array(true,'El proceso se ha realizado correctamente');
       }

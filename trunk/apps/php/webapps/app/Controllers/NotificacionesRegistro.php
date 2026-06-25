@@ -71,11 +71,14 @@ class NotificacionesRegistro extends BaseController
    }
    //
 	public function existeOficio() {
-		$numOficio   = $this->request->getPost("num_oficio");
-		$total  = $this->Modelo->getExisteOficio($numOficio)->getRow()->total;
-		$result = array("total" => $total);
+		$numOficio = $this->request->getPost("num_oficio");
+      $numOrden  = $this->request->getPost("num_orden");
+      $results = array(
+         'totalOficio' => $this->Modelo->getExisteOficio($numOficio)->getRow()->total,
+         'totalOrden'  => $this->Modelo->getExisteOrden($numOrden)->getRow()->total
+      );
 		
-	  return $this->response->setJSON($result);
+	  return $this->response->setJSON($results);
 	} 
 	//
    public function guardarNotificacion() {
@@ -85,8 +88,12 @@ class NotificacionesRegistro extends BaseController
       }
       else {
          $idNotificacion = $this->request->getPost("vm_id_notificacion");
-         $numOficio   = $this->request->getPost("vm_num_oficio");
+         $numOficio = $this->request->getPost("vm_num_oficio");
+         $numOrden  = $this->request->getPost("vm_num_orden");
          $fechaOficio = $this->request->getPost("vm_fecha_oficio");
+         $idInsumo = $this->request->getPost("vm_id_insumo");
+         $idBloque = $this->request->getPost("vm_id_bloque");
+         $montoPresuntiva = $this->request->getPost("vm_monto_presuntiva");
          $idPrioridad = $this->request->getPost("vm_id_prioridad");
          $domicilio   = $this->request->getPost("vm_domicilio");
          $referenciaUbicacion = $this->request->getPost("vm_referencia_ubicacion");
@@ -94,35 +101,52 @@ class NotificacionesRegistro extends BaseController
          $ip      = $this->session->get("ip");
          $idEstatus = "POR_ASIGNAR";
          $bandEstatus = 0;
-         $exist = $this->Modelo->getExisteOficio($numOficio)->getRow()->total;
+         $existOficio = $this->Modelo->getExisteOficio($numOficio)->getRow()->total;
+         $existOrden = $this->Modelo->getExisteOrden($numOrden)->getRow()->total;
          if(!empty($idNotificacion)){
             $datos = $this->Modelo->getDatosNotificacion($idNotificacion)->getRow();
             if(mb_strtoupper(trim($datos->num_oficio),'UTF-8') == mb_strtoupper(trim($numOficio),'UTF-8')) {
-               $exist = 0;
+               $existOficio = 0;
+            }
+            if(mb_strtoupper(trim($datos->num_orden),'UTF-8') == mb_strtoupper(trim($numOrden),'UTF-8')) {
+               $existOrden = 0;
             }
             if($datos->id_estatus_notificacion != $idEstatus) {
-               $exist = 1;
+               $existOficio = 1;
+               $existOrden  = 1;
                $bandEstatus = 1;
             }
          }
          $this->db->transBegin();
          //
-         if((int)$exist == 0) {
-            if(empty($idNotificacion)){
-               $result = $this->Modelo->insertNotificacion(
-                  $numOficio,$fechaOficio,$idPrioridad,$domicilio,$referenciaUbicacion,$idEstatus,$usuario,$ip);
+         if((int)$existOficio == 0) {
+            if((int)$existOrden == 0) {
+               if(empty($idNotificacion)){
+                  $result = $this->Modelo->insertNotificacion(
+                     $numOficio,$numOrden,$fechaOficio,$idInsumo,$idBloque,$montoPresuntiva,$idPrioridad,$domicilio,
+                     $referenciaUbicacion,$idEstatus,$usuario,$ip);
+               }
+               else{
+                  $result = $this->Modelo->updateNotificacion(
+                     $idNotificacion,$numOficio,$numOrden,$fechaOficio,$idInsumo,$idBloque,$montoPresuntiva,$idPrioridad,
+                     $domicilio,$referenciaUbicacion,$usuario,$ip);
+               }
             }
-            else{
-               $result = $this->Modelo->updateNotificacion(
-                  $idNotificacion,$numOficio,$idPrioridad,$fechaOficio,$domicilio,$referenciaUbicacion,$usuario,$ip);
+            else {
+               if((int)$bandEstatus == 0) {
+                  $result = array(false,"El n&uacute;mero de orden (<b>".$numOrden."</b>) ya se encuentra registrado",1);
+               }
+               else {
+                  $result = array(false,"El n&uacute;mero de orden (<b>".$numOrden."</b>) ya se encuentra asignado a un paquete, ya no se puede modificar",1);
+               }
             }
          }
          else {
             if((int)$bandEstatus == 0) {
-               $result = array(false,"El n&uacute;mero de orden (<b>".$numOficio."</b>) ya se encuentra registrado",1);
+               $result = array(false,"El n&uacute;mero de oficio (<b>".$numOficio."</b>) ya se encuentra registrado",1);
             }
             else {
-               $result = array(false,"El n&uacute;mero de orden (<b>".$numOficio."</b>) ya se encuentra asignado a un paquete, ya no se puede modificar",1);
+               $result = array(false,"El n&uacute;mero de oficio (<b>".$numOficio."</b>) ya se encuentra asignado a un paquete, ya no se puede modificar",1);
             }
          }
          //
@@ -139,9 +163,17 @@ class NotificacionesRegistro extends BaseController
       return $this->response->setJSON($response);
    }
    // TODO: Proceso de carga de layout de notificaciones (oficios)
+   public function getComboRegxLayout() {
+      $results = array(
+         'prioridades' => $this->Modelo->getPrioridadesxLayout()->getResult()
+      );
+
+      return $this->response->setJSON($results);
+   }
+   //
    public function descargarFormatoLayout(){
-      $filename = "FORMATO_LAYOUT_NUM_ORDEN.xlsx";
-      $file = $this->utilerias->urlFiles().'formato_layout_num_orden/'.$filename;
+      $filename = "FORMATO_LAYOUT_OFICIOS.xlsx";
+      $file = $this->utilerias->urlFiles().'formato_layout_num_oficios/'.$filename;
       $extension = mb_strtolower($this->utilerias->getFileExtension($file), 'UTF-8');
       header("Content-disposition: attachment; filename=".$filename."");
       header("Content-type: application/".$extension."");
@@ -154,6 +186,7 @@ class NotificacionesRegistro extends BaseController
          $response = array('respuesta' => false, 'mensaje' => 'Se terminó la sesión, vuelva a iniciar nuevamente');
       }
       else {
+         $prioridades = $this->request->getPost("vm_idprioridad");
          $file_excel  = $this->request->getFile("vm_archivo_layout");
          $idNivelUsuario = $this->session->get("id_nivel_usuario");
          $usuario     = $this->session->get("usuario");
@@ -163,14 +196,32 @@ class NotificacionesRegistro extends BaseController
          $rutaLayout  = "notificaciones/layout/".$usuario;
          $path_excel  = "";
          $caracteres  = array('$',',',' ','-');
-         $caracteresNew  = array('_','_','_','_');
+         $caracteresNew = array('_','_','_','_');
          $consecutivo   = 1;
+         $contadorInicial = 0;
          $contador = 0;
          $contadorProceso = 0;
          $this->db->transBegin();
-
+         //
          $this->Modelo->deleteNotificacionesTmp($usuario);
-         if(!empty($file_excel)) {
+         if(!empty($prioridades)) {
+            foreach($prioridades as $key) {
+               $idPrioridad = $key;
+               $montoMinimo = $this->request->getPost("vm_monto_min_".$key);
+               $montoMaximo = $this->request->getPost("vm_monto_max_".$key);
+               $result = $this->Modelo->insertPrioridadRangoMontoTmp($usuario,$idPrioridad,$montoMinimo,$montoMaximo);
+               if(!$result[0]) {
+                  $contadorInicial++;
+                  $this->db->transRollback();
+                  break;
+               }
+            }
+         }
+         else {
+            $contadorInicial++;
+         }
+         //
+         if(!empty($file_excel) && (int)$contadorInicial == 0) {
             $ext = $file_excel->guessExtension();
             $extFile = ".".$ext;
             $nombreArchivo = basename($file_excel->getName(),$extFile);
@@ -189,7 +240,7 @@ class NotificacionesRegistro extends BaseController
             $result = array(false, 'El archivo del layout esta vacio');
          }
 
-         if($contador == 0) {
+         if($contadorInicial == 0 && $contador == 0) {
             $documento = IOFactory::load($path_excel);
             $worksheet = $documento->getSheet(0);
             $highestRow = $worksheet->getHighestRow();
@@ -198,14 +249,18 @@ class NotificacionesRegistro extends BaseController
             for ($row = 2; $row <= $highestRow; ++$row) {
                if($worksheet->getCellByColumnAndRow(1, $row)->getValue() != "") {
                   $consecutivo++;
-                  $numOficio     = substr(trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()),0,49);
-                  $fechaOficio   = substr(trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()),0,15);
-                  $prioridad     = substr(trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()),0,19);
-                  $domicilio     = substr(trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()),0,4000);
-                  $referenciaUbi = substr(trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()),0,4000);
+                  $numOrden    = substr(trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()),0,49);
+                  $numOficio   = substr(trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()),0,49);
+                  $fechaOficio = substr(trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()),0,15);
+                  $idInsumo    = substr(trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()),0,49);
+                  $idBloque    = substr(trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()),0,49);
+                  $montoPresuntiva = substr(trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()),0,19);
+                  $domicilio   = substr(trim(mb_strtoupper($worksheet->getCellByColumnAndRow(7, $row)->getValue(),'UTF-8')),0,4000);
+                  $referenciaUbicacion = substr(trim(mb_strtoupper($worksheet->getCellByColumnAndRow(8, $row)->getValue(),'UTF-8')),0,4000);
                   //
                   $result = $this->Modelo->insertNotificacionesTmp(
-                     $consecutivo,$usuario,$numOficio,$fechaOficio,$prioridad,$domicilio,$referenciaUbi);
+                     $consecutivo,$usuario,$numOrden,$numOficio,$fechaOficio,$idInsumo,$idBloque,$montoPresuntiva,
+                     $domicilio,$referenciaUbicacion);
                   if(!$result[0]) {
                      $contadorProceso++;
                      $this->db->transRollback();
@@ -220,7 +275,7 @@ class NotificacionesRegistro extends BaseController
             $contadorProceso++;
          }
          //
-         if($contador == 0 && $contadorProceso == 0) {
+         if($contadorInicial == 0 && $contador == 0 && $contadorProceso == 0) {
             $total_validado = $this->Modelo->getValidLayoutProcedimiento($usuario,$idNivelUsuario)->getRow()->ret_valid;
             if($total_validado) {
                $this->db->transCommit();
