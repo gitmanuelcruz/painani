@@ -5,11 +5,15 @@ DECLARE
 BEGIN
 /*-----------REGISTRO DE NOTIFIICACIONES (OFICIOS)-----------------*/
 	INSERT INTO notificaciones
-		(num_oficio,fecha_oficio,id_prioridad,domicilio,referencia_ubicacion,id_estatus_notificacion,
-		reg_xlayout,creado_por,ip_registro)
+		(num_orden,num_oficio,fecha_oficio,id_insumo,id_bloque,monto_presuntiva,id_prioridad,domicilio,referencia_ubicacion,
+		id_estatus_notificacion,reg_xlayout,creado_por,ip_registro)
 	SELECT 
+		nt.num_orden,
 		nt.num_oficio,
 		TO_DATE(nt.fecha_oficio,'dd-mm-yyyy') AS fecha_oficio,
+		nt.id_insumo::numeric,
+		nt.id_bloque::numeric,
+		COALESCE(nt.monto_presuntiva::numeric,0) AS monto_presuntiva,
 		UPPER(TRIM(nt.prioridad)) AS id_prioridad,
 		UPPER(TRIM(nt.domicilio)) AS domicilio,
 		UPPER(TRIM(nt.referencia_ubicacion)) AS referencia_ubicacion,
@@ -21,6 +25,7 @@ BEGIN
 	WHERE UPPER(TRIM(nt.usuario)) = UPPER(TRIM(vusuario))					
 	ORDER BY nt.id_notificacion_tmp;
 
+	DELETE FROM prioridades_rango_presuntiva_tmp WHERE parse_text(usuario) = parse_text(vusuario);
 	DELETE FROM notificaciones_tmp WHERE parse_text(usuario) = parse_text(vusuario);
 END;
 $$ LANGUAGE plpgsql;
