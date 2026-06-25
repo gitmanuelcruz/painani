@@ -250,11 +250,11 @@ class NotificacionesRegistro extends BaseController
                if($worksheet->getCellByColumnAndRow(1, $row)->getValue() != "") {
                   $consecutivo++;
                   $numOrden    = substr(trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()),0,49);
-                  $numOficio   = substr(trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()),0,49);
-                  $fechaOficio = substr(trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()),0,15);
-                  $prioridad   = substr(trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()),0,49);
-                  $domicilio   = substr(trim(mb_strtoupper($worksheet->getCellByColumnAndRow(5, $row)->getValue(),'UTF-8')),0,4000);
-                  $referenciaUbicacion = substr(trim(mb_strtoupper($worksheet->getCellByColumnAndRow(6, $row)->getValue(),'UTF-8')),0,4000);
+                  $numOficio   = substr(trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()),0,49);
+                  $fechaOficio = substr(trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()),0,15);
+                  $prioridad   = substr(trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()),0,49);
+                  $domicilio   = substr(trim(mb_strtoupper($worksheet->getCellByColumnAndRow(4, $row)->getValue(),'UTF-8')),0,4000);
+                  $referenciaUbicacion = substr(trim(mb_strtoupper($worksheet->getCellByColumnAndRow(5, $row)->getValue(),'UTF-8')),0,4000);
                   //
                   $result = $this->Modelo->insertNotificacionesTmp(
                      $consecutivo,$usuario,$numOrden,$numOficio,$fechaOficio,$prioridad,$domicilio,$referenciaUbicacion);
