@@ -14,6 +14,7 @@ const vm_carga_layout = () => {
                         <!-- li class="text-dark"><span class="fw-bold">ID Insumo:</span> El ID insumo debe ser inico</>
                         <li class="text-dark"><span class="fw-bold">ID Bloque:</span> El ID bloque debe ser inico</li>
                         <li class="text-dark"><span class="fw-bold">Monto Presuntiva:</span> El monto presuntiva debe ser mayor a 0</li -->
+                        <li class="text-dark"><span class="fw-bold">Prioridad:</span> La prioridad del oficio</li>
                         <li class="text-dark"><span class="fw-bold">Domicilio:</span> Es el domicilio donde se notificar&aacute;</li>
                         <li class="text-dark"><span class="fw-bold">Referencia Ubicaci&oacute;n:</span> Es la referencia de la ubicaci&oacute;n a notificar</li>
                      </ol>
