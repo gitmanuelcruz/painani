@@ -6,6 +6,7 @@ const getMiPaqueteNotificacion = async (idUsuario, idPaquete) => {
   const sql = `SELECT pqn.id_paquete_notificacion,
             n.id_notificacion,
             n.num_oficio,
+            n.num_orden,
             n.domicilio,
             n.referencia_ubicacion,
             n.id_estatus_notificacion estatus_oficio,
@@ -49,7 +50,8 @@ const getMiPaqueteNotificacion = async (idUsuario, idPaquete) => {
         idPaqueteNotificacion: Number(row.id_paquete_notificacion),
         idEstatusNotificacionPaquete: row.id_estatus_notificacion,
         nombreEstatusNotificacion: row.nombre_estatus,
-        numOficio: row.num_oficio,
+        numOficio: row.num_orden, //temporal se pinta numOrden para los que no puedan actualizar su app
+        numOrden:row.num_orden,
         domicilio: row.domicilio,
         referenciaUbicacion: row.referencia_ubicacion,
         idEstatusOficio: row.estatus_oficio,
