@@ -3,6 +3,7 @@ namespace App\Controllers;
 use App\Models\MPaquetesRegistro;
 use App\Models\MServicios;
 use App\Libraries\ExcelGenerate;
+use ZipArchive;
 
 class PaquetesRegistro extends BaseController
 {
@@ -82,6 +83,7 @@ class PaquetesRegistro extends BaseController
 	}
    //
    public function soportesNotificacionAsigPag() {
+      $idPaquete = $this->request->getPost("id_paquete");
       $idPaqueteNotificacion = $this->request->getPost("id_paquete_notificacion");
       $idNotificacion = $this->request->getPost("id_notificacion");
 		$pagina     = 0;
@@ -92,11 +94,67 @@ class PaquetesRegistro extends BaseController
 		if (!empty($this->request->getPost("resultados")))
 			$resultados = $this->request->getPost("resultados");
 
-		$sql = $this->Modelo->getSoporteNotificacionAsigPag($idPaqueteNotificacion,$idNotificacion);
+		$sql = $this->Modelo->getSoporteNotificacionAsigPag($idPaquete,$idPaqueteNotificacion,$idNotificacion);
 		$results = $this->utilerias->loadJSON($sql,$pagina,$resultados);
 
 		return $this->response->setJSON($results);
 	}
+   //
+   public function soportesNotificacionAsig() {
+      $idPaquete = $this->request->getPost("id_paquete");
+      $idPaqueteNotificacion = $this->request->getPost("id_paquete_notificacion");
+      $idNotificacion = $this->request->getPost("id_notificacion");
+      $result = array(
+         'listSoporte'=> $this->Modelo->getSoporteNotificacionAsig($idPaquete,$idPaqueteNotificacion,$idNotificacion)->getResult()
+      );
+      return $this->response->setJSON($result);    
+   }
+   //
+   public function descargarSoporte() {
+      $idPaquete = $this->request->getPost("id_paquete");
+      $idPaqueteNotificacion = $this->request->getPost("id_paquete_notificacion");
+      $idNotificacion = $this->request->getPost("id_notificacion");
+      $usuario = $this->session->get("usuario");
+      $ip      = $this->session->get("ip");
+      $darchivosDet  = $this->Modelo->getSoporteNotificacionAsig($idPaquete,$idPaqueteNotificacion,$idNotificacion);
+      $totalArchivo = $darchivosDet->getNumRows();
+      $caracteres = array('/','*',' ');
+      $caracteresNew = array('_','_','_');
+      $fileGenerado = "";
+      //
+      if((int)$totalArchivo > 1) {
+         $fileGenerado = "SOPORTE_OFICIOS_".$totalArchivo.".zip";
+         $zip = new ZipArchive;
+         $zip->open($fileGenerado, ZipArchive::CREATE);
+         foreach ($darchivosDet->getResult() as $keyNumFile) {
+            $carpeta = str_replace($caracteres,$caracteresNew,trim($keyNumFile->num_orden));
+            $nombreEnZip = $carpeta."/".basename($keyNumFile->nombre_original.".".$keyNumFile->extension);
+            $file = $keyNumFile->ruta_soporte;
+            $zip->addFile($file,$nombreEnZip);
+         }
+         $zip->close();
+      }
+      else {
+         foreach ($darchivosDet->getResult() as $keyNumFile) {
+            $fileGenerado = $keyNumFile->ruta_soporte;
+         }
+      }
+      //
+      header('Content-Description: File Transfer');
+      header('Content-Type: application/octet-stream');
+      header('Content-Disposition: attachment; filename="'.basename($fileGenerado).'"');
+      header('Content-Transfer-Encoding: binary');
+      header('Expires: 0');
+      header('Cache-Control: must-revalidate');
+      header('Pragma: public');
+      header('Content-Length: ' . filesize($fileGenerado));
+      header('Access-Control-Expose-Headers: Content-Disposition');
+      readfile($fileGenerado);
+      if((int)$totalArchivo > 1) {
+         $this->utilerias->removeFile($fileGenerado);
+      }
+      exit;
+   }
 	// TODO: Proceso de registro o edicion
    public function getComboRegistro() {
       $result = array(

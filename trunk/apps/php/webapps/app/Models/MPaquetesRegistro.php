@@ -23,8 +23,10 @@ class MPaquetesRegistro extends Model
 					COALESCE(pno.total_notificaciones,0) AS total_notificaciones,
 					COALESCE(pno.total_notificado,0) AS total_notificado,
 					COALESCE(pno.total_no_localizado,0) AS total_no_localizado,
+					COALESCE(pno.total_soporte,0) AS total_soporte,
 					1 AS band,
 					1 AS band_detalle,
+					(CASE WHEN COALESCE(pno.total_soporte,0) > 0 THEN 1 ELSE 0 END) AS icon_soporte,
 					(CASE WHEN COALESCE($iconEditar,0) > 0 AND paq.fecha_hora_apertura_operacion IS NOT NULL THEN 0 ELSE 1 END) AS icon_editar,
 					(CASE WHEN COALESCE($iconEliminar,0) > 0 AND paq.fecha_hora_apertura_operacion IS NOT NULL THEN 0 ELSE 1 END) AS icon_eliminar,
 					(CASE WHEN COALESCE($iconInforme,0) > 0 THEN 1 ELSE 0 END) AS icon_informe,
@@ -36,12 +38,20 @@ class MPaquetesRegistro extends Model
 				INNER JOIN usuarios usu ON paq.id_usuario_notificador = usu.id_usuario
 				LEFT JOIN (
 					SELECT
-						id_paquete,
+						pan.id_paquete,
 						COUNT(*) AS total_notificaciones,
-						SUM(CASE WHEN id_estatus_notificacion = 'NOTIFICADO' THEN 1 ELSE 0 END) AS total_notificado,
-						SUM(CASE WHEN id_estatus_notificacion IN ('NO_LOCALIZADO','CANCELADO') THEN 1 ELSE 0 END) AS total_no_localizado
-					FROM paquetes_notificaciones
-					GROUP BY id_paquete
+						SUM(CASE WHEN pan.id_estatus_notificacion = 'NOTIFICADO' THEN 1 ELSE 0 END) AS total_notificado,
+						SUM(CASE WHEN pan.id_estatus_notificacion IN ('NO_LOCALIZADO','CANCELADO') THEN 1 ELSE 0 END) AS total_no_localizado,
+						SUM(sop.total_soporte) AS total_soporte
+					FROM paquetes_notificaciones pan
+					LEFT JOIN(
+						SELECT
+							id_paquete_notificacion,
+							COUNT(*) AS total_soporte
+						FROM soportes_notificacion
+						GROUP BY id_paquete_notificacion
+					) sop ON pan.id_paquete_notificacion = sop.id_paquete_notificacion
+					GROUP BY pan.id_paquete
 				) pno ON paq.id_paquete = pno.id_paquete
 				WHERE 1=1 ";
 		if(!empty($idNumOficio)) {
@@ -121,11 +131,13 @@ class MPaquetesRegistro extends Model
 		return $sql;
    }
 	//
-	public function getSoporteNotificacionAsigPag($idPaqueteNotificacion,$idNotificacion) {
+	public function getSoporteNotificacionAsigPag($idPaquete,$idPaqueteNotificacion,$idNotificacion) {
       $sql ="SELECT
 					sno.id_paquete_notificacion,
 					sno.id_notificacion,
 					sno.id_soporte_notificacion,
+					ntf.num_orden,
+					CONCAT(ntf.num_orden,' - ',sno.id_soporte_notificacion) AS desc_soporte,
 					sno.nombre_original,
 					sno.ruta_soporte,
 					sno.extension_archivo AS extension,
@@ -141,12 +153,27 @@ class MPaquetesRegistro extends Model
 					END) AS archivo,
 					'#ea4335' AS color_red
 				FROM soportes_notificacion sno
-				WHERE sno.id_paquete_notificacion = $idPaqueteNotificacion
-				AND sno.id_notificacion = '$idNotificacion'
-				ORDER BY sno.id_soporte_notificacion";
+				INNER JOIN notificaciones ntf ON sno.id_notificacion = ntf.id_notificacion
+				INNER JOIN paquetes_notificaciones pan ON sno.id_paquete_notificacion = pan.id_paquete_notificacion
+				WHERE 1=1 ";
+		if(!empty($idPaquete)) {
+			$sql .="AND pan.id_paquete = $idPaquete ";
+		}
+		if(!empty($idPaqueteNotificacion)) {
+			$sql .="AND sno.id_paquete_notificacion = $idPaqueteNotificacion ";
+		}
+		if(!empty($idNotificacion)) {
+			$sql .="AND sno.id_notificacion = '$idNotificacion' ";
+		}
+		$sql .="ORDER BY sno.id_soporte_notificacion";
 
 		return $sql;
    }
+	//
+	public function getSoporteNotificacionAsig($idPaquete,$idPaqueteNotificacion,$idNotificacion) {
+		$sql = $this->getSoporteNotificacionAsigPag($idPaquete,$idPaqueteNotificacion,$idNotificacion);
+		return $this->db->query($sql);
+	}
 	//
 	public function getDatosPaquete($idPaquete) {
 		$sql ="SELECT * FROM paquetes WHERE id_paquete = ?";	
