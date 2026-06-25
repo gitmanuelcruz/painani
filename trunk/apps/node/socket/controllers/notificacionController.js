@@ -14,6 +14,8 @@ const {
 } = require("../services/notificacionService");
 const { getDateTime } = require("./comun");
 
+const pool = require("../config/db");
+
 const listadoOficiosNotificar = async (req, res) => {
   const { usuario, idPaquete } = req.body;
   try {
@@ -129,23 +131,32 @@ const iniciarRuta = async (req, res) => {
 
 const finalizarRutaNotificacion = async (req, res) => {
   const { usuario, idPaquete } = req.body;
+  const client = await pool.connect();
 
   try {
+    await client.query('BEGIN');
+    
     await cerrarRutaNotificacion(usuario, idPaquete);
 
     await cancelarOrdenesPorNotificar(usuario, idPaquete);
 
     await liberarOficiosParaReasignar(usuario, idPaquete);
 
+    await client.query('COMMIT');
+
     return res
       .status(200)
       .json({ ok: true, message: "Paquete Cerrado Correctamente" });
   } catch (error) {
+     await client.query('ROLLBACK');
     console.log(error.toString());
 
     return res
       .status(500)
       .json({ ok: false, error: error.toString(), message: error.toString() });
+  }
+  finally{
+    client.release();
   }
 };
 

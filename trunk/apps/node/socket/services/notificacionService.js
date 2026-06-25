@@ -62,7 +62,7 @@ const getMiPaqueteNotificacion = async (idUsuario, idPaquete) => {
         comentarios: row.comentarios,
         ordenamiento: Number(row.ordenamiento),
         soportes: Number(row.soportes),
-        bloqueado: row.bloqueado,
+        bloqueado: row.bloqueado
       };
 
       oficios.push(reg);
