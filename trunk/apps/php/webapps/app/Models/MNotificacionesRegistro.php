@@ -123,6 +123,8 @@ class MNotificacionesRegistro extends Model
 	public function insertNotificacion(
 		$num_oficio,$num_orden,$fecha_oficio,$id_insumo,$id_bloque,$monto_presuntiva,$id_prioridad,$domicilio,
 		$referencia_ubicacion,$id_estatus,$usuario,$ip) {
+		if(empty($id_insumo)) { $id_insumo = NULL; }
+		if(empty($id_bloque)) { $id_bloque = NULL; }
 		if(empty($monto_presuntiva)) { $monto_presuntiva = 0; }
       $caracImp = array('$',',',' ');
       $caracImpNew = array('','','');
@@ -150,6 +152,8 @@ class MNotificacionesRegistro extends Model
 	public function updateNotificacion(
 		$id_notificacion,$num_oficio,$num_orden,$fecha_oficio,$id_insumo,$id_bloque,$monto_presuntiva,$id_prioridad,
 		$domicilio,$referencia_ubicacion,$usuario,$ip) {
+		if(empty($id_insumo)) { $id_insumo = NULL; }
+		if(empty($id_bloque)) { $id_bloque = NULL; }
 		if(empty($monto_presuntiva)) { $monto_presuntiva = 0; }
       $caracImp = array('$',',',' ');
       $caracImpNew = array('','','');
@@ -229,21 +233,16 @@ class MNotificacionesRegistro extends Model
 	}
    //
    public function insertNotificacionesTmp(
-      $consecutivo,$usuario,$num_orden,$num_oficio,$fecha_oficio,$id_insumo,$id_bloque,$monto_presuntiva,
-		$domicilio,$referencia_ubicacion) {
-		if(empty($monto_presuntiva)) { $monto_presuntiva = '0'; }
-      $caracImp = array('$',',',' ');
-      $caracImpNew = array('','','');
-      $montoPresuntiva = str_replace($caracImp,$caracImpNew,trim($monto_presuntiva));
+      $consecutivo,$usuario,$num_orden,$num_oficio,$fecha_oficio,$prioridad,$domicilio,$referencia_ubicacion) {
       $sql ="INSERT INTO notificaciones_tmp
-                  (id_notificacion_tmp,consecutivo,usuario,num_orden,num_oficio,fecha_oficio,id_insumo,
-						id_bloque,monto_presuntiva,domicilio,referencia_ubicacion)
+                  (id_notificacion_tmp,consecutivo,usuario,num_orden,num_oficio,fecha_oficio,prioridad,
+						domicilio,referencia_ubicacion)
                VALUES
-                  (NEXTVAL('seq_notificaciones_tmp'),?,?,?,?,?,?,?,?,?,?)";
+                  (NEXTVAL('seq_notificaciones_tmp'),?,?,?,?,?,?,?,?)";
 
       $this->db->query($sql,[
-         $consecutivo,$usuario,trim($num_orden),trim($num_oficio),trim($fecha_oficio),$id_insumo,
-			$id_bloque,$montoPresuntiva,trim($domicilio),trim($referencia_ubicacion)]);
+         $consecutivo,$usuario,trim($num_orden),trim($num_oficio),trim($fecha_oficio),$prioridad,
+			trim($domicilio),trim($referencia_ubicacion)]);
       if($this->db->transStatus()) {
          return array(true,'El proceso se ha realizado correctamente');
       }

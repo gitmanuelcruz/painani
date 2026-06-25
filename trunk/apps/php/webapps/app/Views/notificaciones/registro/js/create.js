@@ -33,13 +33,13 @@ const vmRegistro = (id_notificacion,tipo) => {
                   <div class="col-sm-4">
                      <label class="form-label">ID Insumo</label>
                      <input type="text" class="form-control" id="vm_id_insumo" name="vm_id_insumo" maxlength="20"
-                        style="height:40px" onkeypress="return getKeyNumber(event);" required>
+                        style="height:40px" onkeypress="return getKeyNumber(event);">
                      <div class="invalid-feedback">ID insumo requerido</div>
                   </div>
                   <div class="col-sm-4">
 							<label class="form-label">ID Bloque</label>
 							<input type="text" class="form-control" id="vm_id_bloque" name="vm_id_bloque" maxlength="20"
-                        style="height:40px;" onkeypress="return getKeyNumber(event);" required>
+                        style="height:40px;" onkeypress="return getKeyNumber(event);">
                      <div class="invalid-feedback">ID bloque requerido</div>        
 						</div>
                </div>
@@ -48,7 +48,7 @@ const vmRegistro = (id_notificacion,tipo) => {
 							<label class="form-label">Monto Presuntiva</label>
 							<input type="text" class="form-control" id="vm_monto_presuntiva" name="vm_monto_presuntiva" maxlength="20"
                         style="height:40px;" onkeypress="return getKeyNumberDecimal(event);" onBlur="formateo(this)"
-                        onFocus="sinformateo(this)" required value="0.00">
+                        onFocus="sinformateo(this)" value="0.00">
                      <div class="invalid-feedback">Monto presuntiva requerido</div>        
 						</div>
                   <div class="col-sm-4">

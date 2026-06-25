@@ -204,7 +204,7 @@ class NotificacionesRegistro extends BaseController
          $this->db->transBegin();
          //
          $this->Modelo->deleteNotificacionesTmp($usuario);
-         if(!empty($prioridades)) {
+         /*if(!empty($prioridades)) {
             foreach($prioridades as $key) {
                $idPrioridad = $key;
                $montoMinimo = $this->request->getPost("vm_monto_min_".$key);
@@ -219,7 +219,7 @@ class NotificacionesRegistro extends BaseController
          }
          else {
             $contadorInicial++;
-         }
+         }*/
          //
          if(!empty($file_excel) && (int)$contadorInicial == 0) {
             $ext = $file_excel->guessExtension();
@@ -252,15 +252,12 @@ class NotificacionesRegistro extends BaseController
                   $numOrden    = substr(trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()),0,49);
                   $numOficio   = substr(trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()),0,49);
                   $fechaOficio = substr(trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()),0,15);
-                  $idInsumo    = substr(trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()),0,49);
-                  $idBloque    = substr(trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()),0,49);
-                  $montoPresuntiva = substr(trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()),0,19);
-                  $domicilio   = substr(trim(mb_strtoupper($worksheet->getCellByColumnAndRow(7, $row)->getValue(),'UTF-8')),0,4000);
-                  $referenciaUbicacion = substr(trim(mb_strtoupper($worksheet->getCellByColumnAndRow(8, $row)->getValue(),'UTF-8')),0,4000);
+                  $prioridad   = substr(trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()),0,49);
+                  $domicilio   = substr(trim(mb_strtoupper($worksheet->getCellByColumnAndRow(5, $row)->getValue(),'UTF-8')),0,4000);
+                  $referenciaUbicacion = substr(trim(mb_strtoupper($worksheet->getCellByColumnAndRow(6, $row)->getValue(),'UTF-8')),0,4000);
                   //
                   $result = $this->Modelo->insertNotificacionesTmp(
-                     $consecutivo,$usuario,$numOrden,$numOficio,$fechaOficio,$idInsumo,$idBloque,$montoPresuntiva,
-                     $domicilio,$referenciaUbicacion);
+                     $consecutivo,$usuario,$numOrden,$numOficio,$fechaOficio,$prioridad,$domicilio,$referenciaUbicacion);
                   if(!$result[0]) {
                      $contadorProceso++;
                      $this->db->transRollback();

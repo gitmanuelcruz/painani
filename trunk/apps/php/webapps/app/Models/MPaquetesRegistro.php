@@ -23,7 +23,6 @@ class MPaquetesRegistro extends Model
 					COALESCE(pno.total_notificaciones,0) AS total_notificaciones,
 					COALESCE(pno.total_notificado,0) AS total_notificado,
 					COALESCE(pno.total_no_localizado,0) AS total_no_localizado,
-					COALESCE(pno.total_cancelado,0) AS total_cancelado,
 					1 AS band,
 					1 AS band_detalle,
 					(CASE WHEN COALESCE($iconEditar,0) > 0 AND paq.fecha_hora_apertura_operacion IS NOT NULL THEN 0 ELSE 1 END) AS icon_editar,
@@ -40,8 +39,7 @@ class MPaquetesRegistro extends Model
 						id_paquete,
 						COUNT(*) AS total_notificaciones,
 						SUM(CASE WHEN id_estatus_notificacion = 'NOTIFICADO' THEN 1 ELSE 0 END) AS total_notificado,
-						SUM(CASE WHEN id_estatus_notificacion = 'NO_LOCALIZADO' THEN 1 ELSE 0 END) AS total_no_localizado,
-						SUM(CASE WHEN id_estatus_notificacion = 'CANCELADO' THEN 1 ELSE 0 END) AS total_cancelado
+						SUM(CASE WHEN id_estatus_notificacion IN ('NO_LOCALIZADO','CANCELADO') THEN 1 ELSE 0 END) AS total_no_localizado
 					FROM paquetes_notificaciones
 					GROUP BY id_paquete
 				) pno ON paq.id_paquete = pno.id_paquete
@@ -217,11 +215,12 @@ class MPaquetesRegistro extends Model
 					WHERE id_estatus_notificacion NOT IN('NO_LOCALIZADO','CANCELADO')
 				) b ON a.id_notificacion = b.id_notificacion
 				WHERE a.id_estatus_notificacion IN('POR_ASIGNAR','ASIGNADO')
-				AND a.fecha_oficio >= TO_DATE(?,'yyyy-mm-dd')
+				AND a.fecha_oficio <= TO_DATE(?,'yyyy-mm-dd')
 				AND NOT EXISTS (
 					SELECT NULL
 					FROM paquetes_notificaciones x
 					WHERE x.id_notificacion = a.id_notificacion
+					AND x.id_estatus_notificacion NOT IN('NO_LOCALIZADO','CANCELADO')
 					AND x.id_paquete <> ?
 				)
 				ORDER BY a.fecha_oficio,a.num_oficio";

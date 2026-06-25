@@ -11,9 +11,9 @@ const vm_carga_layout = () => {
                         <li class="text-dark"><span class="fw-bold">Num. Orden:</span> El n&uacute;mero de orden debe ser unico (<b>NO debe existir en la plataforma</b>)</li>
                         <li class="text-dark"><span class="fw-bold">Num. Oficio:</span> El n&uacute;mero de oficio debe ser unico (<b>NO debe existir en la plataforma</b>)</li>
                         <li class="text-dark"><span class="fw-bold">Fecha oficio:</span> La fecha de orden debe llevar el siguiente formato (<b>dd-mm-yyyy</b>)</li>
-                        <li class="text-dark"><span class="fw-bold">ID Insumo:</span> El ID insumo debe ser inico</li>
+                        <!-- li class="text-dark"><span class="fw-bold">ID Insumo:</span> El ID insumo debe ser inico</>
                         <li class="text-dark"><span class="fw-bold">ID Bloque:</span> El ID bloque debe ser inico</li>
-                        <li class="text-dark"><span class="fw-bold">Monto Presuntiva:</span> El monto presuntiva debe ser mayor a 0</li>
+                        <li class="text-dark"><span class="fw-bold">Monto Presuntiva:</span> El monto presuntiva debe ser mayor a 0</li -->
                         <li class="text-dark"><span class="fw-bold">Domicilio:</span> Es el domicilio donde se notificar&aacute;</li>
                         <li class="text-dark"><span class="fw-bold">Referencia Ubicaci&oacute;n:</span> Es la referencia de la ubicaci&oacute;n a notificar</li>
                      </ol>
@@ -32,7 +32,7 @@ const vm_carga_layout = () => {
                </div>
             </div>
             <form method="post" class="app-form frm-modal-rlc" id="frmRegLayout" name="frmRegLayout" novalidate onsubmit="return false">
-               <div class="row mb-2">
+               <!--div class="row mb-2">
                   <div class="col-sm-10 offset-1">
                      <table class="table table-sm table-bordered table-striped table-hover" style="width: 100%;">
                         <thead class="table-secondary">
@@ -48,7 +48,7 @@ const vm_carga_layout = () => {
                         <tbody id="tbodyPrioridad"></tbody>
                      </table>
                   </div>
-               </div>
+               </div -->
                <div class="row">
                   <div class="col-sm-12">
                      <label class="form-label">Layout de Num. Oficios</label>
@@ -71,7 +71,7 @@ const vm_carga_layout = () => {
                </button>`;
 
    modalLG('frmNotificaciones', titulo, html, 'formlg_scrollable', botones, 'cerrarVMRegistroxLayout()');
-   cargaRegMasivo(true);
+   //cargaRegMasivo(true);
    //
    $("#bt_descargar_formatoxlayout").on("click", function () {
       descargar_formato_layout();
@@ -157,14 +157,14 @@ const descargar_formato_layout = () => {
 const cleanFrmxLayout = () => {
    $("#frmRegLayout").removeClass('frm-modal-rlc was-validated').addClass('frm-modal-rlc');
    $("#vm_archivo_layout").val('');
-   let arreglo = document.getElementsByName("vm_idprioridad[]");
+   /*let arreglo = document.getElementsByName("vm_idprioridad[]");
    let index = '';
    for (let i=0; i<arreglo.length; i++) {
       index = arreglo[i].value;
       $("#vm_monto_min_"+index).val('0.00');
       $("#vm_monto_max_"+index).val('0.00');
       $("#vm_monto_min_"+index).prop('readonly',false);
-   }
+   }*/
 }
 //!
 const validxLayout = () => {
@@ -187,11 +187,11 @@ const validxLayout = () => {
 //!
 const validarArchivosLayout = () => {
    let extension = ['.xlsx'];
-   let arreglo = document.getElementsByName("vm_idprioridad[]");
-   let index = '';
+   //let arreglo = document.getElementsByName("vm_idprioridad[]");
+   //let index = '';
    let msg = '';
    //
-   for (let i=0; i<arreglo.length; i++) {
+   /*for (let i=0; i<arreglo.length; i++) {
       index = arreglo[i].value;
       let montoMin = (unFormatNumber($("#vm_monto_min_"+index).val()) == '') ? 0 : unFormatNumber($("#vm_monto_min_"+index).val());
       let montoMax = (unFormatNumber($("#vm_monto_max_"+index).val()) == '') ? 0 : unFormatNumber($("#vm_monto_max_"+index).val());
@@ -204,7 +204,7 @@ const validarArchivosLayout = () => {
       if(parseFloat(montoMax) <= 0 && idSiguiente != '' && idSiguiente != null && idSiguiente != undefined) {
          msg +="<li>El monto m&aacute;ximo del "+descPrioridad+" tiene que ser mayor a 0</li>";
       }
-   }
+   }*/
    if($.trim($("#vm_archivo_layout").val()).length > 0){
       if(verifcar_peso_archivo('vm_archivo_layout', 15)) {
          msg +="<li>El archivo .xlsx no puede pesar m&aacute;s de 15MB</li>";
