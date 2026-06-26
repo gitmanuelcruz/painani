@@ -11,12 +11,17 @@ VALUES
 'Botón para registrar nuevo paquete','PRIVILEGIO','#','',1,10,'PRIV_ESPECIFICOS'),
 (NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_REG_PAQUETES'),'PRIV_BTN_EDI_PAQUETE','Botón para editar registro de paquete',
 'Botón para editar registro de paquete','PRIVILEGIO','#','',1,11,'PRIV_ESPECIFICOS'),
+(NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_REG_PAQUETES'),'PRIV_BTN_INICIAR_PAQUETE','Botón para iniciar la operación del paquete',
+'Botón para iniciar la operación del paquete','PRIVILEGIO','#','',1,12,'PRIV_ESPECIFICOS'),
+(NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_REG_PAQUETES'),'PRIV_BTN_CERRAR_PAQUETE','Botón para cerrar la operación del paquete',
+'Botón para cerrar la operación del paquete','PRIVILEGIO','#','',1,13,'PRIV_ESPECIFICOS'),
 (NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_REG_PAQUETES'),'PRIV_BTN_ELIM_PAQUETE','Botón para eliminar registro de paquete',
-'Botón para eliminar registro de paquete','PRIVILEGIO','#','',1,12,'PRIV_ESPECIFICOS'),
-(NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_REG_PAQUETES'),'PRIV_BTN_INFOEXCEL_NOTPAQUETE','Botón para descargar informe de notificaciones x paquete',
-'Botón para descargar informe de notificaciones x paquete','PRIVILEGIO','#','',1,13,'PRIV_ESPECIFICOS'),
-(NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_REG_PAQUETES'),'PRIV_BTN_INFOPDF_PAQUETE','Botón para descargar informe de paquete',
-'Botón para descargar informe de paquete','PRIVILEGIO','#','',1,13,'PRIV_ESPECIFICOS');
+'Botón para eliminar registro de paquete','PRIVILEGIO','#','',1,14,'PRIV_ESPECIFICOS'),
+
+(NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_REG_PAQUETES'),'PRIV_BTN_INFOEXCEL_NOTPAQUETE','Botón para descargar informe de notificaciones x paquete (Excel)',
+'Botón para descargar informe de notificaciones x paquete (Excel)','PRIVILEGIO','#','',1,15,'PRIV_ESPECIFICOS'),
+(NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_REG_PAQUETES'),'PRIV_BTN_INFOPDF_PAQUETE','Botón para descargar informe de paquete (PDF)',
+'Botón para descargar informe de paquete (PDF)','PRIVILEGIO','#','',1,16,'PRIV_ESPECIFICOS');
 
 /*---Rol Privilegio del Modulo--*/
 INSERT INTO roles_privilegios (id_rol_privilegio,id_rol,id_menu,solo_lectura,lectura_escritura)
@@ -27,6 +32,8 @@ INSERT INTO roles_privilegios (id_rol_privilegio,id_rol,id_menu,solo_lectura,lec
 VALUES
 (NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_NVO_PAQUETE'),0,1),
 (NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_EDI_PAQUETE'),0,1),
+(NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_INICIAR_PAQUETE'),0,1),
+(NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_CERRAR_PAQUETE'),0,1),
 (NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_ELIM_PAQUETE'),0,1),
 (NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_INFOEXCEL_NOTPAQUETE'),0,1),
 (NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_INFOPDF_PAQUETE'),0,1);
