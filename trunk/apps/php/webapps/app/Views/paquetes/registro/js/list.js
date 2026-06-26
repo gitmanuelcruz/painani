@@ -45,6 +45,7 @@ const loadPaquetesPag = () => {
             {"etiqueta":"", "titulo": "Opc. Paquete", "icono": "fa-solid fa-list-ul fa-lg", "tooltip": "Lista de opciones", "tipoicono": "i",
                "menu":[
                   { "campo_bd": "band_detalle", "valor_campo": "1", "icono": "fa-solid fa-circle-info fa-lg", "callback": "detalle", "etiqueta": "Detalle", "tipoicono": "i", "color": "color_blue" },
+                  { "campo_bd": "icon_ubicacion", "valor_campo": "1", "icono": "fa-solid fa-map-location-dot fa-lg", "callback": "verUbicacionxPaquete", "etiqueta": "Ubicaciones", "tipoicono": "i", "color": "color_red" },
                   { "campo_bd": "icon_soporte", "valor_campo": "1", "icono": "fa-solid fa-folder-open fa-lg", "callback": "verSoportexPaquete", "etiqueta": "Soportes", "tipoicono": "i", "color": "color_blue" },
                   { "campo_bd": "icon_editar", "valor_campo": "1", "icono": "fa-solid fa-pen-to-square fa-lg", "callback": "editarPaquete", "etiqueta": "Editar", "tipoicono": "i", "color": "color_black" },
                   { "campo_bd": "icon_eliminar", "valor_campo": "1", "icono": "fa-solid fa-trash fa-lg", "callback": "eliminarPaquete", "etiqueta": "Eliminar", "tipoicono": "i", "color": "color_red" },

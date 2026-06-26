@@ -76,11 +76,19 @@ class PaquetesRegistro extends BaseController
 		if (!empty($this->request->getPost("resultados")))
 			$resultados = $this->request->getPost("resultados");
 
-		$sql = $this->Modelo->getNotificacionesAsigPag($idPaquete);
+		$sql = $this->Modelo->getNotificacionesAsigPag($idPaquete,0);
 		$results = $this->utilerias->loadJSON($sql,$pagina,$resultados);
 
 		return $this->response->setJSON($results);
 	}
+   //
+   public function notificacionesAplicadas() {
+      $idPaquete = $this->request->getPost("id_paquete");
+      $result = array(
+         'listNotificaciones'=> $this->Modelo->getNotificacionesAplicadas($idPaquete,1)->getResult()
+      );
+      return $this->response->setJSON($result);    
+   }
    //
    public function soportesNotificacionAsigPag() {
       $idPaquete = $this->request->getPost("id_paquete");

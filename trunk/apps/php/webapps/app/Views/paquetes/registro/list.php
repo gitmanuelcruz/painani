@@ -88,13 +88,14 @@
 					<tr class="p-font-msg-09">
 						<th width="8%" class="text-start"   rowspan="3">ID</th>
 						<th width="20%" class="text-start"  rowspan="3">Notificador</th>
-						<th width="13%" class="text-center" rowspan="3">Fecha Programada</th>
-						<th width="13%" class="text-center" rowspan="3">Fecha Apertura</th>
-						<th width="13%" class="text-center" rowspan="3">Fecha Cierre</th>
-						<th width="20%" class="text-center" colspan="3">NUM. ORDENES<hr class="mb-0 mt-0 text-white"></th>
+						<th width="20%" class="text-center fw-bold" colspan="3">FECHAS<hr class="mb-0 mt-0 text-white"></th>
+						<th width="20%" class="text-center fw-bold" colspan="3">NUM. ORDENES<hr class="mb-0 mt-0 text-white"></th>
 						<th width="1%"  class="text-center" rowspan="3">Acciones</th>
 					</tr>
 					<tr class="p-font-msg-09">
+						<th width="6%" class="text-center fw-bold">Programada</th>
+						<th width="7%" class="text-center fw-bold text-success">Apertura</th>
+						<th width="7%" class="text-center fw-bold text-danger">Cierre</th>
 						<th width="6%" class="text-center fw-bold text-info">Total</th>
 						<th width="6%" class="text-center fw-bold text-success">Notificado</th>
 						<th width="8%" class="text-center fw-bold text-orange">No Localizado</th>
@@ -110,5 +111,6 @@
 	<script src="<?php echo base_url();?>app/Views/paquetes/registro/js/list.js?version=<?php echo time(); ?>" type="text/javascript"></script>
 	<script src="<?php echo base_url();?>app/Views/paquetes/registro/js/create.js?version=<?php echo time(); ?>" type="text/javascript"></script>
 	<script src="<?php echo base_url();?>app/Views/paquetes/registro/js/detalle.js?version=<?php echo time(); ?>" type="text/javascript"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD7gaLNQIvZP_d1rt2Uod-JcwHofGgwA9Y&sensor=true&libraries=geometry"></script>
 <?=$this->endSection()?>
 <?=$this->extend("layout/main")?>

@@ -26,6 +26,7 @@ class MPaquetesRegistro extends Model
 					COALESCE(pno.total_soporte,0) AS total_soporte,
 					1 AS band,
 					1 AS band_detalle,
+					(CASE WHEN COALESCE(pno.total_notificado,0) > 0 THEN 1 ELSE 0 END) AS icon_ubicacion,
 					(CASE WHEN COALESCE(pno.total_soporte,0) > 0 THEN 1 ELSE 0 END) AS icon_soporte,
 					(CASE WHEN COALESCE($iconEditar,0) > 0 AND paq.fecha_hora_apertura_operacion IS NOT NULL THEN 0 ELSE 1 END) AS icon_editar,
 					(CASE WHEN COALESCE($iconEliminar,0) > 0 AND paq.fecha_hora_apertura_operacion IS NOT NULL THEN 0 ELSE 1 END) AS icon_eliminar,
@@ -85,7 +86,7 @@ class MPaquetesRegistro extends Model
 		return $sql;
    }
 	//
-	public function getNotificacionesAsigPag($idPaquete) {
+	public function getNotificacionesAsigPag($idPaquete,$notificado) {
       $sql ="SELECT
 					pno.id_paquete,
 					pno.id_paquete_notificacion,
@@ -102,6 +103,7 @@ class MPaquetesRegistro extends Model
 					END) AS desc_domicilio,
 					ntf.referencia_ubicacion AS referencia_ubicacion,
 					pno.id_estatus_notificacion,
+					TO_CHAR(pno.fecha_hora_notificacion,'dd/mm/yyyy hh24:mi') AS fnotificado,
 					(CASE WHEN COALESCE(pno.notificado,FALSE) = TRUE
 						THEN CONCAT(UPPER(eno.nombre_estatus_notificacion),'<br><span class=''badge bg-light-primary text-primary fs-1 fw-bold''>',TO_CHAR(pno.fecha_hora_notificacion,'dd/mm/yyyy hh24:mi'),'</span>')
 						ELSE 
@@ -112,8 +114,13 @@ class MPaquetesRegistro extends Model
 								ELSE UPPER(eno.nombre_estatus_notificacion)
 							END)
 					END) AS desc_estatus,
+					pno.latitud,
+					pno.longitud,
+					(CASE WHEN pno.notificado = TRUE THEN 1 ELSE 0 END) AS icon_ubicacion,
 					(CASE WHEN COALESCE(sno.total_soportes,0) > 0 THEN 1 ELSE 0 END) AS icon_soportes,
-					'#145dbd' AS color_blue
+					'#145dbd' AS color_blue,
+					'#66bb6a' AS color_green,
+					'#ea4335' AS color_red
 				FROM paquetes_notificaciones pno
 				INNER JOIN notificaciones ntf ON pno.id_notificacion = ntf.id_notificacion
 				INNER JOIN estatus_notificacion eno ON pno.id_estatus_notificacion = eno.id_estatus_notificacion
@@ -125,11 +132,18 @@ class MPaquetesRegistro extends Model
 					FROM soportes_notificacion
 					GROUP BY id_notificacion,id_paquete_notificacion
 				) sno ON ntf.id_notificacion = sno.id_notificacion AND pno.id_paquete_notificacion = sno.id_paquete_notificacion
-				WHERE pno.id_paquete = $idPaquete
-				ORDER BY eno.num_orden,ntf.num_oficio,ntf.fecha_oficio,pno.id_paquete_notificacion";
+				WHERE pno.id_paquete = $idPaquete ";
+		if(!empty($notificado)) {
+			$sql .="AND pno.notificado = TRUE ";
+		}
+		$sql .="ORDER BY eno.num_orden,ntf.num_oficio,ntf.fecha_oficio,pno.id_paquete_notificacion";
 
 		return $sql;
    }
+	public function getNotificacionesAplicadas($idPaquete,$notificado) {
+		$sql = $this->getNotificacionesAsigPag($idPaquete,$notificado);
+		return $this->db->query($sql);
+	}
 	//
 	public function getSoporteNotificacionAsigPag($idPaquete,$idPaqueteNotificacion,$idNotificacion) {
       $sql ="SELECT
