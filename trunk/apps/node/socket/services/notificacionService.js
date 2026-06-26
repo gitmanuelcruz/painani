@@ -116,7 +116,7 @@ const cerrarRutaNotificacion = async (usuario, idPaquete) => {
 const cancelarOrdenesPorNotificar = async(usuario, idPaquete)=>{
  const sql = `UPDATE paquetes_notificaciones SET fecha_ultimo_cambio = now(),
                     modificado_por = $1,
-                    id_estatus_notificacion = 'CANCELADO'
+                    id_estatus_notificacion = 'NO_ENTREGADO'
                 WHERE id_paquete =$2
                 AND id_estatus_notificacion = 'POR_NOTIFICAR' `;
 
@@ -132,7 +132,7 @@ const liberarOficiosParaReasignar = async(usuario, idPaquete)=>{
                   FROM paquetes_notificaciones pn
                   WHERE pn.id_notificacion = n.id_notificacion
                     AND pn.id_paquete = $2
-                    AND pn.id_estatus_notificacion IN ('NO_LOCALIZADO', 'CANCELADO')
+                    AND pn.id_estatus_notificacion IN ('NO_LOCALIZADO', 'NO_ENTREGADO')
                  `;
 
   await pool.query(sql, [usuario, idPaquete]);
@@ -187,7 +187,8 @@ const getPaquetesHoy = async (usuario) => {
                 FROM paquetes p 
                     INNER JOIN usuarios u ON p.id_usuario_notificador = u.id_usuario
                 WHERE p.id_usuario_notificador =$1
-                AND p.fecha_programada = current_date`;
+                AND p.fecha_programada = current_date
+                ORDER BY id_paquete`;
 
   let paquetes = [];
 
