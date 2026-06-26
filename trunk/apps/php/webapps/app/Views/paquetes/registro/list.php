@@ -94,8 +94,8 @@
 					</tr>
 					<tr class="p-font-msg-09">
 						<th width="6%" class="text-center fw-bold">Programada</th>
-						<th width="7%" class="text-center fw-bold text-success">Apertura</th>
-						<th width="7%" class="text-center fw-bold text-danger">Cierre</th>
+						<th width="7%" class="text-center fw-bold">Apertura</th>
+						<th width="7%" class="text-center fw-bold">Cierre</th>
 						<th width="6%" class="text-center fw-bold text-info">Total</th>
 						<th width="6%" class="text-center fw-bold text-success">Notificado</th>
 						<th width="8%" class="text-center fw-bold text-orange">No Localizado</th>

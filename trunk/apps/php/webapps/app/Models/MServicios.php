@@ -34,12 +34,16 @@ class MServicios extends Model
       return $this->db->query($sql);
    }
 
-   public function getEstatusNotificacion() {
+   public function getEstatusNotificacion($notEstatus = "") {
       $sql ="SELECT
                id_estatus_notificacion AS id,
                nombre_estatus_notificacion AS descripcion
             FROM estatus_notificacion
-            ORDER BY num_orden";
+            WHERE 1=1 ";
+      if(!empty($notEstatus)) {
+         $sql .="AND id_estatus_notificacion NOT IN($notEstatus) ";
+      }
+      $sql .="ORDER BY num_orden";
 
       return $this->db->query($sql);
    }
