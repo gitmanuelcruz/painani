@@ -48,7 +48,9 @@ class PaquetesRegistro extends BaseController
       $fechaCierre   = $this->request->getPost("txt_fecha_cierre");
       $notificador   = $this->request->getPost("txt_nombre_notificador");
 		$usuario 	   = $this->session->get("usuario");
-		$iconEditar    = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_EDI_PAQUETE","PRIVILEGIO");
+		$iconAbrir     = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_INICIAR_PAQUETE","PRIVILEGIO");
+      $iconCerrar    = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_CERRAR_PAQUETE","PRIVILEGIO");
+      $iconEditar    = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_EDI_PAQUETE","PRIVILEGIO");
 		$iconEliminar  = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_ELIM_PAQUETE","PRIVILEGIO");
       $iconInforme   = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_INFOPDF_PAQUETE","PRIVILEGIO");
 		$pagina        = 0;
@@ -60,7 +62,8 @@ class PaquetesRegistro extends BaseController
 			$resultados = $this->request->getPost("resultados");
 
 		$sql = $this->Modelo->getPaquetesPag(
-         $idNumOficio,$fechaProgramada,$fechaApertura,$fechaCierre,$notificador,$iconEditar,$iconEliminar,$iconInforme);
+         $idNumOficio,$fechaProgramada,$fechaApertura,$fechaCierre,$notificador,$iconAbrir,$iconCerrar,$iconEditar,
+         $iconEliminar,$iconInforme);
 		$results = $this->utilerias->loadJSON($sql,$pagina,$resultados);
 
 		return $this->response->setJSON($results);
@@ -278,7 +281,73 @@ class PaquetesRegistro extends BaseController
       }
 
       return $this->response->setJSON($response);
-   }  
+   }
+   // TODO: Proceso de iniciar paquete
+   public function procesoIniciarPaquete(){
+      set_time_limit(0);
+      if ($this->session->get("logueado") != true) {
+         $response = array('respuesta' => false, 'mensaje' => 'Se terminó la sesión, vuelva a iniciar nuevamente');
+      }
+      else {
+         $idPaquete = $this->request->getPost("id_paquete");
+         $usuario = $this->session->get("usuario");
+         $ip      = $this->session->get("ip");
+         $datos = $this->Modelo->getDatosPaquete($idPaquete)->getRow();
+         $msjValid = "";
+         $this->db->transBegin();
+         //
+         if($datos->fecha_hora_apertura_operacion == "") {
+            $result = $this->Modelo->iniciarPaquete($idPaquete,$usuario,$ip);
+         }
+         else {
+            $result = array(false,"El paquete con el ID (<b>".$idPaquete."</b>) ya se encuentra iniciada para su operaci&oacute;n",1);
+         }
+         //
+         if($result[0]) {
+            $this->db->transCommit();
+            $response = array('respuesta' => true, 'mensaje' => $result[1]);
+         }
+         else {
+            $this->db->transRollback();
+            $response = array('respuesta' => false, 'mensaje' => $result[1], 'valid' => $result[2]);
+         }
+      }
+
+      return $this->response->setJSON($response);
+   }
+   // TODO: Proceso de cerrar paquete
+   public function procesoCerrarPaquete(){
+      set_time_limit(0);
+      if ($this->session->get("logueado") != true) {
+         $response = array('respuesta' => false, 'mensaje' => 'Se terminó la sesión, vuelva a iniciar nuevamente');
+      }
+      else {
+         $idPaquete = $this->request->getPost("id_paquete");
+         $usuario = $this->session->get("usuario");
+         $ip      = $this->session->get("ip");
+         $datos = $this->Modelo->getDatosPaquete($idPaquete)->getRow();
+         $msjValid = "";
+         $this->db->transBegin();
+         //
+         if($datos->fecha_hora_cierre_operacion == "") {
+            $result = $this->Modelo->cerrarPaquete($idPaquete,$usuario,$ip);
+         }
+         else {
+            $result = array(false,"El paquete con el ID (<b>".$idPaquete."</b>) ya se encuentra cerrada para su operaci&oacute;n",1);
+         }
+         //
+         if($result[0]) {
+            $this->db->transCommit();
+            $response = array('respuesta' => true, 'mensaje' => $result[1]);
+         }
+         else {
+            $this->db->transRollback();
+            $response = array('respuesta' => false, 'mensaje' => $result[1], 'valid' => $result[2]);
+         }
+      }
+
+      return $this->response->setJSON($response);
+   }
    // TODO: Proceso de eliminacion
    public function procesoEliminacion(){
       set_time_limit(0);

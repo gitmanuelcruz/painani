@@ -9,7 +9,8 @@ class MPaquetesRegistro extends Model
 	}
 	//
 	public function getPaquetesPag(
-		$idNumOficio,$fechaProgramada,$fechaApertura,$fechaCierre,$notificador,$iconEditar,$iconEliminar,$iconInforme) {
+		$idNumOficio,$fechaProgramada,$fechaApertura,$fechaCierre,$notificador,$iconAbrir,$iconCerrar,$iconEditar,
+		$iconEliminar,$iconInforme) {
       $sql ="SELECT
 					paq.id_paquete,
 					paq.id_usuario_notificador AS id_notificador,
@@ -28,6 +29,8 @@ class MPaquetesRegistro extends Model
 					1 AS band_detalle,
 					(CASE WHEN COALESCE(pno.total_notificado,0) > 0 THEN 1 ELSE 0 END) AS icon_ubicacion,
 					(CASE WHEN COALESCE(pno.total_soporte,0) > 0 THEN 1 ELSE 0 END) AS icon_soporte,
+					(CASE WHEN COALESCE($iconAbrir,0) > 0 AND paq.fecha_hora_apertura_operacion IS NOT NULL THEN 0 ELSE 1 END) AS icon_abrir,
+					(CASE WHEN COALESCE($iconCerrar,0) > 0 AND paq.fecha_hora_apertura_operacion IS NOT NULL AND paq.fecha_hora_cierre_operacion ISNULL THEN 1 ELSE 0 END) AS icon_cerrar,
 					(CASE WHEN COALESCE($iconEditar,0) > 0 AND paq.fecha_hora_apertura_operacion IS NOT NULL THEN 0 ELSE 1 END) AS icon_editar,
 					(CASE WHEN COALESCE($iconEliminar,0) > 0 AND paq.fecha_hora_apertura_operacion IS NOT NULL THEN 0 ELSE 1 END) AS icon_eliminar,
 					(CASE WHEN COALESCE($iconInforme,0) > 0 THEN 1 ELSE 0 END) AS icon_informe,
@@ -42,7 +45,7 @@ class MPaquetesRegistro extends Model
 						pan.id_paquete,
 						COUNT(*) AS total_notificaciones,
 						SUM(CASE WHEN pan.id_estatus_notificacion = 'NOTIFICADO' THEN 1 ELSE 0 END) AS total_notificado,
-						SUM(CASE WHEN pan.id_estatus_notificacion IN ('NO_LOCALIZADO','CANCELADO') THEN 1 ELSE 0 END) AS total_no_localizado,
+						SUM(CASE WHEN pan.id_estatus_notificacion IN ('NO_LOCALIZADO','NO_ENTREGADO') THEN 1 ELSE 0 END) AS total_no_localizado,
 						SUM(sop.total_soporte) AS total_soporte
 					FROM paquetes_notificaciones pan
 					LEFT JOIN(
@@ -109,7 +112,7 @@ class MPaquetesRegistro extends Model
 						ELSE 
 							(CASE WHEN pno.id_estatus_notificacion = 'NO_LOCALIZADO'
 								THEN CONCAT('<span class=''text-orange fw-bold''>',UPPER(eno.nombre_estatus_notificacion),'</span>')
-								WHEN pno.id_estatus_notificacion = 'CANCELADO'
+								WHEN pno.id_estatus_notificacion = 'NO_ENTREGADO'
 								THEN CONCAT('<span class=''text-danger fw-bold''>',UPPER(eno.nombre_estatus_notificacion),'</span>')
 								ELSE UPPER(eno.nombre_estatus_notificacion)
 							END)
@@ -202,7 +205,7 @@ class MPaquetesRegistro extends Model
 					a.* 
 				FROM paquetes_notificaciones b
 				INNER JOIN notificaciones a ON b.id_notificacion = a.id_notificacion
-				WHERE b.id_estatus_notificacion NOT IN('NO_LOCALIZADO','CANCELADO')
+				WHERE b.id_estatus_notificacion NOT IN('NO_LOCALIZADO','NO_ENTREGADO')
 				AND b.id_paquete <> ?
 				AND b.id_notificacion IN ?
 				ORDER BY a.num_oficio";
@@ -253,7 +256,7 @@ class MPaquetesRegistro extends Model
 				LEFT JOIN (
 					SELECT *
 					FROM paquetes_notificaciones
-					WHERE id_estatus_notificacion NOT IN('NO_LOCALIZADO','CANCELADO')
+					WHERE id_estatus_notificacion NOT IN('NO_LOCALIZADO','NO_ENTREGADO')
 				) b ON a.id_notificacion = b.id_notificacion
 				WHERE a.id_estatus_notificacion IN('POR_ASIGNAR','ASIGNADO')
 				AND a.fecha_oficio <= TO_DATE(?,'yyyy-mm-dd')
@@ -261,7 +264,7 @@ class MPaquetesRegistro extends Model
 					SELECT NULL
 					FROM paquetes_notificaciones x
 					WHERE x.id_notificacion = a.id_notificacion
-					AND x.id_estatus_notificacion NOT IN('NO_LOCALIZADO','CANCELADO')
+					AND x.id_estatus_notificacion NOT IN('NO_LOCALIZADO','NO_ENTREGADO')
 					AND x.id_paquete <> ?
 				)
 				ORDER BY a.fecha_oficio,a.num_oficio";
@@ -313,8 +316,8 @@ class MPaquetesRegistro extends Model
 				AND NOT EXISTS (
 					SELECT NULL
 					FROM notificaciones b
-					WHERE a.id_notificacion = b.id_notificacion
-					AND a.id_notificacion IN ?
+					WHERE b.id_notificacion = a.id_notificacion
+					AND b.id_notificacion IN ?
 				)";
 
 		$this->db->query($sql,[$id_paquete,$ids_notificaciones]);
@@ -328,7 +331,8 @@ class MPaquetesRegistro extends Model
 	//
 	public function insertPaqueteNotificacion($id_paquete,$ids_notificaciones,$idEstatus,$usuario,$ip) {
 		$sql ="INSERT INTO paquetes_notificaciones
-					(id_paquete_notificacion,id_paquete,id_notificacion,id_estatus_notificacion,creado_por,ip_registro)
+					(id_paquete_notificacion,id_paquete,id_notificacion,id_estatus_notificacion,
+					creado_por,ip_registro)
 				SELECT
 					NEXTVAL('seq_paquetes_notificaciones'),
 					?,
@@ -357,9 +361,11 @@ class MPaquetesRegistro extends Model
 					WHERE b.id_notificacion = a.id_notificacion
 					AND b.id_paquete = ?
 				)";
-		
+
 		$sql3 ="UPDATE notificaciones a SET
 						id_estatus_notificacion = 'POR_ASIGNAR',
+						fecha_hora_notificado = NULL,
+						notificado_por = NULL,
 						fecha_ultimo_cambio = CURRENT_TIMESTAMP,
 						modificado_por = TRIM(?),
 						ip_modifico = TRIM(?)
@@ -367,7 +373,8 @@ class MPaquetesRegistro extends Model
 				AND NOT EXISTS (
 					SELECT NULL
 					FROM paquetes_notificaciones b
-					WHERE b.id_notificacion = a.id_notificacion
+					WHERE id_estatus_notificacion = 'NOTIFICADO'
+					AND b.id_notificacion = a.id_notificacion
 				)";
 
 		$this->db->query($sql,[$id_paquete,$usuario,$ip,$ids_notificaciones,$id_paquete]);
@@ -381,11 +388,68 @@ class MPaquetesRegistro extends Model
 		}
 	}
 	//
+	public function iniciarPaquete($id_paquete,$usuario,$ip) {
+		$sql ="UPDATE paquetes a SET
+					fecha_hora_apertura_operacion = CURRENT_TIMESTAMP,
+					fecha_ultimo_cambio = CURRENT_TIMESTAMP,
+					modificado_por = TRIM(?),
+					ip_modifico = TRIM(?)
+				WHERE a.id_paquete = ?";
+
+		$this->db->query($sql,[$usuario,$ip,$id_paquete]);
+		if ($this->db->transStatus()) {
+			return array(true, 'El proceso se ha realizado correctamente');
+		}
+		else {
+			return array(false, 'ERROR AL INICIAR LA OPERACION DEL PAQUETE', 0);
+		}
+	}
+	//
+	public function cerrarPaquete($id_paquete,$usuario,$ip) {
+		$sql ="UPDATE paquetes a SET
+					fecha_hora_cierre_operacion = CURRENT_TIMESTAMP,
+					fecha_ultimo_cambio = CURRENT_TIMESTAMP,
+					modificado_por = TRIM(?),
+					ip_modifico = TRIM(?)
+				WHERE a.id_paquete = ?";
+		
+		$sql2 ="UPDATE paquetes_notificaciones SET 
+						id_estatus_notificacion = 'NO_ENTREGADO',
+						fecha_ultimo_cambio = CURRENT_TIMESTAMP,
+						modificado_por = TRIM(?),
+						ip_modifico = TRIM(?)
+				WHERE id_estatus_notificacion = 'POR_NOTIFICAR'
+				AND id_paquete = ?";
+		
+		$sql3 ="UPDATE notificaciones n SET
+                  id_estatus_notificacion = 'POR_ASIGNAR',
+						fecha_hora_notificado = NULL,
+						notificado_por = NULL,
+						fecha_ultimo_cambio = CURRENT_TIMESTAMP,
+						modificado_por = TRIM(?),
+						ip_modifico = TRIM(?)
+				FROM paquetes_notificaciones pn
+				WHERE pn.id_notificacion = n.id_notificacion
+				AND pn.id_estatus_notificacion IN ('NO_LOCALIZADO', 'NO_ENTREGADO')
+				AND pn.id_paquete = ?";
+
+		$this->db->query($sql ,[$usuario,$ip,$id_paquete]);
+		$this->db->query($sql2,[$usuario,$ip,$id_paquete]);
+		$this->db->query($sql3,[$usuario,$ip,$id_paquete]);
+		if ($this->db->transStatus()) {
+			return array(true, 'El proceso se ha realizado correctamente');
+		}
+		else {
+			return array(false, 'ERROR AL CERRAR LA OPERACION DEL PAQUETE', 0);
+		}
+	}
+	//
 	public function deletePaquetes($id_paquete,$usuario,$ip) {
 		$sql ="DELETE FROM paquetes_notificaciones WHERE id_paquete = ?";
 		$sql2 ="DELETE FROM paquetes WHERE id_paquete = ?";
 		$sql3 ="UPDATE notificaciones a SET
 						id_estatus_notificacion = 'POR_ASIGNAR',
+						fecha_hora_notificado = NULL,
 						fecha_ultimo_cambio = CURRENT_TIMESTAMP,
 						modificado_por = TRIM(?),
 						ip_modifico = TRIM(?)
@@ -393,12 +457,14 @@ class MPaquetesRegistro extends Model
 				AND NOT EXISTS (
 					SELECT NULL
 					FROM paquetes_notificaciones b
-					WHERE b.id_notificacion = a.id_notificacion
+					WHERE id_estatus_notificacion = 'NOTIFICADO'
+					AND b.id_notificacion = a.id_notificacion
+					AND b.id_paquete = ?
 				)";
 
 		$this->db->query($sql,[$id_paquete]);
 		$this->db->query($sql2,[$id_paquete]);
-		$this->db->query($sql3,[$usuario,$ip]);
+		$this->db->query($sql3,[$usuario,$ip,$id_paquete]);
 		if ($this->db->transStatus()) {
 			return array(true, 'El proceso se ha realizado correctamente');
 		}

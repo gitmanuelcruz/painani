@@ -27,7 +27,7 @@ class NotificacionesRegistro extends BaseController
             $data['titulo2'] = "Registro de Notificaciones";
             $data['btn_nuevo'] = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_NVO_NOTIFICACION","PRIVILEGIO");
             $data['btn_layout'] = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_CARGALAYOUT_NOTIFICACION","PRIVILEGIO");
-            $notEstatus = "'POR_NOTIFICAR','NO_LOCALIZADO'";
+            $notEstatus = "'POR_NOTIFICAR','NO_LOCALIZADO','NO_ENTREGADO'";
             $data['estatus'] = $this->MServicios->getEstatusNotificacion($notEstatus)->getResult();
 				return view('notificaciones/registro/list', $data);
          }

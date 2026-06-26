@@ -67,7 +67,7 @@ class MNotificacionesRegistro extends Model
 					FROM paquetes_notificaciones a
 					INNER JOIN paquetes b ON a.id_paquete = b.id_paquete
 					INNER JOIN usuarios c ON b.id_usuario_notificador = c.id_usuario
-					WHERE id_estatus_notificacion NOT IN('NO_LOCALIZADO','CANCELADO')
+					WHERE id_estatus_notificacion NOT IN('NO_LOCALIZADO','NO_ENTREGADO')
 					GROUP BY a.id_paquete,a.id_notificacion,a.notificado,c.nombre_completo
 				) pno ON ntf.id_notificacion = pno.id_notificacion
 				WHERE 1=1 ";
