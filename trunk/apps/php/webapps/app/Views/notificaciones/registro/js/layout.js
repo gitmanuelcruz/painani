@@ -9,7 +9,7 @@ const vm_carga_layout = () => {
                      <p class="mb-2 text-dark">El archivo debe contener las siguientes columnas en este orden:</p>
                      <ol class="mb-2">
                         <li class="text-dark"><span class="fw-bold">Num. Orden:</span> El n&uacute;mero de orden debe ser unico (<b>NO debe existir en la plataforma</b>)</li>
-                        <li class="text-dark"><span class="fw-bold">Num. Oficio:</span> El n&uacute;mero de oficio debe ser unico (<b>NO debe existir en la plataforma</b>)</li>
+                        <!--li class="text-dark"><span class="fw-bold">Num. Oficio:</span> El n&uacute;mero de oficio debe ser unico (<b>NO debe existir en la plataforma</b>)</li -->
                         <li class="text-dark"><span class="fw-bold">Fecha oficio:</span> La fecha de orden debe llevar el siguiente formato (<b>dd-mm-yyyy</b>)</li>
                         <!-- li class="text-dark"><span class="fw-bold">ID Insumo:</span> El ID insumo debe ser inico</>
                         <li class="text-dark"><span class="fw-bold">ID Bloque:</span> El ID bloque debe ser inico</li>
