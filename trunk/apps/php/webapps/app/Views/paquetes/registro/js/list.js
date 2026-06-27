@@ -19,16 +19,16 @@ $(document).ready(function() {
 		loadPaquetesPag();
 	});
 
+   $("#btn_inf_detalle_notif").on("click", function () {
+      vmDescargarInfo();
+   });
+
 	$("#btnNuevo").on("click", function () {
 		vmRegistro('','N');
 	});
 
 	$("#txt_id_num_oficio,#txt_nombre_notificador").keypress(function (e) {
       keyEvent(e);
-   });
-
-   $("#btn_inf_detalle_notif").on("click", function () {
-      descargarInformeNotif();
    });
 });
 
@@ -431,14 +431,92 @@ const deletePaquete = (id_paquete) => {
       }
    });
 }
-// TODO: INFORMES EN EXCEL
-const descargarInformeNotif = () => {
-   let nombreExcel = "InformeNotificaciones.xlsx";
-   $("#overlayprincipal").show();
+// TODO: Descargar informe en Excel
+const vmDescargarInfo = () => {
+   let html = '';
+   let botones = '';
+   let titulo = `Generar Informe de Notificaciones`;
+   const fechaInicio = $("#txt_fechas").attr('fechaInicio');
+   const fechaActual = $("#txt_fechas").attr('fechaActual');
+   //
+   html +=  `<form method="post" class="app-form frm-modal-din" id="frmDescInf" name="frmDescInf" novalidate onsubmit="return false">
+               <div class="row mb-2">
+                  <div class="col-sm-6">
+							<label class="form-label">Fecha Inicio</label>
+							<input type="date" class="form-control" id="vm_fecha_inicio" name="vm_fecha_inicio" style="height: 40px;"
+                        onchange="validFechaDescarga()" required value="${fechaInicio}">
+                     <div class="invalid-feedback">Fecha inicio requerido</div>        
+						</div>
+                  <div class="col-sm-6">
+							<label class="form-label">Fecha T&eacute;rmino</label>
+							<input type="date" class="form-control" id="vm_fecha_termino" name="vm_fecha_termino" style="height: 40px;"
+                        required value="${fechaActual}">
+                     <div class="invalid-feedback">Fecha t&eacute;rmino requerido</div>        
+						</div>
+               </div>
+            </form>`;
+
+   botones +=  `<button type="button" class="btn btn-info me-1" btn="btn" id="btn_descargar_informe">
+                  <i class="fa-solid fa-download me-2"></i>Descargar Informe
+               </button>
+               <button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" id="btn_cerrar_vmgenerarInfo">
+                  <i class="fa-solid fa-xmark me-2"></i>Cerrar
+               </button>`;
+
+   modal('frmPaquetes', titulo, html, 'formdefault_scrollable_center', botones, 'cerrarVMGenerarInfo()');
+   validFechaDescarga();
+   //
+   $("#btn_descargar_informe").on("click", function () {
+      validDescargaInf();
+   });
+   //
+   $("#btn_cerrar_vmgenerarInfo").on("click", function () {
+      cerrarVMGenerarInfo();
+   });
+}
+//!
+const cerrarVMGenerarInfo = () => {
+   closeModal();
+}
+//!
+const validFechaDescarga = () => {
+   const fActual = fechaActual();
+	const fechaInicio = $("#vm_fecha_inicio").val();
+	if(fechaInicio > fActual.fecha2) {
+		$("#vm_fecha_termino").val(fechaInicio);
+	}
+	else{
+		$("#vm_fecha_termino").val(fActual.fecha2);
+	}
+	$("#vm_fecha_termino").prop("min",fechaInicio);
+}
+//!
+const validDescargaInf = () => {
+   let contador = 0;
+   // TODO: Obtener todos los formularios a los que queremos aplicar estilos de validación
+   let forms = document.querySelectorAll('.frm-modal-din');
+   // TODO: Bucle sobre ellos y evitar la presentación
+   Array.prototype.slice.call(forms)
+   .forEach(function (form) {
+      if (!form.checkValidity()) {
+         contador++;
+      }
+      form.classList.add('was-validated');
+   });
+   
+   if(contador == 0) {
+      descargarInfNotificaiones();
+   }
+}
+//!
+const descargarInfNotificaiones = () => {
    $('button[btn="btn"]').prop('disabled',true);
-   $("#btn_inf_detalle_notif").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Inf. Notificaciones</button></li>');
+   $("#overlayprincipal").show();
+   $("#btn_descargar_informe").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Descargar Informe</button></li>');
    targetPrincipal = document.getElementById('frmPaquetes');
    spinnerPrincipal = new Spinner().spin(targetPrincipal);
+   const fActual = fechaActual();
+   const nombreExcel = `InformeNotificaciones_${fActual.fechaHora}.xlsx`;
    //
    let xhr = new XMLHttpRequest();
 	xhr.open('post', contexto+nameController+"/obtieneInformeNotificaciones", true);
@@ -458,13 +536,13 @@ const descargarInformeNotif = () => {
       window.URL.revokeObjectURL(downloadURL);
       a.remove();
       $('button[btn="btn"]').prop('disabled',false);
-      $("#btn_inf_detalle_notif").html('<i class="fa-solid fa-download me-2"></i>Inf. Notificaciones</button></li>');
+      $("#btn_descargar_informe").html('<i class="fa-solid fa-download me-2"></i>Descargar Informe</button></li>');
       spinnerPrincipal.stop();
       $("#overlayprincipal").hide();
    }
-   xhr.send($("#frmPaquetes").serialize());
+   xhr.send($("#frmDescInf").serialize());
 }
-//!
+// TODO: Descargar informe en PDf
 function descargarInfoPaquete(reg) {
    $('button[btn="btn"]').prop('disabled',true);
    $("#overlayprincipal").show();

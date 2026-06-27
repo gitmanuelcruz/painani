@@ -6,6 +6,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class ExcelGenerate
 {
@@ -312,6 +313,13 @@ class ExcelGenerate
 	/* #endregion */
 
 	/* #region public function formatoNumero($rango) */
+	public function formatoNumeroSD($rango)
+	{
+		$this->sheet->getStyle($rango)->getNumberFormat()->setFormatCode('#,##0');
+	}
+	/* #endregion */
+
+	/* #region public function formatoNumero($rango) */
 	public function formatoNumero($rango)
 	{
 		$this->sheet->getStyle($rango)->getNumberFormat()->setFormatCode('#,##0.00');
@@ -322,6 +330,20 @@ class ExcelGenerate
 	public function formatoMoneda($rango)
 	{
 		$this->sheet->getStyle($rango)->getNumberFormat()->setFormatCode('$ #,##0.00');
+	}
+	/* #endregion */
+
+	/* #region public function formatoContable($rango) */
+	public function formatoContable($rango)
+	{
+		$this->sheet->getStyle($rango)->getNumberFormat()->setFormatCode('_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)');
+	}
+	/* #endregion */
+
+	/* #region public function formatoPorcentaje($rango) */
+	public function formatoPorcentaje($rango)
+	{
+		$this->sheet->getStyle($rango)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE_00);
 	}
 	/* #endregion */
 
@@ -336,14 +358,14 @@ class ExcelGenerate
 	/* #endregion */
 
 	/* #region public function bordes($rango) */
-	public function bordes($rango)
+	public function bordes($rango, $color = '00000000')
 	{
 		//Estilos generales
 		$styleArray = [
 			'borders' => [
 					'outline' => [
 				'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-				'color' => ['argb' => '00000000'],
+				'color' => ['argb' => $color],
 			],
 			]
 		];
@@ -423,11 +445,11 @@ class ExcelGenerate
 	/* #region public function toBase64() */
 	public function toBase64(): string
 	{
-			$writer = new Xlsx($this->spreadSheet);
-			ob_start();
-			$writer->save('php://output');
-			$binaryContent = ob_get_clean();
-			return base64_encode($binaryContent);
+		$writer = new Xlsx($this->spreadSheet);
+		ob_start();
+		$writer->save('php://output');
+		$binaryContent = ob_get_clean();
+		return base64_encode($binaryContent);
 	}
 	/* #endregion */
 }

@@ -16,13 +16,13 @@ class MUsuarios extends Model
             FROM niveles_usuarios
             WHERE 1=1 ";
       if ($id_nivel_usuario == 1) {
-         $sql .= "AND id_nivel_usuario IN(1,2,3) ";
+         $sql .= "AND id_nivel_usuario IN(1,2,3,4) ";
       }
       else if ($id_nivel_usuario == 2) {
          $sql .= "AND id_nivel_usuario = 3 ";
       }
       else {
-         $sql .= "AND id_nivel_usuario =3 ";
+         $sql .= "AND id_nivel_usuario = 3 ";
       }
       $sql .= "ORDER BY codigo_nivel_usuario";
 

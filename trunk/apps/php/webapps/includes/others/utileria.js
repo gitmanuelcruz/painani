@@ -1315,6 +1315,7 @@ function fechaActual() {
    fecha.hora1    = hora+':'+min+':'+sec;
    fecha.hora2    = hora+':'+min;
    fecha.horaNum  = hora+min+sec;
+   fecha.fechaHora = year+mes+dia+'_'+hora+min+sec;
 
    return fecha;
 }

@@ -29,6 +29,7 @@
 						</button>
 					</div>
 					<div class="card-body collapse show" id="flush-collapseOne">
+						<input type="hidden" id="txt_fechas" fechaInicio="<?php if(!empty($fecha_inicial)) echo $fecha_inicial;?>" fechaActual="<?php if(!empty($fecha_actual)) echo $fecha_actual;?>">
 						<form method="post" class="app-form" id="frmPaquetes" name="frmPaquetes" onsubmit="return false">
 							<div class="row mb-2">
 								<div class="col-sm-3">
@@ -82,8 +83,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="table-responsive-sm">
-			<table class="table table-sm-2 table-striped table-hover" id="gridPaquetes" style="width: 100%;">
+		<div class="table-responsives-sm">
+			<table class="table table-sm table-striped table-hover" id="gridPaquetes" style="width: 100%;">
 				<thead class="table-dark">
 					<tr class="p-font-msg-09">
 						<th width="8%" class="text-start"   rowspan="3">ID</th>

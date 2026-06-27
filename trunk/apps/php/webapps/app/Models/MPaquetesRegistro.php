@@ -473,25 +473,27 @@ class MPaquetesRegistro extends Model
 		}
 	}
 	//
-	public function getDatosInfoNotificaciones(
-		$num_oficio,$fechaProgramada,$fechaApertura,$fechaCierre,$notificador) {
+	public function getDatosInfNotificacionesExcel($fechaInicio,$fechaTermino) {
 		$sql ="SELECT
-					row_number() OVER (ORDER BY pa.id_usuario_notificador,nt.fecha_oficio ASC) AS fila,
-					nt.num_oficio,
-					TO_CHAR(nt.fecha_oficio,'dd/mm/yyyy') AS fecha_oficio,
+					pa.id_usuario_notificador AS id_notificador,
+					us.nombre_completo AS nombre_notificador,
+					pq.id_paquete,
+					TO_CHAR(pa.fecha_programada,'dd/mm/yyyy') AS fprogramada,
+					nt.num_orden,
+					TO_CHAR(nt.fecha_oficio,'dd/mm/yyyy') AS foficio,
+					pri.nombre_prioridad,
+					COALESCE(nt.monto_presuntiva,0) AS monto_presuntiva,
 					nt.domicilio,
 					nt.referencia_ubicacion,
-					pq.id_paquete,
-					pa.id_usuario_notificador,
-					us.nombre_completo AS nombre_notificador,
-					et.nombre_estatus_notificacion AS id_estatus_notificacion,
-					TO_CHAR(pq.fecha_hora_notificacion,'dd/mm/yyyy hh24:mi') AS fecha_hora_notificado,
+					et.nombre_estatus_notificacion AS estatus_notificacion,
+					TO_CHAR(pq.fecha_hora_notificacion,'dd/mm/yyyy hh24:mi') AS fnotificacion,
 					(CASE WHEN COALESCE(sn.total_evidencias,0) > 0 THEN 'SI' ELSE 'NO' END) AS band_evidencias
 				FROM paquetes_notificaciones pq
 				INNER JOIN notificaciones nt ON pq.id_notificacion = nt.id_notificacion
-				INNER JOIN estatus_notificacion et ON pq.id_estatus_notificacion = et.id_estatus_notificacion
 				INNER JOIN paquetes pa ON pq.id_paquete = pa.id_paquete
 				INNER JOIN usuarios us ON pa.id_usuario_notificador = us.id_usuario
+				INNER JOIN prioridades pri ON nt.id_prioridad = pri.id_prioridad
+				INNER JOIN estatus_notificacion et ON pq.id_estatus_notificacion = et.id_estatus_notificacion
 				LEFT JOIN (
 					SELECT
 						id_notificacion,
@@ -501,22 +503,43 @@ class MPaquetesRegistro extends Model
 					GROUP BY id_notificacion,id_paquete_notificacion
 				) sn ON pq.id_notificacion = sn.id_notificacion AND pq.id_paquete_notificacion = sn.id_paquete_notificacion
 				WHERE 1=1 ";
-		if(!empty($num_oficio)) {
-			$sql .="AND parse_text(nt.num_oficio) LIKE parse_text('%".trim($num_oficio)."%') ";
+		if (!empty($fechaInicio) && !empty($fechaTermino)) {
+			$sql .="AND pa.fecha_programada BETWEEN TO_DATE('$fechaInicio','yyyy-mm-dd') AND TO_DATE('$fechaTermino','yyyy-mm-dd') ";
 		}
-		if (!empty($fechaProgramada)) {
-			$sql .="AND pa.fecha_programada = TO_DATE('$fechaProgramada','yyyy-mm-dd') ";
+		$sql .="ORDER BY pa.id_usuario_notificador,pa.fecha_programada,pq.id_paquete,nt.fecha_oficio ASC";
+
+		return $this->db->query($sql);
+	}
+	//
+	public function getDatosInfNotificacionesxEficienciaExcel($fechaInicio,$fechaTermino) {
+		$sql ="SELECT
+					x.*,
+					ROUND(((COALESCE(x.total_por_notificar::numeric,0) / COALESCE(x.total_num_ordenes::numeric,0)) * 100),2) AS porcentaje_xnotificar,
+					ROUND(((COALESCE(x.total_notificado::numeric,0) / COALESCE(x.total_num_ordenes::numeric,0)) * 100),2) AS porcentaje_notificado,
+					ROUND(((COALESCE(x.total_localizado::numeric,0) / COALESCE(x.total_num_ordenes::numeric,0)) * 100),2) AS porcentaje_no_localizado,
+					(CASE WHEN COALESCE(x.total_notificado,0) > (COALESCE(x.total_por_notificar,0) + COALESCE(x.total_localizado,0))
+						THEN 'Es Eficiente'
+						ELSE 'No es Eficiente'
+					END) AS desc_eficiencia
+				FROM (
+					SELECT
+						pa.id_usuario_notificador,
+						us.nombre_completo AS nombre_notificador,
+						COUNT(pq.*) AS total_num_ordenes,
+						SUM(CASE WHEN pq.id_estatus_notificacion = 'POR_NOTIFICAR' THEN 1 ELSE 0 END) AS total_por_notificar,
+						SUM(CASE WHEN pq.id_estatus_notificacion = 'NOTIFICADO' THEN 1 ELSE 0 END) AS total_notificado,
+						SUM(CASE WHEN pq.id_estatus_notificacion IN('NO_LOCALIZADO','NO_ENTREGADO') THEN 1 ELSE 0 END) AS total_localizado
+					FROM paquetes pa
+					INNER JOIN usuarios us ON pa.id_usuario_notificador = us.id_usuario
+					INNER JOIN paquetes_notificaciones pq ON pa.id_paquete = pq.id_paquete
+					INNER JOIN notificaciones nt ON pq.id_notificacion = nt.id_notificacion
+					WHERE 1=1 ";
+		if (!empty($fechaInicio) && !empty($fechaTermino)) {
+			$sql .="AND pa.fecha_programada BETWEEN TO_DATE('$fechaInicio','yyyy-mm-dd') AND TO_DATE('$fechaTermino','yyyy-mm-dd') ";
 		}
-		if (!empty($fechaApertura)) {
-			$sql .="AND pa.fecha_hora_apertura_operacion::date = TO_DATE('$fechaApertura','yyyy-mm-dd') ";
-		}
-		if (!empty($fechaCierre)) {
-			$sql .="AND pa.fecha_hora_cierre_operacion::date = TO_DATE('$fechaCierre','yyyy-mm-dd') ";
-		}
-		if(!empty($notificador)) {
-			$sql .="AND parse_text(us.nombre_completo) LIKE parse_text('%".trim($notificador)."%') ";
-		}
-		$sql .=" ORDER BY pa.id_usuario_notificador,pq.id_paquete,nt.fecha_oficio ASC ";		
+		$sql .="GROUP BY pa.id_usuario_notificador,us.nombre_completo
+					ORDER BY pa.id_usuario_notificador
+				) x ";
 
 		return $this->db->query($sql);
 	}

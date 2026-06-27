@@ -79,7 +79,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="table-responsive-sm">
+		<div class="table-responsives-sm">
 			<table class="table table-striped table-hover" id="gridNotificaciones" style="width: 100%;">
 				<thead class="table-dark">
 					<tr class="p-font-msg-09">

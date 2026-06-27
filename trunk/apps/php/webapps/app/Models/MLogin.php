@@ -64,7 +64,7 @@ class MLogin extends Model
       $vsql =" INSERT INTO bitacora_session
                      (id_bitacora_session,id_usuario,fecha_hora_login,num_intentos_logueado,creado_por,ip_registro)
                   VALUES
-                     (?, TRIM(?),CURRENT_TIMESTAMP,COALESCE(?::numeric,0),TRIM(?),TRIM(?))";
+                     (?,TRIM(?),CURRENT_TIMESTAMP,COALESCE(?::numeric,0),TRIM(?),TRIM(?))";
 
       $this->db->query($vsql,[$id_bitacora,$id_usuario,$num_intento,$id_usuario,$ip]);
       if ($this->db->transStatus()) {

@@ -28929,7 +28929,7 @@ body[class="ltr dark"] .card.card-bordered .card-body {
   padding-right: 1.25rem;
 }
 .table.table-sm tr td {
-  padding: 0.5rem !important;
+  padding: 0.7rem !important;
 }
 
 .table-striped > tbody > tr:nth-of-type(odd) > * {
@@ -28961,7 +28961,7 @@ body[class="ltr dark"] .card.card-bordered .card-body {
   max-width: calc(100% - 60px);
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  /*white-space: nowrap;*/
 }
 
 .table-lg > :not(caption) > * > * {
@@ -28971,7 +28971,7 @@ body[class="ltr dark"] .card.card-bordered .card-body {
 
 .table-sm > :not(caption) > * > * {
   padding: 0.4rem 0.5rem !important;
-  font-size: 95%;
+  /*font-size: 95%;*/
 }
 
 .table > :not(caption) > * > * {
@@ -38784,6 +38784,41 @@ input[type=range]::-webkit-slider-thumb {
 }
 .pricing-table.table-responsive table thead tr th:nth-child(4) {
   width: 22%;
+}
+
+.table-responsives {
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch
+}
+@media (max-width: 575.98px) {
+    .table-responsives-sm {
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch
+    }
+}
+@media (max-width: 767.98px) {
+    .table-responsives-md {
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch
+    }
+}
+@media (max-width: 991.98px) {
+    .table-responsives-lg {
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch
+    }
+}
+@media (max-width: 1599.98px) {
+    .table-responsives-xl {
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch
+    }
+}
+@media (max-width: 1799.98px) {
+    .table-responsives-xxl {
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch
+    }
 }
 
 .simple-pricing-card {

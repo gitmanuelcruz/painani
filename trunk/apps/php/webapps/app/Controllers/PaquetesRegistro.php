@@ -28,6 +28,7 @@ class PaquetesRegistro extends BaseController
             $data['btn_nuevo'] = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_NVO_PAQUETE","PRIVILEGIO");
             $data['btn_inf_excel'] = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_INFOEXCEL_NOTPAQUETE","PRIVILEGIO");
             $fechaMes = $this->utilerias->getDayInicioTermino("yyyy-mm-dd");
+            $data['fecha_inicial'] = $fechaMes["fecha_inicial"];
             $data['fecha_actual']  = $fechaMes["fecha_actual"];
 				return view('paquetes/registro/list', $data);
          }
@@ -408,69 +409,182 @@ class PaquetesRegistro extends BaseController
    }
    //
    public function obtieneInformeNotificaciones(){
-      $num_oficio = $this->request->getPost("txt_id_num_oficio");
-      $fecha_programada = $this->request->getPost("txt_fecha_programada");
-      $fecha_apertura = $this->request->getPost("txt_fecha_apertura");
-      $fecha_cierre   = $this->request->getPost("txt_fecha_cierre");
-      $nombre_notificador = $this->request->getPost("txt_nombre_notificador");
+      $fechaInicio  = $this->request->getPost("vm_fecha_inicio");
+      $fechaTermino = $this->request->getPost("vm_fecha_termino");
       $usuario = $this->session->get("usuario");
+      $numHoja = 0;
       //
       $excel = new ExcelGenerate();      
-      $excel->estilosFila('INFORME NOTIFICACIONES ', 'A1', 'Arial', true, '11', '999797');
-      $excel->combinarCeldas('A1:J1');
-      $excel->alinearCeldaCentro('A1:J1');
-      $excel->altoFila(2, 18);
-      $excel->estiloCelda('A2:J2','000000',9);
+      $excel->estilosFila('INFORME DE NOTIFICACIONES DEL '.date("d/m/Y", strtotime($fechaInicio)).' AL '.date("d/m/Y", strtotime($fechaTermino)), 'A1', 'Arial', true, '11', '999797');
+      $excel->combinarCeldas('A1:K1');
+      $excel->alinearCeldaCentro('A1:K1');
       $excel->altoFila(1, 20);
       //
-      $excel->valorCelda('A2', '#');
-      $excel->valorCelda('B2', 'NO. OFICIO');
-      $excel->valorCelda('C2', 'FECHA OFICIO');
-      $excel->valorCelda('D2', 'DOMICILIO');
-      $excel->valorCelda('E2', 'REFERENCIA');
-      $excel->valorCelda('F2', 'NO. PAQUETE');
-      $excel->valorCelda('G2', 'NOTIFICADOR');
-      $excel->valorCelda('H2', 'ESTATUS');
-      $excel->valorCelda('I2', 'FECHA NOTIFICACIÓN');
-      $excel->valorCelda('J2', 'EVIDENCIAS');
-      $excel->alinearCeldaCentro('A2:J2');
+      $excel->valorCelda('A2', 'NOTIFICADOR');
+      $excel->valorCelda('B2', 'NO. PAQUETE');
+      $excel->valorCelda('C2', 'NUM. ORDEN');
+      $excel->valorCelda('D2', 'FECHA OFICIO');
+      $excel->valorCelda('E2', 'PRIORIDAD');
+      $excel->valorCelda('F2', 'IMP. PRESUNTIVA');
+      $excel->valorCelda('G2', 'DOMICILIO');
+      $excel->valorCelda('H2', 'REFERENCIA');
+      $excel->valorCelda('I2', 'ESTATUS');
+      $excel->valorCelda('J2', 'FECHA NOTIFICACIÓN');
+      $excel->valorCelda('K2', 'EVIDENCIAS');
+      $excel->alinearCeldaCentro('A2:K2');
+      $excel->estiloCelda('A2:K2','000000',9);
+      $excel->altoFila(2, 18);
       $excel->inmovilizar(3,3);
       //
       $fila = 3;
       $filaInicio = $fila;
-      $resultado = $this->Modelo->getDatosInfoNotificaciones(
-         $num_oficio,$fecha_programada,$fecha_apertura,$fecha_cierre,$nombre_notificador)->getResult();
+      $idNotificiadorTmp = "";
+      $contadorIndex = 0;
+      $resultado = $this->Modelo->getDatosInfNotificacionesExcel($fechaInicio,$fechaTermino)->getResult();
       foreach($resultado as $row) {
-         $excel->valorCeldaTexto('A'.$fila, $row->fila);
-         $excel->valorCelda('B'.$fila, $row->num_oficio);
-         $excel->valorCelda('C'.$fila, $row->fecha_oficio);
-         $excel->valorCelda('D'.$fila, $row->domicilio);
-         $excel->valorCelda('E'.$fila, $row->referencia_ubicacion);
-         $excel->valorCeldaTexto('F'.$fila, $row->id_paquete);
-         $excel->valorCelda('G'.$fila, mb_strtoupper($row->nombre_notificador,'UTF-8'));
-         $excel->valorCelda('H'.$fila, mb_strtoupper($row->id_estatus_notificacion,'UTF-8'));
-         $excel->valorCelda('I'.$fila, $row->fecha_hora_notificado);
-         $excel->valorCelda('J'.$fila, mb_strtoupper($row->band_evidencias,'UTF-8'));
+         if($idNotificiadorTmp != $row->id_notificador) {
+            $excel->valorCelda('A'.$fila, mb_strtoupper($row->nombre_notificador,'UTF-8'));
+            $excel->combinarCeldas('A'.$fila.':K'.$fila);
+            $excel->estiloCelda('A'.$fila.':K'.$fila,'dce6f1',9,'000000',true,true);
+            $excel->bordes('A'.$fila.':K'.$fila,'000000');
+            $fila++;
+            $contadorIndex = 1;
+            $excel->valorCeldaTexto('A'.$fila, $contadorIndex);
+            $excel->alinearCeldaCentro('A'.$fila.':A'.$fila);
+            $excel->valorCeldaTexto('B'.$fila, $row->id_paquete);
+            $excel->valorCeldaTexto('C'.$fila, $row->num_orden);
+            $excel->valorCelda('D'.$fila, $row->foficio);
+            $excel->valorCelda('E'.$fila, mb_strtoupper($row->nombre_prioridad,'UTF-8'));
+            $excel->valorCelda('F'.$fila, $row->monto_presuntiva);
+            $excel->valorCelda('G'.$fila, $row->domicilio);
+            $excel->valorCelda('H'.$fila, $row->referencia_ubicacion);
+            $excel->valorCelda('I'.$fila, mb_strtoupper($row->estatus_notificacion,'UTF-8'));
+            $excel->valorCelda('J'.$fila, $row->fnotificacion);
+            $excel->valorCelda('K'.$fila, mb_strtoupper($row->band_evidencias,'UTF-8'));
+            $idNotificiadorTmp = $row->id_notificador;
+         }
+         else {
+            $contadorIndex++;
+            $excel->valorCelda('A'.$fila, $contadorIndex);
+            $excel->alinearCeldaCentro('A'.$fila.':A'.$fila);
+            $excel->valorCeldaTexto('B'.$fila, $row->id_paquete);
+            $excel->valorCeldaTexto('C'.$fila, $row->num_orden);
+            $excel->valorCelda('D'.$fila, $row->foficio);
+            $excel->valorCelda('E'.$fila, mb_strtoupper($row->nombre_prioridad,'UTF-8'));
+            $excel->valorCelda('F'.$fila, $row->monto_presuntiva);
+            $excel->valorCelda('G'.$fila, $row->domicilio);
+            $excel->valorCelda('H'.$fila, $row->referencia_ubicacion);
+            $excel->valorCelda('I'.$fila, mb_strtoupper($row->estatus_notificacion,'UTF-8'));
+            $excel->valorCelda('J'.$fila, $row->fnotificacion);
+            $excel->valorCelda('K'.$fila, mb_strtoupper($row->band_evidencias,'UTF-8'));
+         }
          $fila++;
       }
       $ultimaFila = $fila - 1;
-      $excel->textoTamano('A'.$filaInicio.':J'.$ultimaFila,9);
-      $excel->alinearCeldaCentro('A'.$filaInicio.':A'.$ultimaFila);
-      $excel->alinearCeldaCentro('C'.$filaInicio.':C'.$ultimaFila);
-      $excel->alinearCeldaCentro('F'.$filaInicio.':F'.$ultimaFila);
-      $excel->alinearCeldaCentro('H'.$filaInicio.':J'.$ultimaFila);
+      $excel->textoTamano('A'.$filaInicio.':K'.$ultimaFila,9);
+      $excel->alinearCeldaCentro('B'.$filaInicio.':B'.$ultimaFila);
+      $excel->alinearCeldaCentro('D'.$filaInicio.':E'.$ultimaFila);
+      $excel->alinearCeldaDerecha('F'.$filaInicio.':F'.$ultimaFila);
+      $excel->formatoContable('F'.$filaInicio.':F'.$ultimaFila);
+      $excel->alinearCeldaCentro('I'.$filaInicio.':K'.$ultimaFila);
       //
-      $excel->anchoColumna('A', 8);
-      $excel->anchoColumna('B', 25);
+      $excel->anchoColumna('A', 15);
+      $excel->anchoColumna('B', 15);
+      $excel->anchoColumna('C', 18);
+      $excel->anchoColumna('D', 15);
+      $excel->anchoColumna('E', 13);
+      $excel->anchoColumna('F', 18);
+      $excel->anchoColumna('G', 25);
+      $excel->anchoColumna('H', 45);
+      $excel->anchoColumna('I', 15);
+      $excel->anchoColumna('J', 20);
+      $excel->anchoColumna('K', 15);
+      $excel->tituloHoja('Notificaciones_Notificadores');
+      $numHoja++;
+      //* SEGUNDA HOJA
+      $excel->crearHoja($numHoja);
+      $excel->estilosFila('INFORME DE NOTIFICADORES DEL '.date("d/m/Y", strtotime($fechaInicio)).' AL '.date("d/m/Y", strtotime($fechaTermino)), 'A1', 'Arial', true, '11', '999797');
+      $excel->combinarCeldas('A1:I1');
+      $excel->alinearCeldaCentro('A1:I1');
+      $excel->altoFila(1, 20);
+      //
+      $excel->valorCelda('A2', 'NOTIFICADOR');
+      $excel->combinarCeldas('A2:A3');
+      $excel->estiloCelda('A2:A3','1f497d',9);
+      $excel->alinearCeldaCentro('A2:A3');
+      $excel->bordes('A2:A3','000000');
+      //----
+      $excel->valorCelda('B2', 'TOTALES');
+      $excel->combinarCeldas('B2:E2');
+      $excel->estiloCelda('B2:E2','000000',9);
+      $excel->bordes('B2:E2','ffffff');
+      //----
+      $excel->valorCelda('F2', 'PORCENTAJES (%)');
+      $excel->combinarCeldas('F2:H2');
+      $excel->estiloCelda('F2:H2','000000',9);
+      $excel->bordes('F2:H2','ffffff');
+      $excel->alinearCeldaCentro('B2:H2');
+      //----
+      $excel->valorCelda('I2', 'ESTATUS');
+      $excel->combinarCeldas('I2:I3');
+      $excel->estiloCelda('I2:I3','1f497d',9);
+      $excel->alinearCeldaCentro('I2:I3');
+      $excel->bordes('I2:I3','000000');
+      //
+      $excel->valorCelda('B3', 'NO. ORDEN');
+      $excel->valorCelda('C3', 'POR NOTIFICAR');
+      $excel->valorCelda('D3', 'NO LOCALIZADO');
+      $excel->valorCelda('E3', 'NOTIFICADO');
+      $excel->valorCelda('F3', 'POR NOTIFICAR');
+      $excel->valorCelda('G3', 'NO LOCALIZADO');
+      $excel->valorCelda('H3', 'NOTIFICADO');
+      $excel->alinearCeldaCentro('B3:H3');
+      $excel->estiloCelda('B3:E3','c4bd97',9,'000000');
+      $excel->estiloCelda('F3:H3','ccc0da',9,'000000');
+      $excel->bordes('B3:B3','000000');
+      $excel->bordes('C3:C3','000000');
+      $excel->bordes('D3:D3','000000');
+      $excel->bordes('E3:E3','000000');
+      $excel->bordes('F3:F3','000000');
+      $excel->bordes('G3:G3','000000');
+      $excel->bordes('H3:H3','000000');
+      $excel->inmovilizar(2,4);
+      //
+      $fila = 4;
+      $filaInicio = $fila;
+      $idNotificiadorTmp = "";
+      $resultado = $this->Modelo->getDatosInfNotificacionesxEficienciaExcel($fechaInicio,$fechaTermino)->getResult();
+      foreach($resultado as $row) {
+         $excel->valorCelda('A'.$fila, mb_strtoupper($row->nombre_notificador,'UTF-8'));
+         $excel->valorCelda('B'.$fila, $row->total_num_ordenes);
+         $excel->valorCelda('C'.$fila, $row->total_por_notificar);
+         $excel->valorCelda('D'.$fila, $row->total_localizado);
+         $excel->valorCelda('E'.$fila, $row->total_notificado);
+         $excel->valorCelda('F'.$fila, '=C'.$fila.'/B'.$fila.'');
+         $excel->valorCelda('G'.$fila, '=D'.$fila.'/B'.$fila.'');
+         $excel->valorCelda('H'.$fila, '=E'.$fila.'/B'.$fila.'');
+         $excel->valorCelda('I'.$fila, mb_strtoupper($row->desc_eficiencia,'UTF-8'));
+         $fila++;
+      }
+      $ultimaFila = $fila - 1;
+      $excel->textoTamano('A'.$filaInicio.':I'.$ultimaFila,9);
+      $excel->alinearCeldaCentro('B'.$filaInicio.':H'.$ultimaFila);
+      $excel->formatoNumeroSD('B'.$filaInicio.':E'.$ultimaFila);
+      $excel->formatoPorcentaje('F'.$filaInicio.':H'.$ultimaFila);
+      $excel->alinearCeldaCentro('I'.$filaInicio.':I'.$ultimaFila);
+      //
+      $excel->anchoColumna('A', 40);
+      $excel->anchoColumna('B', 15);
       $excel->anchoColumna('C', 15);
-      $excel->anchoColumna('D', 45);
-      $excel->anchoColumna('E', 45);
+      $excel->anchoColumna('D', 15);
+      $excel->anchoColumna('E', 15);
       $excel->anchoColumna('F', 15);
-      $excel->anchoColumna('G', 35);
-      $excel->anchoColumna('H', 16);
-      $excel->anchoColumna('I', 22);
-      $excel->anchoColumna('J', 12);
-      $excel->tituloHoja('Notificaciones');
+      $excel->anchoColumna('G', 15);
+      $excel->anchoColumna('H', 15);
+      $excel->anchoColumna('I', 15);
+      $excel->zoomHoja(120);
+      $excel->tituloHoja('Notificadores_xEficiencias');
+      //
       $excel->seleccionarHoja(0);
       $nombreArchivo = 'InformeNotificaciones';
       $excel->descargar($nombreArchivo);
