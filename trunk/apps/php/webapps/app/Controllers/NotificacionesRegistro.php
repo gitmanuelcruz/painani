@@ -62,6 +62,23 @@ class NotificacionesRegistro extends BaseController
 
 		return $this->response->setJSON($results);
 	}
+   //
+   public function historialNotificacionPackagesPag() {
+      $idNotificacion = $this->request->getPost("id_notificacion");
+		$usuario 	  = $this->session->get("usuario");
+		$pagina       = 0;
+		$resultados   = 0;
+
+		if (!empty($this->request->getPost("pagina")))
+			$pagina = $this->request->getPost("pagina");
+		if (!empty($this->request->getPost("resultados")))
+			$resultados = $this->request->getPost("resultados");
+
+		$sql = $this->Modelo->getHistorialNotificacionPackagesPag($idNotificacion);
+		$results = $this->utilerias->loadJSON($sql, $pagina, $resultados);
+
+		return $this->response->setJSON($results);
+	}
 	// TODO: Proceso de registro o edicion
    public function getComboRegistro() {
       $results = array(

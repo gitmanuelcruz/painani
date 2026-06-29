@@ -373,13 +373,14 @@ class MPaquetesRegistro extends Model
 				AND NOT EXISTS (
 					SELECT NULL
 					FROM paquetes_notificaciones b
-					WHERE id_estatus_notificacion = 'NOTIFICADO'
+					WHERE id_estatus_notificacion IN('POR_NOTIFICAR','NOTIFICADO')
 					AND b.id_notificacion = a.id_notificacion
+					AND b.id_paquete = ?
 				)";
 
 		$this->db->query($sql,[$id_paquete,$usuario,$ip,$ids_notificaciones,$id_paquete]);
 		$this->db->query($sql2,[$idEstatus,$usuario,$ip,$id_paquete]);
-		$this->db->query($sql3,[$usuario,$ip,$idEstatus]);
+		$this->db->query($sql3,[$usuario,$ip,$idEstatus,$id_paquete]);
 		if ($this->db->transStatus()) {
 			return array(true, 'El proceso se ha realizado correctamente');
 		}

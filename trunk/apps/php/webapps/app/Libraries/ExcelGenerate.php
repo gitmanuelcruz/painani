@@ -341,9 +341,14 @@ class ExcelGenerate
 	/* #endregion */
 
 	/* #region public function formatoPorcentaje($rango) */
-	public function formatoPorcentaje($rango)
+	public function formatoPorcentaje($rango, $decimal = true)
 	{
-		$this->sheet->getStyle($rango)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE_00);
+		if($decimal) {
+			$this->sheet->getStyle($rango)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE_00);
+		}
+		else {
+			$this->sheet->getStyle($rango)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
+		}
 	}
 	/* #endregion */
 

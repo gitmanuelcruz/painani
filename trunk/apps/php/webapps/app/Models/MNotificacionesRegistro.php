@@ -48,6 +48,7 @@ class MNotificacionesRegistro extends Model
 					pno.notificador,
 					1 AS band,
 					1 AS band_detalle,
+					(CASE WHEN COALESCE(pnt.total_paquetes,0) > 1 THEN 1 ELSE 0 END) AS icon_historial_paq,
 					(CASE WHEN COALESCE($iconEditar,0) > 0 AND ntf.id_estatus_notificacion = 'POR_ASIGNAR' THEN 1 ELSE 0 END) AS icon_editar,
 					(CASE WHEN COALESCE($iconCancelar,0) > 0 AND ntf.id_estatus_notificacion = 'POR_ASIGNAR' THEN 1 ELSE 0 END) AS icon_cancelar,
 					'#145dbd' AS color_blue,
@@ -58,8 +59,8 @@ class MNotificacionesRegistro extends Model
 				INNER JOIN prioridades pri ON ntf.id_prioridad = pri.id_prioridad
 				INNER JOIN estatus_notificacion eno ON ntf.id_estatus_notificacion = eno.id_estatus_notificacion
 				LEFT JOIN (
-					SELECT
-						MAX(a.id_paquete_notificacion) AS id_paquete_notificacion,
+					SELECT DISTINCT ON (a.id_notificacion)
+						a.id_paquete_notificacion,
 						a.id_paquete,
 						a.id_notificacion,
 						a.notificado,
@@ -67,9 +68,16 @@ class MNotificacionesRegistro extends Model
 					FROM paquetes_notificaciones a
 					INNER JOIN paquetes b ON a.id_paquete = b.id_paquete
 					INNER JOIN usuarios c ON b.id_usuario_notificador = c.id_usuario
-					WHERE id_estatus_notificacion NOT IN('NO_LOCALIZADO','NO_ENTREGADO')
-					GROUP BY a.id_paquete,a.id_notificacion,a.notificado,c.nombre_completo
+					WHERE a.id_estatus_notificacion NOT IN('NO_LOCALIZADO','NO_ENTREGADO')
+					ORDER BY a.id_notificacion,a.id_paquete_notificacion DESC
 				) pno ON ntf.id_notificacion = pno.id_notificacion
+				LEFT JOIN (
+					SELECT
+						id_notificacion,
+						COUNT(*) AS total_paquetes
+					FROM paquetes_notificaciones
+					GROUP BY id_notificacion
+				) pnt ON ntf.id_notificacion = pnt.id_notificacion
 				WHERE 1=1 ";
 		if(!empty($idNumOficio)) {
 			$sql .="AND (parse_text(ntf.num_orden) LIKE parse_text('%".trim($idNumOficio)."%') OR
@@ -87,8 +95,34 @@ class MNotificacionesRegistro extends Model
 		return $sql;
    }
 	//
+	public function getHistorialNotificacionPackagesPag($idNotificacion) {
+		$sql ="SELECT
+					a.id_paquete_notificacion,
+					a.id_paquete,
+					a.id_notificacion,
+					TO_CHAR(b.fecha_programada,'dd/mm/yyyy') AS fprogramada,
+					(CASE WHEN COALESCE(a.notificado,FALSE) = TRUE
+						THEN CONCAT(c.nombre_completo,'<br><span class=''badge bg-light-primary text-primary fs-1 fw-bold''>Fecha Notificación: ',TO_CHAR(a.fecha_hora_notificacion,'dd/mm/yyyy hh24:mi'),'</span>')
+						ELSE c.nombre_completo
+					END) AS notificador,
+					(CASE WHEN a.id_estatus_notificacion = 'NO_LOCALIZADO'
+						THEN CONCAT('<span class=''text-orange fw-bold''>',epn.nombre_estatus_notificacion,'</span>')
+						WHEN a.id_estatus_notificacion = 'NO_ENTREGADO'
+						THEN CONCAT('<span class=''text-danger fw-bold''>',epn.nombre_estatus_notificacion,'</span>')
+						ELSE epn.nombre_estatus_notificacion
+					END) AS estatus_npaq
+				FROM paquetes_notificaciones a
+				INNER JOIN paquetes b ON a.id_paquete = b.id_paquete
+				INNER JOIN usuarios c ON b.id_usuario_notificador = c.id_usuario
+				INNER JOIN estatus_notificacion epn ON a.id_estatus_notificacion = epn.id_estatus_notificacion
+				WHERE a.id_notificacion = '$idNotificacion'
+				ORDER BY b.fecha_programada DESC,a.id_paquete_notificacion";
+
+		return $sql;
+	}
+	//
 	public function getDatosNotificacion($idNotificacion) {
-		$sql ="SELECT * FROM notificaciones WHERE id_notificacion = ?";	
+		$sql ="SELECT * FROM notificaciones WHERE id_notificacion = ?";
 		return $this->db->query($sql,[$idNotificacion]);
 	}
    //
