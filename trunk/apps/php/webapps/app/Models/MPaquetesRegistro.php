@@ -310,8 +310,24 @@ class MPaquetesRegistro extends Model
 		}
 	}
 	//
-	public function deletePaqueteNotificacion($id_paquete,$ids_notificaciones) {
-		$sql ="DELETE FROM paquetes_notificaciones a
+	public function deletePaqueteNotificacion($id_paquete,$ids_notificaciones,$usuario,$ip) {
+		$sql ="UPDATE notificaciones a SET
+						id_estatus_notificacion = 'POR_ASIGNAR',
+						fecha_hora_notificado = NULL,
+						notificado_por = NULL,
+						fecha_ultimo_cambio = CURRENT_TIMESTAMP,
+						modificado_por = TRIM(?),
+						ip_modifico = TRIM(?)
+				WHERE a.id_estatus_notificacion = 'ASIGNADO'
+				AND EXISTS (
+					SELECT NULL
+					FROM paquetes_notificaciones b
+					WHERE b.id_estatus_notificacion <> 'NOTIFICADO'
+					AND b.id_notificacion = a.id_notificacion
+					AND b.id_paquete = ?
+				)";
+
+		$sql2 ="DELETE FROM paquetes_notificaciones a
 				WHERE a.id_paquete = ?
 				AND NOT EXISTS (
 					SELECT NULL
@@ -320,7 +336,8 @@ class MPaquetesRegistro extends Model
 					AND b.id_notificacion IN ?
 				)";
 
-		$this->db->query($sql,[$id_paquete,$ids_notificaciones]);
+		$this->db->query($sql,[$usuario,$ip,$id_paquete]);
+		$this->db->query($sql2,[$id_paquete,$ids_notificaciones]);
 		if ($this->db->transStatus()) {
 			return array(true, 'El proceso se ha realizado correctamente');
 		}
@@ -362,25 +379,8 @@ class MPaquetesRegistro extends Model
 					AND b.id_paquete = ?
 				)";
 
-		$sql3 ="UPDATE notificaciones a SET
-						id_estatus_notificacion = 'POR_ASIGNAR',
-						fecha_hora_notificado = NULL,
-						notificado_por = NULL,
-						fecha_ultimo_cambio = CURRENT_TIMESTAMP,
-						modificado_por = TRIM(?),
-						ip_modifico = TRIM(?)
-				WHERE a.id_estatus_notificacion = ?
-				AND NOT EXISTS (
-					SELECT NULL
-					FROM paquetes_notificaciones b
-					WHERE id_estatus_notificacion IN('POR_NOTIFICAR','NOTIFICADO')
-					AND b.id_notificacion = a.id_notificacion
-					AND b.id_paquete = ?
-				)";
-
 		$this->db->query($sql,[$id_paquete,$usuario,$ip,$ids_notificaciones,$id_paquete]);
 		$this->db->query($sql2,[$idEstatus,$usuario,$ip,$id_paquete]);
-		$this->db->query($sql3,[$usuario,$ip,$idEstatus,$id_paquete]);
 		if ($this->db->transStatus()) {
 			return array(true, 'El proceso se ha realizado correctamente');
 		}
