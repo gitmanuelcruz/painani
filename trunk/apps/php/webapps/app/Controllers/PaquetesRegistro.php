@@ -25,7 +25,8 @@ class PaquetesRegistro extends BaseController
             $data['titulo'] = "Registro";
             $data['titulo2'] = "Registro de Paquetes";
             $data['btn_nuevo'] = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_NVO_PAQUETE","PRIVILEGIO");
-            $data['btn_inf_excel'] = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_INFOEXCEL_NOTPAQUETE","PRIVILEGIO");
+            $data['btn_inf_excel_gral']  = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_INFOGRALEXCEL_NOTPAQUETE","PRIVILEGIO");
+            $data['btn_inf_excel_xefic'] = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_INFOEFICEXCEL_NOTPAQUETE","PRIVILEGIO");
             $fechaMes = $this->utilerias->getDayInicioTermino("yyyy-mm-dd");
             $data['fecha_inicial'] = $fechaMes["fecha_inicial"];
             $data['fecha_actual']  = $fechaMes["fecha_actual"];
