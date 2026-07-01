@@ -36,9 +36,40 @@ class ExcelGenerate
 	}
 	/* #endregion */
 
+	/* #region public function estilosGenerales($rango = 'A:ZZ', $tamanoLetra = '10') */
+	public function estilosGenerales($rango = 'A:ZZ', $tamanoLetra = '10')
+	{
+		//Estilos generales
+		$styleArray = [
+			'font' => [
+				'name' => 'Arial',
+				'size' => $tamanoLetra
+			],
+			'alignment' => [
+				'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+				'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+			],
+			'fill' => [
+				'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_GRADIENT_LINEAR,
+				'color' =>  [
+					'argb' => 'FFFFFF',
+				]
+			],
+		];
+		//Aplicando estilos generales
+		$this->sheet->getStyle($rango)->applyFromArray($styleArray);
+	}
+	/* #endregion */
+
+	/* #region public function aplicarEstilos($rango, array $estilos) */
+	public function aplicarEstilos($rango, array $estilos)
+	{
+		$this->sheet->getStyle($rango)->applyFromArray($estilos);
+	}
+	/* #endregion */
+
 	/* #region public function estilosTitulo($titulo, $subtitulo) */
-	public function estilosFila(
-		$titulo, $celda = 'A1', $tipoLetra = 'Arial', $boldLetra = true, $tamanoLetra = '9', $colorFondo = 'FFFFFF', $colorFuente = 'FFFFFF')
+	public function estilosFila($titulo, $celda = 'A1', $tipoLetra = 'Arial', $boldLetra = true, $tamanoLetra = '9', $colorFondo = 'FFFFFF', $colorFuente = 'FFFFFF')
 	{
 		$styleTitulo = [
 			'font' => [
@@ -64,7 +95,22 @@ class ExcelGenerate
 	}
 	/* #endregion */
 
-    /* #region public function estiloCelda($rango, $colorFondo = '0072bb', $color_fuente = 'ffffff', $negrita = true) Para rango de celda*/
+   /* #region public function estiloTexto($rango, $tamanoLetra = '8', $color_fuente = '000000', $negrita = true) Para rango de celda*/
+	public function estiloTexto($rango, $tamanoLetra = '8', $colorFuente = '000000', $negrita = true)
+	{
+		$style = [
+			'font' => [
+				'size'  => $tamanoLetra,
+				'color' => array('rgb' => $colorFuente),
+				'bold'  => $negrita
+			]
+		];
+
+      $this->sheet->getStyle($rango)->applyFromArray($style);
+	}
+	/* #endregion */
+
+	/* #region public function estiloCelda($rango, $colorFondo = '0072bb', $tamanoLetra = '8', $color_fuente = 'ffffff', $negrita = true,  $border = true) Para rango de celda*/
 	public function estiloCelda($rango, $colorFondo = '0072bb', $tamanoLetra = '8', $colorFuente = 'ffffff', $negrita = true, $border = true)
 	{
 		if($border){
@@ -259,38 +305,6 @@ class ExcelGenerate
 	}
 	/* #endregion */
 
-	/* #region public function estilosGenerales($rango = 'A:ZZ') */
-	public function estilosGenerales($rango = 'A:ZZ')
-	{
-		//Estilos generales
-		$styleArray = [
-			'font' => [
-				'name' => 'Arial',
-				'size' => '10'
-			],
-			'alignment' => [
-				'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-				'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
-			],
-			'fill' => [
-				'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_GRADIENT_LINEAR,
-				'color' =>  [
-					'argb' => 'FFFFFF',
-				]
-			],
-		];
-		//Aplicando estilos generales
-		$this->sheet->getStyle($rango)->applyFromArray($styleArray);
-	}
-	/* #endregion */
-
-	/* #region public function aplicarEstilos($rango, array $estilos) */
-	public function aplicarEstilos($rango, array $estilos)
-	{
-		$this->sheet->getStyle($rango)->applyFromArray($estilos);
-	}
-	/* #endregion */
-
 	/* #region public function ajustarTexto($rango) */
 	public function ajustarTexto($rango)
 	{
@@ -334,9 +348,13 @@ class ExcelGenerate
 	/* #endregion */
 
 	/* #region public function formatoContable($rango) */
-	public function formatoContable($rango)
+	public function formatoContable($rango, $conCero = false)
 	{
-		$this->sheet->getStyle($rango)->getNumberFormat()->setFormatCode('_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)');
+		$formato = '_("$"* #,##0.00_);_("$"* \(#,##0.00\);_("$"* "-"_);_(@_)';
+		if($conCero) {
+			$formato = '_("$"* #,##0.00_);_("$"* \(#,##0.00\);_("$"* 0.00_);_(@_)';
+		}
+		$this->sheet->getStyle($rango)->getNumberFormat()->setFormatCode($formato);
 	}
 	/* #endregion */
 
