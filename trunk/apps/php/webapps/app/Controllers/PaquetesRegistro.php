@@ -263,7 +263,7 @@ class PaquetesRegistro extends BaseController
             //*
             if($result[0]) {
                $result = $this->Modelo->deletePaqueteNotificacion(
-                  $id_paquete,$idsNotificaciones);
+                  $id_paquete,$idsNotificaciones,$usuario,$ip);
                if($result[0]) {
                   $result = $this->Modelo->insertPaqueteNotificacion(
                      $id_paquete,$idsNotificaciones,$idEstatus,$usuario,$ip);

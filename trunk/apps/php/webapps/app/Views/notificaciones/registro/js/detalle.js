@@ -42,12 +42,22 @@ const detalle = (reg) => {
                      </ol>
                   </div>
                </div>
-            </div>`;
+            </div>
+            <div class="overlay" id="overlay2"></div>`;
 
+   if(parseInt(reg.icon_historial_paq) > 0) {
+      botones +=  `<button type="button" class="btn btn-info" btn="btn" id="bt_historial_paq">
+                     <i class="fa-solid fa-list-check me-2"></i>Historial
+                  </button>`;
+   }
    botones +=  `<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" id="bt_cerrar_detalle">
                   <i class="fa-solid fa-xmark me-2"></i>Cerrar
                </button>`;
    modalLG('frmNotificaciones', titulo, html, 'formlg_scrollable', botones, 'cerrarVMDetalle()');
+   //
+   $("#bt_historial_paq").on("click", function () {
+      vmHistorialPaquetes(reg);
+   });
    //
    $("#bt_cerrar_detalle").on("click", function () {
       cerrarVMDetalle();
@@ -56,4 +66,77 @@ const detalle = (reg) => {
 //!
 const cerrarVMDetalle = () => {
    closeModalLG();
+}
+//!
+const vmHistorialPaquetes = (reg) => {
+   let html = '';
+   let botones = '';
+   const titulo = 'Historial de la Notificaci&oacute;n en Paquete';
+   $("#overlay2").show();
+   //
+   html +=  `<div class="row mb-1">
+               <div class="col-sm-3">
+                  <figure>
+                     <blockquote class="blockquote">
+                        <p class="p-font-weight-500 p-font-msg-09">${reg.num_orden}</p>
+                     </blockquote>
+                     <figcaption class="blockquote-footer fw-bold">Num. Orden</figcaption>
+                  </figure>
+               </div>
+               <div class="col-sm-3">
+                  <figure>
+                     <blockquote class="blockquote">
+                        <p class="p-font-weight-500 p-font-msg-09">${reg.foficio}</p>
+                     </blockquote>
+                     <figcaption class="blockquote-footer fw-bold">Fecha Oficio</figcaption>
+                  </figure>
+               </div>
+               <div class="col-sm-6">
+                  <figure>
+                     <blockquote class="blockquote">
+                        <p class="p-font-weight-500 p-font-msg-09">${reg.domicilio.toUpperCase()}</p>
+                     </blockquote>
+                     <figcaption class="blockquote-footer fw-bold">Domicilio</figcaption>
+                  </figure>
+               </div>
+            </div>
+            <hr style="margin-top:0">`;
+   html +=  `<div class="table-responsive-sm">
+               <table class="table table-sm table-hover" id="tblHistorialNotPaq" width="100%">
+                  <thead class="table-secondary">
+                     <tr class="p-font-msg-08">
+                        <th width="6%"  class="text-start">ID Paquete</th>
+                        <th width="12%" class="text-center">Fecha Programda</th>
+                        <th width="20%" class="text-start">Notificador</th>
+                        <th width="10%" class="text-center">Estatus</th>
+                     </tr>
+                  </thead>
+                  <tbody></tbody>
+               </table>
+            </div>`;
+
+   botones +=  `<button type="button" class="btn btn-danger" data-bs-dismiss="modal"  btn="btn" onclick="cerrarVMHistorialPaquete()">
+                  <i class="fa-solid fa-xmark me-2"></i>Cerrar
+                </button>`;
+
+   modalLG2('frmNotificaciones',titulo,html,'formlg_scrollable_center',botones,'cerrarVMHistorialPaquete()');
+   getConsultaHistorialPaqPag(reg.id_notificacion);
+}
+//!
+const cerrarVMHistorialPaquete = () => {
+   tblHistorial.barraDibujada = false;
+   $("#overlay2").hide();
+   closeModalLG2();
+}
+//!
+const getConsultaHistorialPaqPag = (id_notificacion) => {
+   tblHistorial.setTablaHTML("tblHistorialNotPaq");
+   tblHistorial.setUrl(contexto+nameController+"/historialNotificacionPackagesPag");
+   tblHistorial.setRegistrosPagina(8);
+   tblHistorial.setColumnas("id_paquete,fprogramada,notificador,estatus_npaq");
+   tblHistorial.setColTipos("text,text,textHTML,textHTML");
+   tblHistorial.setAlineacion("left,center,left,center");
+   tblHistorial.fontSize = '0.8rem';
+   tblHistorial.parametros = "id_notificacion="+id_notificacion;
+   tblHistorial.loadJSON();
 }
