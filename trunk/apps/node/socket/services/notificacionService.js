@@ -139,10 +139,15 @@ const liberarOficiosParaReasignar = async(usuario, idPaquete)=>{
 }
 
 const setMarcarOficioNotificado = async (usuario, idNotificacion,idStatus,horaNotificacion) => {
-  const sql = `UPDATE notificaciones SET fecha_hora_notificado =  (current_date + $3::time),
+
+  const horaFinal = (horaNotificacion && horaNotificacion.trim() !== "") ? horaNotificacion : null;
+
+  const sql = `UPDATE notificaciones SET fecha_hora_notificado =  (CASE  WHEN $3::time IS NULL THEN now() 
+                                                ELSE (current_date + $3::time) END),
                     modificado_por = $1,
                     notificado_por = $1,
-                    id_estatus_notificacion=$2
+                    id_estatus_notificacion=$2,
+                    fecha_ultimo_cambio = now()
                 WHERE id_notificacion = $4`;
 
   await pool.query(sql, [usuario, idStatus,horaNotificacion,idNotificacion]);
@@ -159,13 +164,17 @@ const setMarcarOficioPaquete = async (
   horaNotificacion
 ) => {
   console.log("idStatus", idStatus);
+  const horaFinal = (horaNotificacion && horaNotificacion.trim() !== "") ? horaNotificacion : null;
+
   const sql = `UPDATE paquetes_notificaciones SET comentarios = $1,
-                    fecha_hora_notificacion = (current_date + $7::time),
+                    fecha_hora_notificacion = (CASE  WHEN $7::time IS NULL THEN now() 
+                                                ELSE (current_date + $7::time) END),
                     notificado = $2,
                     id_estatus_notificacion = $3,
                     modificado_por = $4,
                     latitud=$5,
-                    longitud=$6
+                    longitud=$6,
+		                fecha_ultimo_cambio = now()
                 WHERE id_paquete_notificacion = $8`;
 
   await pool.query(sql, [
