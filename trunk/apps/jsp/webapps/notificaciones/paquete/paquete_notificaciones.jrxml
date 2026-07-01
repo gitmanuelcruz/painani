@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<!-- Created with Jaspersoft Studio version 6.17.0.final using JasperReports Library version 6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="formato_paquete_notificaciones" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7a5c8b32-1234-5678-abcd-ef1234567890">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Painani Dev"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
@@ -65,7 +65,7 @@ WHERE a.id_paquete =  $P!{pid_paquete}]]>
 				<textElement textAlignment="Left">
 					<font size="15" isBold="true"/>
 				</textElement>
-				<text><![CDATA[FICHA PAQUETE DE NOTIFICACIONES]]></text>
+				<text><![CDATA[FICHA DE PAQUETE DE NOTIFICACIONES]]></text>
 			</staticText>
 		</band>
 	</title>
@@ -81,11 +81,13 @@ WHERE a.id_paquete =  $P!{pid_paquete}]]>
 				<reportElement x="3" y="0" width="4" height="85" forecolor="#0D6EFD" backcolor="#0D6EFD" uuid="3e4f5a6b-7c8d-9e0f-1a2b-3c4d5e6f7a8b"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="18" y="10" width="100" height="13" forecolor="#6C757D" uuid="4f5a6b7c-8d9e-0f1a-2b3c-4d5e6f7a8b9c"/>
+				<reportElement x="18" y="10" width="124" height="13" forecolor="#6C757D" uuid="4f5a6b7c-8d9e-0f1a-2b3c-4d5e6f7a8b9c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[CONTROL DE PAQUETES]]></text>
+				<text><![CDATA[CONTROL DE PAQUETE]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="18" y="23" width="75" height="20" forecolor="#1A252F" uuid="6256250b-e03d-4ecf-8c2e-288f8c502c6c"/>

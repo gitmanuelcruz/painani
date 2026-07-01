@@ -55,7 +55,7 @@ const loadPaquetesPag = () => {
                   { "campo_bd": "icon_cerrar", "valor_campo": "1", "icono": "fa-regular fa-circle-stop fa-lg", "callback": "cerrarPaquete", "etiqueta": "Cerrar", "tipoicono": "i", "color": "color_red" },
                   { "campo_bd": "icon_editar", "valor_campo": "1", "icono": "fa-solid fa-pen-to-square fa-lg", "callback": "editarPaquete", "etiqueta": "Editar", "tipoicono": "i", "color": "color_black" },
                   { "campo_bd": "icon_eliminar", "valor_campo": "1", "icono": "fa-solid fa-trash fa-lg", "callback": "eliminarPaquete", "etiqueta": "Eliminar", "tipoicono": "i", "color": "color_red" },
-                  { "campo_bd": "icon_informe","valor_campo": "1", "icono": "fa-solid fa-print fa-lg","callback": "descargarInfoPaquete", "etiqueta": "Imprimir Inf.", "tipoicono": "i", "color": "color_red" }
+                  { "campo_bd": "icon_informe","valor_campo": "1", "icono": "fa-solid fa-print fa-lg","callback": "descargarInfoPaquete", "etiqueta": "Imp. Ficha", "tipoicono": "i", "color": "color_red" }
                ]
             }
          ]
