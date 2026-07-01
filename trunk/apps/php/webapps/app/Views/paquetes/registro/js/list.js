@@ -519,7 +519,7 @@ const descargarInfNotificaiones = () => {
    const nombreExcel = `InformeNotificaciones_${fActual.fechaHora}.xlsx`;
    //
    let xhr = new XMLHttpRequest();
-	xhr.open('post', contexto+nameController+"/obtieneInformeNotificaciones", true);
+	xhr.open('post', contexto+'Reportes/obtieneInformeNotificaciones', true);
    xhr.responseType = 'blob';
    xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded; charset=utf-8');
    xhr.onload = function () {
