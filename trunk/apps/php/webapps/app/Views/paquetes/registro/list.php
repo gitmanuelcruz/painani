@@ -64,9 +64,16 @@
 									<i class="fa-solid fa-magnifying-glass me-2"></i>Buscar
 								</button>
 								<?php
-									if($btn_inf_excel) {
-										echo '<button type="button" class="btn btn-success btn-sm" btn="btn" id="btn_inf_detalle_notif">
-													<i class="fa-solid fa-file-excel me-2"></i>Inf. Num. Ordenes
+									if($btn_inf_excel_gral) {
+										echo '<button type="button" class="btn btn-success btn-sm" btn="btn" id="btn_inf_notif_gral">
+													<i class="fa-solid fa-file-excel me-2"></i>Inf. Num. Ordenes Gral.
+												</button>';
+									}
+								?>
+								<?php
+									if($btn_inf_excel_xefic) {
+										echo '<button type="button" class="btn btn-success btn-sm" btn="btn" id="btn_inf_notif_xeficiencias">
+													<i class="fa-solid fa-file-excel me-2"></i>Inf. Num. Ordenes x Eficiencias
 												</button>';
 									}
 								?>
