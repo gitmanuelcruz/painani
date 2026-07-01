@@ -138,14 +138,14 @@ const liberarOficiosParaReasignar = async(usuario, idPaquete)=>{
   await pool.query(sql, [usuario, idPaquete]);
 }
 
-const setMarcarOficioNotificado = async (usuario, idNotificacion,idStatus) => {
-  const sql = `UPDATE notificaciones SET fecha_hora_notificado = now(),
+const setMarcarOficioNotificado = async (usuario, idNotificacion,idStatus,horaNotificacion) => {
+  const sql = `UPDATE notificaciones SET fecha_hora_notificado =  (current_date + $3::time),
                     modificado_por = $1,
                     notificado_por = $1,
                     id_estatus_notificacion=$2
-                WHERE id_notificacion = $3`;
+                WHERE id_notificacion = $4`;
 
-  await pool.query(sql, [usuario, idStatus,idNotificacion]);
+  await pool.query(sql, [usuario, idStatus,horaNotificacion,idNotificacion]);
 };
 
 const setMarcarOficioPaquete = async (
@@ -155,17 +155,18 @@ const setMarcarOficioPaquete = async (
   notificado,
   comentarios,
   latitud,
-  longitud
+  longitud,
+  horaNotificacion
 ) => {
   console.log("idStatus", idStatus);
   const sql = `UPDATE paquetes_notificaciones SET comentarios = $1,
-                    fecha_hora_notificacion = now(),
+                    fecha_hora_notificacion = (current_date + $7::time),
                     notificado = $2,
                     id_estatus_notificacion = $3,
                     modificado_por = $4,
                     latitud=$5,
                     longitud=$6
-                WHERE id_paquete_notificacion = $7`;
+                WHERE id_paquete_notificacion = $8`;
 
   await pool.query(sql, [
     comentarios,
@@ -174,6 +175,7 @@ const setMarcarOficioPaquete = async (
     usuario,
     latitud,
     longitud,
+    horaNotificacion,
     idPaqueteNotificacion,
   ]);
 };
@@ -277,5 +279,5 @@ module.exports = {
   getPaquetesHoy,
   getEvidenciasNotificacion,
   cancelarOrdenesPorNotificar,
-  liberarOficiosParaReasignar
+  liberarOficiosParaReasignar,
 };

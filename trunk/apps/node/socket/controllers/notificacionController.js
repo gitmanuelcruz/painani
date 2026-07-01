@@ -187,7 +187,8 @@ const marcarOficioPaquete = async (req, res) => {
     idStatus,
     comentarios,
     latitud,
-    longitud
+    longitud,
+    horaNotificacion
   } = req.body;
 
   const notificado = idStatus === "NOTIFICADO" ? true : false;
@@ -200,11 +201,12 @@ const marcarOficioPaquete = async (req, res) => {
       notificado,
       comentarios,
       latitud,
-      longitud
+      longitud,
+      horaNotificacion
     );
 
    // if (notificado) {
-    await setMarcarOficioNotificado(usuario, idNotificacion,idStatus);
+    await setMarcarOficioNotificado(usuario, idNotificacion,idStatus,horaNotificacion);
    // }
 
     return res
