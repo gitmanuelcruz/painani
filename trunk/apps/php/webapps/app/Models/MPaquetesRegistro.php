@@ -111,9 +111,9 @@ class MPaquetesRegistro extends Model
 						THEN CONCAT(UPPER(eno.nombre_estatus_notificacion),'<br><span class=''badge bg-light-primary text-primary fs-1 fw-bold''>',TO_CHAR(pno.fecha_hora_notificacion,'dd/mm/yyyy hh24:mi'),'</span>')
 						ELSE 
 							(CASE WHEN pno.id_estatus_notificacion = 'NO_LOCALIZADO'
-								THEN CONCAT('<span class=''text-orange fw-bold''>',UPPER(eno.nombre_estatus_notificacion),'</span>')
+								THEN CONCAT('<span class=''text-orange fw-bold''>',UPPER(eno.nombre_estatus_notificacion),'<br><span class=''badge bg-light-warning text-orange fs-1 fw-bold''>',TO_CHAR(pno.fecha_ultimo_cambio,'dd/mm/yyyy hh24:mi'),'</span></span>')
 								WHEN pno.id_estatus_notificacion = 'NO_ENTREGADO'
-								THEN CONCAT('<span class=''text-danger fw-bold''>',UPPER(eno.nombre_estatus_notificacion),'</span>')
+								THEN CONCAT('<span class=''text-danger fw-bold''>',UPPER(eno.nombre_estatus_notificacion),'<br><span class=''badge bg-light-danger text-danger fs-1 fw-bold''>',TO_CHAR(pno.fecha_ultimo_cambio,'dd/mm/yyyy hh24:mi'),'</span></span>')
 								ELSE UPPER(eno.nombre_estatus_notificacion)
 							END)
 					END) AS desc_estatus,

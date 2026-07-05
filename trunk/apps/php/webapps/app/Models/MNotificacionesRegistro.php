@@ -59,17 +59,23 @@ class MNotificacionesRegistro extends Model
 				INNER JOIN prioridades pri ON ntf.id_prioridad = pri.id_prioridad
 				INNER JOIN estatus_notificacion eno ON ntf.id_estatus_notificacion = eno.id_estatus_notificacion
 				LEFT JOIN (
-					SELECT DISTINCT ON (a.id_notificacion)
-						a.id_paquete_notificacion,
-						a.id_paquete,
-						a.id_notificacion,
-						a.notificado,
-						c.nombre_completo AS notificador
-					FROM paquetes_notificaciones a
-					INNER JOIN paquetes b ON a.id_paquete = b.id_paquete
-					INNER JOIN usuarios c ON b.id_usuario_notificador = c.id_usuario
-					WHERE a.id_estatus_notificacion NOT IN('NO_LOCALIZADO','NO_ENTREGADO')
-					ORDER BY a.id_notificacion,a.id_paquete_notificacion DESC
+					SELECT 
+						x.*
+					FROM (
+						SELECT DISTINCT ON (a.id_notificacion)
+							a.id_paquete_notificacion,
+							a.id_paquete,
+							a.id_notificacion,
+							b.fecha_programada,
+							a.notificado,
+							c.nombre_completo AS notificador,
+							a.id_estatus_notificacion
+						FROM paquetes_notificaciones a
+						INNER JOIN paquetes b ON a.id_paquete = b.id_paquete
+						INNER JOIN usuarios c ON b.id_usuario_notificador = c.id_usuario
+						ORDER BY a.id_notificacion,a.id_paquete_notificacion DESC
+					) x
+					WHERE x.id_estatus_notificacion NOT IN('NO_LOCALIZADO','NO_ENTREGADO')
 				) pno ON ntf.id_notificacion = pno.id_notificacion
 				LEFT JOIN (
 					SELECT
