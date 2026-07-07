@@ -193,8 +193,7 @@ const setMarcarOficioPaquete = async (
 };
 
 const getPaquetesHoy = async (usuario) => {
-  	const sql =`SELECT
-						p.id_paquete,
+  	const sql =`SELECT p.id_paquete,
 						to_char(p.fecha_programada,'YYYY-MM-DD') AS fecha,
 						to_char(fecha_hora_apertura_operacion,'YYYY-mm-dd hh12:mi:ss am') AS fecha_apertura,
 						to_char(fecha_hora_cierre_operacion,'YYYY-mm-dd hh12:mi:ss am') AS fecha_cierre,
