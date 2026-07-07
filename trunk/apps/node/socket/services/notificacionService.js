@@ -3,31 +3,30 @@ const path = require("path");
 const pool = require("../config/db");
 
 const getMiPaqueteNotificacion = async (idUsuario, idPaquete) => {
-  const sql =`SELECT
-  						pqn.id_paquete_notificacion,
-						n.id_notificacion,
-						n.num_oficio,
-						n.num_orden,
-						n.domicilio,
-						n.referencia_ubicacion,
-						n.id_estatus_notificacion AS estatus_oficio,
-						pqn.id_paquete,
-						pqn.fecha_hora_notificacion,
-						pqn.notificado,
-						pqn.comentarios,
-						pqn.id_estatus_notificacion,
-						en.nombre_estatus_notificacion AS nombre_estatus,
-						to_char(n.fecha_oficio,'YYYY-mm-dd') AS fecha_oficio,
-						(CASE WHEN pqn.id_estatus_notificacion = 'POR_NOTIFICAR' THEN  1
-							WHEN pqn.id_estatus_notificacion = 'NO_LOCALIZADO' THEN 2
-							WHEN pqn.id_estatus_notificacion = 'NOTIFICADO' THEN 3 
-							ELSE 4
-						END )::integer AS ordenamiento,
-						sop.soportes,
-						(CASE WHEN p.fecha_hora_apertura_operacion IS NOT NULL 
-							AND p.fecha_hora_cierre_operacion IS NOT NULL 
-							THEN TRUE ELSE FALSE
-						END) AS bloqueado
+  const sql =`SELECT pqn.id_paquete_notificacion,
+				n.id_notificacion,
+				n.num_oficio,
+				n.num_orden,
+				n.domicilio,
+				n.referencia_ubicacion,
+				n.id_estatus_notificacion AS estatus_oficio,
+				pqn.id_paquete,
+				pqn.fecha_hora_notificacion,
+				pqn.notificado,
+				pqn.comentarios,
+				pqn.id_estatus_notificacion,
+				en.nombre_estatus_notificacion AS nombre_estatus,
+				to_char(n.fecha_oficio,'YYYY-mm-dd') AS fecha_oficio,
+				(CASE WHEN pqn.id_estatus_notificacion = 'POR_NOTIFICAR' THEN  1
+					WHEN pqn.id_estatus_notificacion = 'NO_LOCALIZADO' THEN 2
+					WHEN pqn.id_estatus_notificacion = 'NOTIFICADO' THEN 3 
+					ELSE 4
+				END )::integer AS ordenamiento,
+				sop.soportes,
+				(CASE WHEN p.fecha_hora_apertura_operacion IS NOT NULL 
+					AND p.fecha_hora_cierre_operacion IS NOT NULL 
+					THEN TRUE ELSE FALSE
+				END) AS bloqueado
             FROM paquetes_notificaciones pqn
             INNER JOIN paquetes p ON pqn.id_paquete = p.id_paquete 
             INNER JOIN notificaciones n ON pqn.id_notificacion = n.id_notificacion 
@@ -226,8 +225,7 @@ const getPaquetesHoy = async (usuario) => {
 };
 
 const getEvidenciasNotificacion = async (idPaqueteNotificacion, usuario) => {
-  	const sql = `SELECT
-						sn.id_soporte_notificacion,
+  	const sql = `SELECT sn.id_soporte_notificacion,
                 	sn.ruta_soporte,
                 	sn.extension_archivo,
                 	to_char(sn.fecha_registro,'YYYY-mm-dd hh24:mi:ss') AS fecha_registro 
