@@ -382,9 +382,16 @@ class Reportes extends BaseController
          $excel->valorCelda('D'.$fila, $row->total_por_notificar_local);
          $excel->valorCelda('E'.$fila, $row->total_no_localizado_local);
          $excel->valorCelda('F'.$fila, $row->total_notificado_local);
-         $excel->valorCelda('G'.$fila, '=D'.$fila.'/C'.$fila.'');
-         $excel->valorCelda('H'.$fila, '=E'.$fila.'/C'.$fila.'');
-         $excel->valorCelda('I'.$fila, '=F'.$fila.'/C'.$fila.'');
+         if((int)$row->total_asignados_local > 0) {
+            $excel->valorCelda('G'.$fila, '=D'.$fila.'/C'.$fila.'');
+            $excel->valorCelda('H'.$fila, '=E'.$fila.'/C'.$fila.'');
+            $excel->valorCelda('I'.$fila, '=F'.$fila.'/C'.$fila.'');
+         }
+         else {
+            $excel->valorCelda('G'.$fila, '0.00');
+            $excel->valorCelda('H'.$fila, '0.0');
+            $excel->valorCelda('I'.$fila, '0.00');
+         }
          if(mb_strtoupper($row->desc_eficiencia,'UTF-8') == 'ALTA') {
             $excel->valorCelda('J'.$fila, '=F'.$fila.' * 30');
          }
@@ -402,9 +409,16 @@ class Reportes extends BaseController
          $excel->valorCelda('L'.$fila, $row->total_por_notificar_foraneo);
          $excel->valorCelda('M'.$fila, $row->total_no_localizado_foraneo);
          $excel->valorCelda('N'.$fila, $row->total_notificado_foraneo);
-         $excel->valorCelda('O'.$fila, '=L'.$fila.'/K'.$fila.'');
-         $excel->valorCelda('P'.$fila, '=M'.$fila.'/K'.$fila.'');
-         $excel->valorCelda('Q'.$fila, '=N'.$fila.'/K'.$fila.'');
+         if((int)$row->total_asignados_foraneo > 0) {
+            $excel->valorCelda('O'.$fila, '=L'.$fila.'/K'.$fila.'');
+            $excel->valorCelda('P'.$fila, '=M'.$fila.'/K'.$fila.'');
+            $excel->valorCelda('Q'.$fila, '=N'.$fila.'/K'.$fila.'');
+         }
+         else {
+            $excel->valorCelda('O'.$fila, '0.00');
+            $excel->valorCelda('P'.$fila, '0.00');
+            $excel->valorCelda('Q'.$fila, '0.00');
+         }
          if(mb_strtoupper($row->desc_eficiencia,'UTF-8') == 'ALTA') {
             $excel->valorCelda('R'.$fila, '=N'.$fila.' * 32');
             $excel->estiloTexto('T'.$fila.':T'.$fila,9,'66bb6a');
