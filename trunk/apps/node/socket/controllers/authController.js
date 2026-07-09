@@ -4,6 +4,7 @@ const login = async (req, res) => {
   try {
     const userAgent = req.headers['user-agent'];
     const { usuario, password } = req.body;
+    console.log(`usuario ${usuario} autenticando......`);
 
     const data = await authService.login(usuario, password,userAgent);
 

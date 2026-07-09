@@ -17,7 +17,7 @@ const login = async (username, password, userAgent) => {
   );
 
   if (result.rows.length === 0) {
-    throw new Error("Usuario no existe");
+    throw new Error(`${username}, Usuario no existe`);
   }
 
   const user = result.rows[0];
