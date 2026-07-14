@@ -121,7 +121,7 @@ const cerrarRutaNotificacion = async (usuario, idPaquete) => {
 const cancelarOrdenesPorNotificar = async(usuario, idPaquete)=>{
  	const sql = `UPDATE paquetes_notificaciones SET fecha_ultimo_cambio = now(),
                   	modificado_por = $1,
-                    	id_estatus_notificacion = 'NO_ENTREGADO'
+                    id_estatus_notificacion = 'NO_ENTREGADO'
                 WHERE id_paquete =$2
                 AND id_estatus_notificacion = 'POR_NOTIFICAR' `;
 
