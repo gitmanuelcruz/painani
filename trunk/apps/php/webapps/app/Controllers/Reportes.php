@@ -159,7 +159,7 @@ class Reportes extends BaseController
       $nombreArchivo = 'informe_notificaciones_gral';
       $excel->descargar($nombreArchivo);
    }
-   //
+   // TODO: Informe de notificaciones x eficiencias
    public function informeNotificacionesxEficiencias(){
       $fechaInicio  = $this->request->getPost("vm_fecha_inicio");
       $fechaTermino = $this->request->getPost("vm_fecha_termino");
@@ -354,19 +354,19 @@ class Reportes extends BaseController
       $excel->bordes('S2:S3','000000');
       $excel->ajustarTexto('S2:S3');
       //----
-      $excel->valorCelda('T2', 'NIVEL EFICIENCIA');
+      /*$excel->valorCelda('T2', 'NIVEL EFICIENCIA');
+      $excel->combinarCeldas('T2:T3');
+      $excel->estiloCelda('T2:T3','76933c',9);
+      $excel->alinearCeldaCentro('T2:T3');
+      $excel->bordes('T2:T3','000000');
+      $excel->ajustarTexto('T2:T3');*/
+      //----
+      $excel->valorCelda('T2', 'COMISION TOTAL ESTIMADA');
       $excel->combinarCeldas('T2:T3');
       $excel->estiloCelda('T2:T3','76933c',9);
       $excel->alinearCeldaCentro('T2:T3');
       $excel->bordes('T2:T3','000000');
       $excel->ajustarTexto('T2:T3');
-      //----
-      $excel->valorCelda('U2', 'COMISION TOTAL ESTIMADA');
-      $excel->combinarCeldas('U2:U3');
-      $excel->estiloCelda('U2:U3','76933c',9);
-      $excel->alinearCeldaCentro('U2:U3');
-      $excel->bordes('U2:U3','000000');
-      $excel->ajustarTexto('U2:U3');
       //----
       $excel->inmovilizar(3,4);
       //
@@ -392,14 +392,8 @@ class Reportes extends BaseController
             $excel->valorCelda('H'.$fila, '0.0');
             $excel->valorCelda('I'.$fila, '0.00');
          }
-         if(mb_strtoupper($row->desc_eficiencia,'UTF-8') == 'ALTA') {
-            $excel->valorCelda('J'.$fila, '=F'.$fila.' * 30');
-         }
-         else if(mb_strtoupper($row->desc_eficiencia,'UTF-8') == 'MEDIA') {
-            $excel->valorCelda('J'.$fila, '=F'.$fila.' * 25');
-         }
-         else if(mb_strtoupper($row->desc_eficiencia,'UTF-8') == 'BAJA') {
-            $excel->valorCelda('J'.$fila, '=F'.$fila.' * 10');
+         if((int)$row->total_notificado_local > 0) {
+            $excel->valorCelda('J'.$fila, '=F'.$fila.' * 35');
          }
          else {
             $excel->valorCelda('J'.$fila, 0.00);
@@ -419,29 +413,19 @@ class Reportes extends BaseController
             $excel->valorCelda('P'.$fila, '0.00');
             $excel->valorCelda('Q'.$fila, '0.00');
          }
-         if(mb_strtoupper($row->desc_eficiencia,'UTF-8') == 'ALTA') {
-            $excel->valorCelda('R'.$fila, '=N'.$fila.' * 32');
-            $excel->estiloTexto('T'.$fila.':T'.$fila,9,'66bb6a');
-         }
-         else if(mb_strtoupper($row->desc_eficiencia,'UTF-8') == 'MEDIA') {
-            $excel->valorCelda('R'.$fila, '=N'.$fila.' * 27');
-            $excel->estiloTexto('T'.$fila.':T'.$fila,9,'ffa632');
-         }
-         else if(mb_strtoupper($row->desc_eficiencia,'UTF-8') == 'BAJA') {
-            $excel->valorCelda('R'.$fila, '=N'.$fila.' * 12');
-            $excel->estiloTexto('T'.$fila.':T'.$fila,9,'ea4335');
+         if((int)$row->total_notificado_foraneo > 0) {
+            $excel->valorCelda('R'.$fila, '=N'.$fila.' * 50');
          }
          else {
             $excel->valorCelda('R'.$fila, 0.00);
          }
          //
          $excel->valorCelda('S'.$fila, '=(F'.$fila.' + N'.$fila.')/B'.$fila.'');
-         $excel->valorCelda('T'.$fila, mb_strtoupper($row->desc_eficiencia,'UTF-8'));
-         $excel->valorCelda('U'.$fila, '=J'.$fila.' + R'.$fila.'');
+         $excel->valorCelda('T'.$fila, '=J'.$fila.' + R'.$fila.'');
          $fila++;
       }
       $ultimaFila = $fila - 1;
-      $excel->textoTamano('A'.$filaInicio.':U'.$ultimaFila,9);
+      $excel->textoTamano('A'.$filaInicio.':T'.$ultimaFila,9);
       $excel->alinearCeldaCentro('B'.$filaInicio.':I'.$ultimaFila);
       $excel->alinearCeldaDerecha('J'.$filaInicio.':J'.$ultimaFila);
       $excel->formatoNumeroSD('B'.$filaInicio.':F'.$ultimaFila);
@@ -454,12 +438,11 @@ class Reportes extends BaseController
       $excel->formatoPorcentaje('O'.$filaInicio.':Q'.$ultimaFila);
       $excel->formatoContable('R'.$filaInicio.':R'.$ultimaFila,true);
       //
-      $excel->alinearCeldaCentro('S'.$filaInicio.':T'.$ultimaFila);
-      $excel->alinearCeldaDerecha('U'.$filaInicio.':U'.$ultimaFila);
+      $excel->alinearCeldaCentro('S'.$filaInicio.':S'.$ultimaFila);
+      $excel->alinearCeldaDerecha('T'.$filaInicio.':T'.$ultimaFila);
       $excel->formatoPorcentaje('S'.$filaInicio.':S'.$ultimaFila);
-      $excel->formatoContable('U'.$filaInicio.':U'.$ultimaFila,true);
-      $excel->estiloTexto('S'.$filaInicio.':S'.$ultimaFila,9);
-      $excel->estiloTexto('U'.$filaInicio.':U'.$ultimaFila,9);
+      $excel->formatoContable('T'.$filaInicio.':T'.$ultimaFila,true);
+      $excel->estiloTexto('S'.$filaInicio.':T'.$ultimaFila,9);
       //
       $excel->anchoColumna('A', 33);
       $excel->anchoColumna('B', 15);
@@ -480,8 +463,7 @@ class Reportes extends BaseController
       $excel->anchoColumna('Q', 15);
       $excel->anchoColumna('R', 15);
       $excel->anchoColumna('S', 15);
-      $excel->anchoColumna('T', 15);
-      $excel->anchoColumna('U', 16);
+      $excel->anchoColumna('T', 16);
       $excel->zoomHoja(110);
       $excel->tituloHoja('Notificadores_xEficiencias');
       //
