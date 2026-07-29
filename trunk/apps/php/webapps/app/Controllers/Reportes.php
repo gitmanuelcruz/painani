@@ -9,6 +9,7 @@ class Reportes extends BaseController
 		$this->Modelo = new MReportes();
       helper('date');
 	}
+   //
    public function informeNotificacionesGral(){
       $fechaInicio  = $this->request->getPost("vm_fecha_inicio");
       $fechaTermino = $this->request->getPost("vm_fecha_termino");
@@ -353,13 +354,6 @@ class Reportes extends BaseController
       $excel->alinearCeldaCentro('S2:S3');
       $excel->bordes('S2:S3','000000');
       $excel->ajustarTexto('S2:S3');
-      //----
-      /*$excel->valorCelda('T2', 'NIVEL EFICIENCIA');
-      $excel->combinarCeldas('T2:T3');
-      $excel->estiloCelda('T2:T3','76933c',9);
-      $excel->alinearCeldaCentro('T2:T3');
-      $excel->bordes('T2:T3','000000');
-      $excel->ajustarTexto('T2:T3');*/
       //----
       $excel->valorCelda('T2', 'COMISION TOTAL ESTIMADA');
       $excel->combinarCeldas('T2:T3');
