@@ -58,7 +58,7 @@ class Utilerias
    }
    // TODO: 
    public function getKeyFormat() {
-      $pw = "k3yH4n4C0ntr0l";
+      $pw = "k3yP41n4n1";
       return $pw;
    }
    // TODO: Obtiene el total de paginas a pintar en la pagina
