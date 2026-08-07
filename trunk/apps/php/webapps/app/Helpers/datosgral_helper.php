@@ -1,5 +1,5 @@
 <?php
 function formatoText() {
-    $pw = getenv('pwgral_enc');
-    return $pw;
+   $pw = getenv('pwgral_enc');
+   return $pw;
 }
