@@ -12,7 +12,7 @@ class WLogin extends BaseController
    //
    public function index() {
       $this->session->destroy();
-      $data['titulo'] = 'Login | Plataforma PAINANI';
+      $data['titulo'] = 'Login | Plataforma Painani';
       return view('login', $data);
    }
    //

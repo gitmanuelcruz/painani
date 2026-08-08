@@ -23,7 +23,7 @@ class Utilerias
       }
 
       $datos_sesion = array(
-         'titulo_gral'     => "Plataforma | PAINANI",
+         'titulo_gral'     => "Plataforma | Painani",
          'usuario'         => $this->session->get("usuario"),
          'nombre_completo' => $this->session->get("nombre_completo"),
          'email'           => $this->session->get("email"),
@@ -39,13 +39,13 @@ class Utilerias
    public function getSinSession() {
       $urlFoto = base_url()."includes/imagenes/avatars/avatar_desconocidos.jpg";
       $datos_sesion = array(
-         'titulo_gral' => "Plataforma | PAINANI",
+         'titulo_gral' => "Plataforma | Painani",
          'urlFoto' => $urlFoto
       );
 
       return $datos_sesion;
    }
-   // TODO: 
+   // TODO:
    public function parseNull($dato) {
       if ($dato == null)
          return "";
@@ -56,7 +56,7 @@ class Utilerias
       else
          return $dato;
    }
-   // TODO: 
+   // TODO:
    public function getKeyFormat() {
       $pw = "k3yP41n4n1";
       return $pw;
@@ -87,9 +87,9 @@ class Utilerias
       $fila_inicial = ($paginaActual * $registrosXPagina) - $registrosXPagina;
       $fila_final = $fila_inicial + $registrosXPagina;
 
-      $query_final = "SELECT * 
+      $query_final = "SELECT *
                      FROM (
-                        SELECT * 
+                        SELECT *
                         FROM (
                            SELECT
                               a.*,
@@ -97,7 +97,7 @@ class Utilerias
                               $totalPaginas AS paginas,
                               $totalRegistros AS total_registro
                            FROM ($myquery) a
-                        ) b 
+                        ) b
                         WHERE b.fila <= $fila_final
                      ) x
                      WHERE x.fila > $fila_inicial";
@@ -135,14 +135,14 @@ class Utilerias
       if (!empty($tipo)) {
          $sql = "SELECT COUNT(vpri.*) AS total
                   FROM (
-                     SELECT me.codigo_menu 
+                     SELECT me.codigo_menu
                      FROM roles rol
                      INNER JOIN roles_privilegios rpr ON rol.id_rol = rpr.id_rol
                      INNER JOIN menus me ON rpr.id_menu = me.id_menu
                      INNER JOIN usuarios_roles ur ON rol.id_rol = ur.id_rol
                      WHERE ur.id_usuario = ?
                      AND me.codigo_menu = ?
-                     AND CURRENT_DATE BETWEEN ur.fecha_vigencia_inicio AND COALESCE(ur.fecha_vigencia_fin, CURRENT_DATE) 
+                     AND CURRENT_DATE BETWEEN ur.fecha_vigencia_inicio AND COALESCE(ur.fecha_vigencia_fin, CURRENT_DATE)
                      ----------
                      UNION ALL
                      ----------
@@ -197,7 +197,7 @@ class Utilerias
       if ($nombre_conexion == null) {
          $nombre_conexion = $this->BaseData;
       }
-      
+
       $db = db_connect($nombre_conexion);
       $sql = "SELECT
                TO_CHAR(date_trunc('month', CURRENT_DATE)::date,?::text) AS fecha_inicio_mes,
@@ -211,7 +211,7 @@ class Utilerias
          "fecha_actual"  =>  $row->fecha_actual_mes,
          "fecha_termino" =>  $row->fecha_termino_mes
       );
-      
+
       return $arreglo;
    }
    // TODO: Retorna la fecha con formato
@@ -219,7 +219,7 @@ class Utilerias
       if ($nombre_conexion == null) {
          $nombre_conexion = $this->BaseData;
       }
-      
+
       $db = db_connect($nombre_conexion);
       $sql = "SELECT TO_CHAR('" . $fecha . "'::date,'" . $formato . "') AS fecha";
       $rs = $db->query($sql);
@@ -373,7 +373,7 @@ class Utilerias
       }
       else {
          return false;
-      }       
+      }
    }
    // TODO: Función para eliminar archivos
    public function removeFile($url_documento) {
