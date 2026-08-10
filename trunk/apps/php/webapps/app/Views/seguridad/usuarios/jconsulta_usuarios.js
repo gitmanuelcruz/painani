@@ -134,7 +134,7 @@ function bloquearUsuario(usuario,status) {
       data: formData,
       beforeSend(xhr) {
          $('button[btn="btn"]').prop('disabled', true);
-         $('#overlayprincipal').show();
+         $("#overlayprincipal").show();
          targetPrincipal = document.getElementById('fusuario');
          spinnerPrincipal = new Spinner().spin(targetPrincipal);
       },
@@ -165,7 +165,7 @@ function bloquearUsuario(usuario,status) {
                   recargaPaginadoPrincipal();
                   if(parseInt(status) > 0) {
                      socket.emit("close-session", {
-                        "userBloqueado" : usuario, 
+                        "userBloqueado" : usuario,
                         "refresh": "exitSession"
                      });
                   }
@@ -185,8 +185,8 @@ function bloquearUsuario(usuario,status) {
       },
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled',false);
-         spinner.stop();
-         $("#overlay").hide();
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
       }
    });
 }
