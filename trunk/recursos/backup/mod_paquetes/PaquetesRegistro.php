@@ -2,7 +2,6 @@
 namespace App\Controllers;
 use App\Models\MPaquetesRegistro;
 use App\Models\MServicios;
-use App\Libraries\ExcelGenerate;
 use ZipArchive;
 
 class PaquetesRegistro extends BaseController
@@ -26,8 +25,10 @@ class PaquetesRegistro extends BaseController
             $data['titulo'] = "Registro";
             $data['titulo2'] = "Registro de Paquetes";
             $data['btn_nuevo'] = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_NVO_PAQUETE","PRIVILEGIO");
-            $data['btn_inf_excel'] = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_INFOEXCEL_NOTPAQUETE","PRIVILEGIO");
+            $data['btn_inf_excel_gral']  = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_INFOGRALEXCEL_NOTPAQUETE","PRIVILEGIO");
+            $data['btn_inf_excel_xefic'] = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_INFOEFICEXCEL_NOTPAQUETE","PRIVILEGIO");
             $fechaMes = $this->utilerias->getDayInicioTermino("yyyy-mm-dd");
+            $data['fecha_inicial'] = $fechaMes["fecha_inicial"];
             $data['fecha_actual']  = $fechaMes["fecha_actual"];
 				return view('paquetes/registro/list', $data);
          }
@@ -262,7 +263,7 @@ class PaquetesRegistro extends BaseController
             //*
             if($result[0]) {
                $result = $this->Modelo->deletePaqueteNotificacion(
-                  $id_paquete,$idsNotificaciones);
+                  $id_paquete,$idsNotificaciones,$usuario,$ip);
                if($result[0]) {
                   $result = $this->Modelo->insertPaqueteNotificacion(
                      $id_paquete,$idsNotificaciones,$idEstatus,$usuario,$ip);
@@ -405,74 +406,5 @@ class PaquetesRegistro extends BaseController
       }
 
       return $this->response->setJSON($response);
-   }
-   //
-   public function obtieneInformeNotificaciones(){
-      $num_oficio = $this->request->getPost("txt_id_num_oficio");
-      $fecha_programada = $this->request->getPost("txt_fecha_programada");
-      $fecha_apertura = $this->request->getPost("txt_fecha_apertura");
-      $fecha_cierre   = $this->request->getPost("txt_fecha_cierre");
-      $nombre_notificador = $this->request->getPost("txt_nombre_notificador");
-      $usuario = $this->session->get("usuario");
-      //
-      $excel = new ExcelGenerate();      
-      $excel->estilosFila('INFORME NOTIFICACIONES ', 'A1', 'Arial', true, '11', '999797');
-      $excel->combinarCeldas('A1:J1');
-      $excel->alinearCeldaCentro('A1:J1');
-      $excel->altoFila(2, 18);
-      $excel->estiloCelda('A2:J2','000000',9);
-      $excel->altoFila(1, 20);
-      //
-      $excel->valorCelda('A2', '#');
-      $excel->valorCelda('B2', 'NO. OFICIO');
-      $excel->valorCelda('C2', 'FECHA OFICIO');
-      $excel->valorCelda('D2', 'DOMICILIO');
-      $excel->valorCelda('E2', 'REFERENCIA');
-      $excel->valorCelda('F2', 'NO. PAQUETE');
-      $excel->valorCelda('G2', 'NOTIFICADOR');
-      $excel->valorCelda('H2', 'ESTATUS');
-      $excel->valorCelda('I2', 'FECHA NOTIFICACIÓN');
-      $excel->valorCelda('J2', 'EVIDENCIAS');
-      $excel->alinearCeldaCentro('A2:J2');
-      $excel->inmovilizar(3,3);
-      //
-      $fila = 3;
-      $filaInicio = $fila;
-      $resultado = $this->Modelo->getDatosInfoNotificaciones(
-         $num_oficio,$fecha_programada,$fecha_apertura,$fecha_cierre,$nombre_notificador)->getResult();
-      foreach($resultado as $row) {
-         $excel->valorCeldaTexto('A'.$fila, $row->fila);
-         $excel->valorCelda('B'.$fila, $row->num_oficio);
-         $excel->valorCelda('C'.$fila, $row->fecha_oficio);
-         $excel->valorCelda('D'.$fila, $row->domicilio);
-         $excel->valorCelda('E'.$fila, $row->referencia_ubicacion);
-         $excel->valorCeldaTexto('F'.$fila, $row->id_paquete);
-         $excel->valorCelda('G'.$fila, mb_strtoupper($row->nombre_notificador,'UTF-8'));
-         $excel->valorCelda('H'.$fila, mb_strtoupper($row->id_estatus_notificacion,'UTF-8'));
-         $excel->valorCelda('I'.$fila, $row->fecha_hora_notificado);
-         $excel->valorCelda('J'.$fila, mb_strtoupper($row->band_evidencias,'UTF-8'));
-         $fila++;
-      }
-      $ultimaFila = $fila - 1;
-      $excel->textoTamano('A'.$filaInicio.':J'.$ultimaFila,9);
-      $excel->alinearCeldaCentro('A'.$filaInicio.':A'.$ultimaFila);
-      $excel->alinearCeldaCentro('C'.$filaInicio.':C'.$ultimaFila);
-      $excel->alinearCeldaCentro('F'.$filaInicio.':F'.$ultimaFila);
-      $excel->alinearCeldaCentro('H'.$filaInicio.':J'.$ultimaFila);
-      //
-      $excel->anchoColumna('A', 8);
-      $excel->anchoColumna('B', 25);
-      $excel->anchoColumna('C', 15);
-      $excel->anchoColumna('D', 45);
-      $excel->anchoColumna('E', 45);
-      $excel->anchoColumna('F', 15);
-      $excel->anchoColumna('G', 35);
-      $excel->anchoColumna('H', 16);
-      $excel->anchoColumna('I', 22);
-      $excel->anchoColumna('J', 12);
-      $excel->tituloHoja('Notificaciones');
-      $excel->seleccionarHoja(0);
-      $nombreArchivo = 'InformeNotificaciones';
-      $excel->descargar($nombreArchivo);
    }
 }

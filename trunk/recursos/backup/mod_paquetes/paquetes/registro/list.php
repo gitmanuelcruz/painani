@@ -29,6 +29,7 @@
 						</button>
 					</div>
 					<div class="card-body collapse show" id="flush-collapseOne">
+						<input type="hidden" id="txt_fechas" fechaInicio="<?php if(!empty($fecha_inicial)) echo $fecha_inicial;?>" fechaActual="<?php if(!empty($fecha_actual)) echo $fecha_actual;?>">
 						<form method="post" class="app-form" id="frmPaquetes" name="frmPaquetes" onsubmit="return false">
 							<div class="row mb-2">
 								<div class="col-sm-3">
@@ -63,9 +64,16 @@
 									<i class="fa-solid fa-magnifying-glass me-2"></i>Buscar
 								</button>
 								<?php
-									if($btn_inf_excel) {
-										echo '<button type="button" class="btn btn-success btn-sm" btn="btn" id="btn_inf_detalle_notif">
-													<i class="fa-solid fa-file-excel me-2"></i>Inf. Num. Ordenes
+									if($btn_inf_excel_gral) {
+										echo '<button type="button" class="btn btn-success btn-sm" btn="btn" id="btn_inf_notif_gral">
+													<i class="fa-solid fa-file-excel me-2"></i>Inf. Num. Ordenes Gral.
+												</button>';
+									}
+								?>
+								<?php
+									if($btn_inf_excel_xefic) {
+										echo '<button type="button" class="btn btn-success btn-sm" btn="btn" id="btn_inf_notif_xeficiencias">
+													<i class="fa-solid fa-file-excel me-2"></i>Inf. Num. Ordenes x Eficiencias
 												</button>';
 									}
 								?>
@@ -82,8 +90,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="table-responsive-sm">
-			<table class="table table-sm-2 table-striped table-hover" id="gridPaquetes" style="width: 100%;">
+		<div class="table-responsives-sm">
+			<table class="table table-sm table-striped table-hover" id="gridPaquetes" style="width: 100%;">
 				<thead class="table-dark">
 					<tr class="p-font-msg-09">
 						<th width="8%" class="text-start"   rowspan="3">ID</th>

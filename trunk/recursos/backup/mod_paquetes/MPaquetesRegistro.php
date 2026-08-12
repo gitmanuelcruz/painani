@@ -111,9 +111,9 @@ class MPaquetesRegistro extends Model
 						THEN CONCAT(UPPER(eno.nombre_estatus_notificacion),'<br><span class=''badge bg-light-primary text-primary fs-1 fw-bold''>',TO_CHAR(pno.fecha_hora_notificacion,'dd/mm/yyyy hh24:mi'),'</span>')
 						ELSE 
 							(CASE WHEN pno.id_estatus_notificacion = 'NO_LOCALIZADO'
-								THEN CONCAT('<span class=''text-orange fw-bold''>',UPPER(eno.nombre_estatus_notificacion),'</span>')
+								THEN CONCAT('<span class=''text-orange fw-bold''>',UPPER(eno.nombre_estatus_notificacion),'<br><span class=''badge bg-light-warning text-orange fs-1 fw-bold''>',TO_CHAR(pno.fecha_ultimo_cambio,'dd/mm/yyyy hh24:mi'),'</span></span>')
 								WHEN pno.id_estatus_notificacion = 'NO_ENTREGADO'
-								THEN CONCAT('<span class=''text-danger fw-bold''>',UPPER(eno.nombre_estatus_notificacion),'</span>')
+								THEN CONCAT('<span class=''text-danger fw-bold''>',UPPER(eno.nombre_estatus_notificacion),'<br><span class=''badge bg-light-danger text-danger fs-1 fw-bold''>',TO_CHAR(pno.fecha_ultimo_cambio,'dd/mm/yyyy hh24:mi'),'</span></span>')
 								ELSE UPPER(eno.nombre_estatus_notificacion)
 							END)
 					END) AS desc_estatus,
@@ -310,8 +310,24 @@ class MPaquetesRegistro extends Model
 		}
 	}
 	//
-	public function deletePaqueteNotificacion($id_paquete,$ids_notificaciones) {
-		$sql ="DELETE FROM paquetes_notificaciones a
+	public function deletePaqueteNotificacion($id_paquete,$ids_notificaciones,$usuario,$ip) {
+		$sql ="UPDATE notificaciones a SET
+						id_estatus_notificacion = 'POR_ASIGNAR',
+						fecha_hora_notificado = NULL,
+						notificado_por = NULL,
+						fecha_ultimo_cambio = CURRENT_TIMESTAMP,
+						modificado_por = TRIM(?),
+						ip_modifico = TRIM(?)
+				WHERE a.id_estatus_notificacion = 'ASIGNADO'
+				AND EXISTS (
+					SELECT NULL
+					FROM paquetes_notificaciones b
+					WHERE b.id_estatus_notificacion <> 'NOTIFICADO'
+					AND b.id_notificacion = a.id_notificacion
+					AND b.id_paquete = ?
+				)";
+
+		$sql2 ="DELETE FROM paquetes_notificaciones a
 				WHERE a.id_paquete = ?
 				AND NOT EXISTS (
 					SELECT NULL
@@ -320,7 +336,8 @@ class MPaquetesRegistro extends Model
 					AND b.id_notificacion IN ?
 				)";
 
-		$this->db->query($sql,[$id_paquete,$ids_notificaciones]);
+		$this->db->query($sql,[$usuario,$ip,$id_paquete]);
+		$this->db->query($sql2,[$id_paquete,$ids_notificaciones]);
 		if ($this->db->transStatus()) {
 			return array(true, 'El proceso se ha realizado correctamente');
 		}
@@ -362,24 +379,8 @@ class MPaquetesRegistro extends Model
 					AND b.id_paquete = ?
 				)";
 
-		$sql3 ="UPDATE notificaciones a SET
-						id_estatus_notificacion = 'POR_ASIGNAR',
-						fecha_hora_notificado = NULL,
-						notificado_por = NULL,
-						fecha_ultimo_cambio = CURRENT_TIMESTAMP,
-						modificado_por = TRIM(?),
-						ip_modifico = TRIM(?)
-				WHERE a.id_estatus_notificacion = ?
-				AND NOT EXISTS (
-					SELECT NULL
-					FROM paquetes_notificaciones b
-					WHERE id_estatus_notificacion = 'NOTIFICADO'
-					AND b.id_notificacion = a.id_notificacion
-				)";
-
 		$this->db->query($sql,[$id_paquete,$usuario,$ip,$ids_notificaciones,$id_paquete]);
 		$this->db->query($sql2,[$idEstatus,$usuario,$ip,$id_paquete]);
-		$this->db->query($sql3,[$usuario,$ip,$idEstatus]);
 		if ($this->db->transStatus()) {
 			return array(true, 'El proceso se ha realizado correctamente');
 		}
@@ -445,80 +446,33 @@ class MPaquetesRegistro extends Model
 	}
 	//
 	public function deletePaquetes($id_paquete,$usuario,$ip) {
-		$sql ="DELETE FROM paquetes_notificaciones WHERE id_paquete = ?";
-		$sql2 ="DELETE FROM paquetes WHERE id_paquete = ?";
-		$sql3 ="UPDATE notificaciones a SET
+		$sql ="UPDATE notificaciones a SET
 						id_estatus_notificacion = 'POR_ASIGNAR',
 						fecha_hora_notificado = NULL,
 						fecha_ultimo_cambio = CURRENT_TIMESTAMP,
 						modificado_por = TRIM(?),
 						ip_modifico = TRIM(?)
 				WHERE a.id_estatus_notificacion = 'ASIGNADO'
-				AND NOT EXISTS (
+				AND EXISTS (
 					SELECT NULL
 					FROM paquetes_notificaciones b
-					WHERE id_estatus_notificacion = 'NOTIFICADO'
+					WHERE b.id_estatus_notificacion <> 'NOTIFICADO'
 					AND b.id_notificacion = a.id_notificacion
 					AND b.id_paquete = ?
 				)";
+		$sql2 ="DELETE FROM paquetes_notificaciones WHERE id_paquete = ?";
+		$sql3 ="DELETE FROM paquetes WHERE id_paquete = ?";
+		
 
-		$this->db->query($sql,[$id_paquete]);
+		$this->db->query($sql,[$usuario,$ip,$id_paquete]);
 		$this->db->query($sql2,[$id_paquete]);
-		$this->db->query($sql3,[$usuario,$ip,$id_paquete]);
+		$this->db->query($sql3,[$id_paquete]);
 		if ($this->db->transStatus()) {
 			return array(true, 'El proceso se ha realizado correctamente');
 		}
 		else {
 			return array(false, 'ERROR AL ELIMINAR EL PAQUETE', 0);
 		}
-	}
-	//
-	public function getDatosInfoNotificaciones(
-		$num_oficio,$fechaProgramada,$fechaApertura,$fechaCierre,$notificador) {
-		$sql ="SELECT
-					row_number() OVER (ORDER BY pa.id_usuario_notificador,nt.fecha_oficio ASC) AS fila,
-					nt.num_oficio,
-					TO_CHAR(nt.fecha_oficio,'dd/mm/yyyy') AS fecha_oficio,
-					nt.domicilio,
-					nt.referencia_ubicacion,
-					pq.id_paquete,
-					pa.id_usuario_notificador,
-					us.nombre_completo AS nombre_notificador,
-					et.nombre_estatus_notificacion AS id_estatus_notificacion,
-					TO_CHAR(pq.fecha_hora_notificacion,'dd/mm/yyyy hh24:mi') AS fecha_hora_notificado,
-					(CASE WHEN COALESCE(sn.total_evidencias,0) > 0 THEN 'SI' ELSE 'NO' END) AS band_evidencias
-				FROM paquetes_notificaciones pq
-				INNER JOIN notificaciones nt ON pq.id_notificacion = nt.id_notificacion
-				INNER JOIN estatus_notificacion et ON pq.id_estatus_notificacion = et.id_estatus_notificacion
-				INNER JOIN paquetes pa ON pq.id_paquete = pa.id_paquete
-				INNER JOIN usuarios us ON pa.id_usuario_notificador = us.id_usuario
-				LEFT JOIN (
-					SELECT
-						id_notificacion,
-						id_paquete_notificacion,
-						COUNT(*) AS total_evidencias
-					FROM soportes_notificacion
-					GROUP BY id_notificacion,id_paquete_notificacion
-				) sn ON pq.id_notificacion = sn.id_notificacion AND pq.id_paquete_notificacion = sn.id_paquete_notificacion
-				WHERE 1=1 ";
-		if(!empty($num_oficio)) {
-			$sql .="AND parse_text(nt.num_oficio) LIKE parse_text('%".trim($num_oficio)."%') ";
-		}
-		if (!empty($fechaProgramada)) {
-			$sql .="AND pa.fecha_programada = TO_DATE('$fechaProgramada','yyyy-mm-dd') ";
-		}
-		if (!empty($fechaApertura)) {
-			$sql .="AND pa.fecha_hora_apertura_operacion::date = TO_DATE('$fechaApertura','yyyy-mm-dd') ";
-		}
-		if (!empty($fechaCierre)) {
-			$sql .="AND pa.fecha_hora_cierre_operacion::date = TO_DATE('$fechaCierre','yyyy-mm-dd') ";
-		}
-		if(!empty($notificador)) {
-			$sql .="AND parse_text(us.nombre_completo) LIKE parse_text('%".trim($notificador)."%') ";
-		}
-		$sql .=" ORDER BY pa.id_usuario_notificador,pq.id_paquete,nt.fecha_oficio ASC ";		
-
-		return $this->db->query($sql);
 	}
 }
 ?>

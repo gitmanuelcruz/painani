@@ -19,16 +19,20 @@ $(document).ready(function() {
 		loadPaquetesPag();
 	});
 
+   $("#btn_inf_notif_gral").on("click", function () {
+      vmDescargarInfo(1);
+   });
+
+   $("#btn_inf_notif_xeficiencias").on("click", function () {
+      vmDescargarInfo(2);
+   });
+
 	$("#btnNuevo").on("click", function () {
 		vmRegistro('','N');
 	});
 
 	$("#txt_id_num_oficio,#txt_nombre_notificador").keypress(function (e) {
       keyEvent(e);
-   });
-
-   $("#btn_inf_detalle_notif").on("click", function () {
-      descargarInformeNotif();
    });
 });
 
@@ -51,7 +55,7 @@ const loadPaquetesPag = () => {
                   { "campo_bd": "icon_cerrar", "valor_campo": "1", "icono": "fa-regular fa-circle-stop fa-lg", "callback": "cerrarPaquete", "etiqueta": "Cerrar", "tipoicono": "i", "color": "color_red" },
                   { "campo_bd": "icon_editar", "valor_campo": "1", "icono": "fa-solid fa-pen-to-square fa-lg", "callback": "editarPaquete", "etiqueta": "Editar", "tipoicono": "i", "color": "color_black" },
                   { "campo_bd": "icon_eliminar", "valor_campo": "1", "icono": "fa-solid fa-trash fa-lg", "callback": "eliminarPaquete", "etiqueta": "Eliminar", "tipoicono": "i", "color": "color_red" },
-                  { "campo_bd": "icon_informe","valor_campo": "1", "icono": "fa-solid fa-print fa-lg","callback": "descargarInfoPaquete", "etiqueta": "Imprimir Inf.", "tipoicono": "i", "color": "color_red" }
+                  { "campo_bd": "icon_informe","valor_campo": "1", "icono": "fa-solid fa-print fa-lg","callback": "descargarInfoPaquete", "etiqueta": "Imp. Ficha", "tipoicono": "i", "color": "color_red" }
                ]
             }
          ]
@@ -431,17 +435,100 @@ const deletePaquete = (id_paquete) => {
       }
    });
 }
-// TODO: INFORMES EN EXCEL
-const descargarInformeNotif = () => {
-   let nombreExcel = "InformeNotificaciones.xlsx";
-   $("#overlayprincipal").show();
+// TODO: Descargar informe en Excel
+const vmDescargarInfo = (tipo) => {
+   let html = '';
+   let botones = '';
+   let titulo = `Generar Informe de Notificaciones`;
+   const fechaInicio = $("#txt_fechas").attr('fechaInicio');
+   const fechaActual = $("#txt_fechas").attr('fechaActual');
+   //
+   html +=  `<form method="post" class="app-form frm-modal-din" id="frmDescInf" name="frmDescInf" novalidate onsubmit="return false">
+               <div class="row mb-2">
+                  <div class="col-sm-6">
+							<label class="form-label">Fecha Inicio</label>
+							<input type="date" class="form-control" id="vm_fecha_inicio" name="vm_fecha_inicio" style="height: 40px;"
+                        onchange="validFechaDescarga()" required value="${fechaInicio}">
+                     <div class="invalid-feedback">Fecha inicio requerido</div>        
+						</div>
+                  <div class="col-sm-6">
+							<label class="form-label">Fecha T&eacute;rmino</label>
+							<input type="date" class="form-control" id="vm_fecha_termino" name="vm_fecha_termino" style="height: 40px;"
+                        required value="${fechaActual}">
+                     <div class="invalid-feedback">Fecha t&eacute;rmino requerido</div>        
+						</div>
+               </div>
+            </form>`;
+
+   botones +=  `<button type="button" class="btn btn-info me-1" btn="btn" id="btn_descargar_informe">
+                  <i class="fa-solid fa-download me-2"></i>Descargar Informe
+               </button>
+               <button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" id="btn_cerrar_vmgenerarInfo">
+                  <i class="fa-solid fa-xmark me-2"></i>Cerrar
+               </button>`;
+
+   modal('frmPaquetes', titulo, html, 'formdefault_scrollable_center', botones, 'cerrarVMGenerarInfo()');
+   validFechaDescarga();
+   //
+   $("#btn_descargar_informe").on("click", function () {
+      validDescargaInf(tipo);
+   });
+   //
+   $("#btn_cerrar_vmgenerarInfo").on("click", function () {
+      cerrarVMGenerarInfo();
+   });
+}
+//!
+const cerrarVMGenerarInfo = () => {
+   closeModal();
+}
+//!
+const validFechaDescarga = () => {
+   const fActual = fechaActual();
+	const fechaInicio = $("#vm_fecha_inicio").val();
+	if(fechaInicio > fActual.fecha2) {
+		$("#vm_fecha_termino").val(fechaInicio);
+	}
+	else{
+		$("#vm_fecha_termino").val(fActual.fecha2);
+	}
+	$("#vm_fecha_termino").prop("min",fechaInicio);
+}
+//!
+const validDescargaInf = (tipo) => {
+   let contador = 0;
+   // TODO: Obtener todos los formularios a los que queremos aplicar estilos de validación
+   let forms = document.querySelectorAll('.frm-modal-din');
+   // TODO: Bucle sobre ellos y evitar la presentación
+   Array.prototype.slice.call(forms)
+   .forEach(function (form) {
+      if (!form.checkValidity()) {
+         contador++;
+      }
+      form.classList.add('was-validated');
+   });
+   
+   if(contador == 0) {
+      if(parseInt(tipo) == 1) {
+         descargarInfNotificaionesGral();
+      }
+      else {
+         descargarInfNotificaionesxEficiencias();
+      }
+   }
+}
+//!
+const descargarInfNotificaionesGral = () => {
    $('button[btn="btn"]').prop('disabled',true);
-   $("#btn_inf_detalle_notif").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Inf. Notificaciones</button></li>');
+   $("#overlayprincipal").show();
+   $("#btn_descargar_informe").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Descargar Informe</button></li>');
    targetPrincipal = document.getElementById('frmPaquetes');
    spinnerPrincipal = new Spinner().spin(targetPrincipal);
+   const fActual = fechaActual();
+   const nombreExcel = `informe_notificaciones_gral_${fActual.fechaHora}.xlsx`;
    //
    let xhr = new XMLHttpRequest();
-	xhr.open('post', contexto+nameController+"/obtieneInformeNotificaciones", true);
+	xhr.open('post', contexto+'Reportes/informeNotificacionesGral', true);
    xhr.responseType = 'blob';
    xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded; charset=utf-8');
    xhr.onload = function () {
@@ -458,13 +545,47 @@ const descargarInformeNotif = () => {
       window.URL.revokeObjectURL(downloadURL);
       a.remove();
       $('button[btn="btn"]').prop('disabled',false);
-      $("#btn_inf_detalle_notif").html('<i class="fa-solid fa-download me-2"></i>Inf. Notificaciones</button></li>');
+      $("#btn_descargar_informe").html('<i class="fa-solid fa-download me-2"></i>Descargar Informe</button></li>');
       spinnerPrincipal.stop();
       $("#overlayprincipal").hide();
    }
-   xhr.send($("#frmPaquetes").serialize());
+   xhr.send($("#frmDescInf").serialize());
 }
 //!
+const descargarInfNotificaionesxEficiencias = () => {
+   $('button[btn="btn"]').prop('disabled',true);
+   $("#overlayprincipal").show();
+   $("#btn_descargar_informe").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Descargar Informe</button></li>');
+   targetPrincipal = document.getElementById('frmPaquetes');
+   spinnerPrincipal = new Spinner().spin(targetPrincipal);
+   const fActual = fechaActual();
+   const nombreExcel = `informe_notificaciones_xeficiencias_${fActual.fechaHora}.xlsx`;
+   //
+   let xhr = new XMLHttpRequest();
+	xhr.open('post', contexto+'Reportes/informeNotificacionesxEficiencias', true);
+   xhr.responseType = 'blob';
+   xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded; charset=utf-8');
+   xhr.onload = function () {
+      let blob = new Blob([this.response], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+      if(window.navigator && window.navigator.msSaveOrOpenBlob){
+         window.navigator.msSaveOrOpenBlob(blob);
+         return;
+      }
+      let downloadURL = URL.createObjectURL(blob);
+      let a = document.createElement("a");
+      a.href = downloadURL;
+      a.download = nombreExcel;
+      a.click();
+      window.URL.revokeObjectURL(downloadURL);
+      a.remove();
+      $('button[btn="btn"]').prop('disabled',false);
+      $("#btn_descargar_informe").html('<i class="fa-solid fa-download me-2"></i>Descargar Informe</button></li>');
+      spinnerPrincipal.stop();
+      $("#overlayprincipal").hide();
+   }
+   xhr.send($("#frmDescInf").serialize());
+}
+// TODO: Descargar informe en PDf
 function descargarInfoPaquete(reg) {
    $('button[btn="btn"]').prop('disabled',true);
    $("#overlayprincipal").show();

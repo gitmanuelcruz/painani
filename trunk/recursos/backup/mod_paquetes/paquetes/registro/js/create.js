@@ -83,7 +83,7 @@ const cerrar_vm_registro = () => {
 //!
 const inicializarListado = () => {
    dlb2 = new DualListbox("#vm_listado",{
-      availableTitle: "Num. Orden Dispobibles",
+      availableTitle: "Num. Orden Disponibles",
       selectedTitle: "Num. Orden Asignados",
       addButtonText: ">",
       removeButtonText: "<",
