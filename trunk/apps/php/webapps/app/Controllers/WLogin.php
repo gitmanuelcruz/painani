@@ -65,12 +65,7 @@ class WLogin extends BaseController
       $id_session = session_id();
       $this->db->transBegin();
       //
-      if($datos->codigo_nivel_usuario == "OPER_SHIELD") {
-         $id_bitacora = array(true,-1);
-      }
-      else {
-         $id_bitacora = $this->Modelo->insertaBitacoraSesion($usuario,$num_intentos,$ipPc);
-      }
+      $id_bitacora = $this->Modelo->insertaBitacoraSesion($usuario,$num_intentos,$ipPc);
       if ($id_bitacora[0]) {
          $this->Modelo->actualizaNumIntentosUsuario($num_intentos,$usuario,$ipPc);
          $this->db->transCommit();
