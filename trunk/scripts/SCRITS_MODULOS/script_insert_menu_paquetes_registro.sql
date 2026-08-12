@@ -19,8 +19,8 @@ VALUES
 'Botón para eliminar registro de paquete','PRIVILEGIO','#','',1,14,'PRIV_ESPECIFICOS'),
 (NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_REG_PAQUETES'),'PRIV_BTN_INFOGRALEXCEL_NOTPAQUETE','Botón para descargar informe de notificaciones general (Excel)',
 'Botón para descargar informe de notificaciones general (Excel)','PRIVILEGIO','#','',1,15,'PRIV_ESPECIFICOS'),
-(NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_REG_PAQUETES'),'PRIV_BTN_INFOEFICEXCEL_NOTPAQUETE','Botón para descargar informe de notificaciones x eficiencias (Excel)',
-'Botón para descargar informe de notificaciones x eficiencias (Excel)','PRIVILEGIO','#','',1,16,'PRIV_ESPECIFICOS'),
+/*(NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_REG_PAQUETES'),'PRIV_BTN_INFOEFICEXCEL_NOTPAQUETE','Botón para descargar informe de notificaciones x eficiencias (Excel)',
+'Botón para descargar informe de notificaciones x eficiencias (Excel)','PRIVILEGIO','#','',1,16,'PRIV_ESPECIFICOS'),*/
 (NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_REG_PAQUETES'),'PRIV_BTN_INFOPDF_PAQUETE','Botón para descargar informe de paquete (PDF)',
 'Botón para descargar informe de paquete (PDF)','PRIVILEGIO','#','',1,17,'PRIV_ESPECIFICOS');
 
@@ -37,5 +37,5 @@ VALUES
 (NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_CERRAR_PAQUETE'),0,1),
 (NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_ELIM_PAQUETE'),0,1),
 (NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_INFOGRALEXCEL_NOTPAQUETE'),0,1),
-(NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_INFOEFICEXCEL_NOTPAQUETE'),0,1),
+/*(NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_INFOEFICEXCEL_NOTPAQUETE'),0,1),*/
 (NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_INFOPDF_PAQUETE'),0,1);
