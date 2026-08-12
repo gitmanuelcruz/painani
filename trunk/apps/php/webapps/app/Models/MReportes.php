@@ -48,86 +48,26 @@ class MReportes extends Model
 	//
 	public function getDatosInfNotificacionesxEficienciaExcel($fechaInicio,$fechaTermino) {
 		$sql ="SELECT
-					y.*,
-					(CASE WHEN COALESCE(y.porcentaje_notificado::numeric,0) BETWEEN 90.00 AND 100.00
-						THEN 'Alta'
-						WHEN COALESCE(y.porcentaje_notificado::numeric,0) BETWEEN 70.00 AND 89.99
-						THEN 'Media'
-						WHEN COALESCE(y.porcentaje_notificado::numeric,0) BETWEEN 0.01 AND 69.99
-						THEN 'Baja'
-						ELSE 'No Aplica'
-					END) AS desc_eficiencia,
-					(CASE WHEN COALESCE(y.porcentaje_notificado_local::numeric,0) BETWEEN 90.00 AND 100.00
-						THEN 'Alta'
-						WHEN COALESCE(y.porcentaje_notificado_local::numeric,0) BETWEEN 70.00 AND 89.99
-						THEN 'Media'
-						WHEN COALESCE(y.porcentaje_notificado_local::numeric,0) BETWEEN 0.01 AND 69.99
-						THEN 'Baja'
-						ELSE 'No Aplica'
-					END) AS desc_eficiencia_local,
-					(CASE WHEN COALESCE(y.porcentaje_notificado_foraneo::numeric,0) BETWEEN 90.00 AND 100.00
-						THEN 'Alta'
-						WHEN COALESCE(y.porcentaje_notificado_foraneo::numeric,0) BETWEEN 70.00 AND 89.99
-						THEN 'Media'
-						WHEN COALESCE(y.porcentaje_notificado_foraneo::numeric,0) BETWEEN 0.01 AND 69.99
-						THEN 'Baja'
-						ELSE 'No Aplica'
-					END) AS desc_eficiencia_foraneo
+					x.*
 				FROM (
 					SELECT
-						x.*,
-						---------------
-						(CASE WHEN COALESCE(x.total_asignados::numeric,0) > 0
-							THEN ROUND(((COALESCE(x.total_por_notificar::numeric,0) / COALESCE(x.total_asignados::numeric,0)) * 100),2) ELSE 0 END) AS porcentaje_xnotificar,
-						(CASE WHEN COALESCE(x.total_asignados::numeric,0) > 0
-							THEN ROUND(((COALESCE(x.total_no_localizado::numeric,0) / COALESCE(x.total_asignados::numeric,0)) * 100),2) ELSE 0 END) AS porcentaje_no_localizado,
-						(CASE WHEN COALESCE(x.total_asignados::numeric,0) > 0
-							THEN ROUND(((COALESCE(x.total_notificado::numeric,0) / COALESCE(x.total_asignados::numeric,0)) * 100),2) ELSE 0 END) AS porcentaje_notificado,
-						---------------
-						(CASE WHEN COALESCE(x.total_asignados_local::numeric,0) > 0
-							THEN ROUND(((COALESCE(x.total_por_notificar_local::numeric,0) / COALESCE(x.total_asignados_local::numeric,0)) * 100),2) ELSE 0 END) AS porcentaje_xnotificar_local,
-						(CASE WHEN COALESCE(x.total_asignados_local::numeric,0) > 0
-							THEN ROUND(((COALESCE(x.total_no_localizado_local::numeric,0) / COALESCE(x.total_asignados_local::numeric,0)) * 100),2) ELSE 0 END) AS porcentaje_no_localizado_local,
-						(CASE WHEN COALESCE(x.total_asignados_local::numeric,0) > 0
-							THEN ROUND(((COALESCE(x.total_notificado_local::numeric,0) / COALESCE(x.total_asignados_local::numeric,0)) * 100),2) ELSE 0 END) AS porcentaje_notificado_local,
-						---------------
-						(CASE WHEN COALESCE(x.total_asignados_foraneo::numeric,0) > 0
-							THEN ROUND(((COALESCE(x.total_por_notificar_foraneo::numeric,0) / COALESCE(x.total_asignados_foraneo::numeric,0)) * 100),2) ELSE 0 END) AS porcentaje_xnotificar_foraneo,
-						(CASE WHEN COALESCE(x.total_asignados_foraneo::numeric,0) > 0
-							THEN ROUND(((COALESCE(x.total_no_localizado_foraneo::numeric,0) / COALESCE(x.total_asignados_foraneo::numeric,0)) * 100),2) ELSE 0 END) AS porcentaje_no_localizado_foraneo,
-						(CASE WHEN COALESCE(x.total_asignados_foraneo::numeric,0) > 0
-							THEN ROUND(((COALESCE(x.total_notificado_foraneo::numeric,0) / COALESCE(x.total_asignados_foraneo::numeric,0)) * 100),2) ELSE 0 END) AS porcentaje_notificado_foraneo
-					FROM (
-						SELECT
-							pa.id_usuario_notificador,
-							us.nombre_completo AS nombre_notificador,
-							-----------------
-							COUNT(pq.*) AS total_asignados,
-							SUM(CASE WHEN pq.id_estatus_notificacion = 'POR_NOTIFICAR' THEN 1 ELSE 0 END) AS total_por_notificar,
-							SUM(CASE WHEN pq.id_estatus_notificacion IN('NO_LOCALIZADO','NO_ENTREGADO') THEN 1 ELSE 0 END) AS total_no_localizado,
-							SUM(CASE WHEN pq.id_estatus_notificacion = 'NOTIFICADO' THEN 1 ELSE 0 END) AS total_notificado,
-							-----------------
-							SUM(CASE WHEN parse_text(nt.domicilio) LIKE parse_text('%CUERNAVACA%') THEN 1 ELSE 0 END) AS total_asignados_local,
-							SUM(CASE WHEN parse_text(nt.domicilio) LIKE parse_text('%CUERNAVACA%') AND pq.id_estatus_notificacion = 'POR_NOTIFICAR' THEN 1 ELSE 0 END) AS total_por_notificar_local,
-							SUM(CASE WHEN parse_text(nt.domicilio) LIKE parse_text('%CUERNAVACA%') AND pq.id_estatus_notificacion IN('NO_LOCALIZADO','NO_ENTREGADO') THEN 1 ELSE 0 END) AS total_no_localizado_local,
-							SUM(CASE WHEN parse_text(nt.domicilio) LIKE parse_text('%CUERNAVACA%') AND pq.id_estatus_notificacion = 'NOTIFICADO' THEN 1 ELSE 0 END) AS total_notificado_local,
-							-----------------
-							SUM(CASE WHEN parse_text(nt.domicilio) NOT LIKE parse_text('%CUERNAVACA%') THEN 1 ELSE 0 END) AS total_asignados_foraneo,
-							SUM(CASE WHEN parse_text(nt.domicilio) NOT LIKE parse_text('%CUERNAVACA%') AND pq.id_estatus_notificacion = 'POR_NOTIFICAR' THEN 1 ELSE 0 END) AS total_por_notificar_foraneo,
-							SUM(CASE WHEN parse_text(nt.domicilio) NOT LIKE parse_text('%CUERNAVACA%') AND pq.id_estatus_notificacion IN('NO_LOCALIZADO','NO_ENTREGADO') THEN 1 ELSE 0 END) AS total_no_localizado_foraneo,
-							SUM(CASE WHEN parse_text(nt.domicilio) NOT LIKE parse_text('%CUERNAVACA%') AND pq.id_estatus_notificacion = 'NOTIFICADO' THEN 1 ELSE 0 END) AS total_notificado_foraneo
-						FROM paquetes pa
-						INNER JOIN usuarios us ON pa.id_usuario_notificador = us.id_usuario
-						INNER JOIN paquetes_notificaciones pq ON pa.id_paquete = pq.id_paquete
-						INNER JOIN notificaciones nt ON pq.id_notificacion = nt.id_notificacion
-						WHERE 1=1 ";
+						pa.id_usuario_notificador,
+						us.nombre_completo AS nombre_notificador,
+						-----------------
+						COUNT(pq.*) AS total_asignados,
+						COALESCE(SUM(CASE WHEN pq.id_estatus_notificacion = 'POR_NOTIFICAR' THEN 1 ELSE 0 END),0) AS total_por_notificar,
+						COALESCE(SUM(CASE WHEN pq.id_estatus_notificacion IN('NO_LOCALIZADO','NO_ENTREGADO') THEN 1 ELSE 0 END),0) AS total_no_localizado,
+						COALESCE(SUM(CASE WHEN pq.id_estatus_notificacion = 'NOTIFICADO' THEN 1 ELSE 0 END),0) AS total_notificado
+					FROM paquetes pa
+					INNER JOIN usuarios us ON pa.id_usuario_notificador = us.id_usuario
+					INNER JOIN paquetes_notificaciones pq ON pa.id_paquete = pq.id_paquete
+					WHERE 1=1 ";
 		if (!empty($fechaInicio) && !empty($fechaTermino)) {
 			$sql .="AND pa.fecha_programada BETWEEN TO_DATE('$fechaInicio','yyyy-mm-dd') AND TO_DATE('$fechaTermino','yyyy-mm-dd') ";
 		}
 		$sql .="	GROUP BY pa.id_usuario_notificador,us.nombre_completo
 					ORDER BY pa.id_usuario_notificador
-				) x
-			) y";
+				) x";
 
 		return $this->db->query($sql);
 	}

@@ -71,13 +71,6 @@
 									}
 								?>
 								<?php
-									if($btn_inf_excel_xefic) {
-										echo '<button type="button" class="btn btn-success btn-sm" btn="btn" id="btn_inf_notif_xeficiencias">
-													<i class="fa-solid fa-file-excel me-2"></i>Inf. Num. Ordenes x Eficiencias
-												</button>';
-									}
-								?>
-								<?php
 								if($btn_nuevo) {
 									echo  '<button type="button" class="btn btn-sm btn-info me-1" id="btnNuevo" btn="btn">
 												<i class="fa-solid fa-plus me-2"></i>Nuevo Registro

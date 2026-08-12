@@ -23,10 +23,6 @@ $(document).ready(function() {
       vmDescargarInfo(1);
    });
 
-   $("#btn_inf_notif_xeficiencias").on("click", function () {
-      vmDescargarInfo(2);
-   });
-
 	$("#btnNuevo").on("click", function () {
 		vmRegistro('','N');
 	});
@@ -512,9 +508,6 @@ const validDescargaInf = (tipo) => {
       if(parseInt(tipo) == 1) {
          descargarInfNotificaionesGral();
       }
-      else {
-         descargarInfNotificaionesxEficiencias();
-      }
    }
 }
 //!
@@ -529,40 +522,6 @@ const descargarInfNotificaionesGral = () => {
    //
    let xhr = new XMLHttpRequest();
 	xhr.open('post', contexto+'Reportes/informeNotificacionesGral', true);
-   xhr.responseType = 'blob';
-   xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded; charset=utf-8');
-   xhr.onload = function () {
-      let blob = new Blob([this.response], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-      if(window.navigator && window.navigator.msSaveOrOpenBlob){
-         window.navigator.msSaveOrOpenBlob(blob);
-         return;
-      }
-      let downloadURL = URL.createObjectURL(blob);
-      let a = document.createElement("a");
-      a.href = downloadURL;
-      a.download = nombreExcel;
-      a.click();
-      window.URL.revokeObjectURL(downloadURL);
-      a.remove();
-      $('button[btn="btn"]').prop('disabled',false);
-      $("#btn_descargar_informe").html('<i class="fa-solid fa-download me-2"></i>Descargar Informe</button></li>');
-      spinnerPrincipal.stop();
-      $("#overlayprincipal").hide();
-   }
-   xhr.send($("#frmDescInf").serialize());
-}
-//!
-const descargarInfNotificaionesxEficiencias = () => {
-   $('button[btn="btn"]').prop('disabled',true);
-   $("#overlayprincipal").show();
-   $("#btn_descargar_informe").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Descargar Informe</button></li>');
-   targetPrincipal = document.getElementById('frmPaquetes');
-   spinnerPrincipal = new Spinner().spin(targetPrincipal);
-   const fActual = fechaActual();
-   const nombreExcel = `informe_notificaciones_xeficiencias_${fActual.fechaHora}.xlsx`;
-   //
-   let xhr = new XMLHttpRequest();
-	xhr.open('post', contexto+'Reportes/informeNotificacionesxEficiencias', true);
    xhr.responseType = 'blob';
    xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded; charset=utf-8');
    xhr.onload = function () {
