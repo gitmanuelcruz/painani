@@ -11,10 +11,8 @@ class Server {
    constructor() {
       this.app = express();
       this.port = process.env.PORT || 3036;
-
       // Http server
       this.server = http.createServer(this.app);
-
       // Configuraciones de sockets
       this.io = socketio(this.server, {
          cors: {
@@ -36,34 +34,27 @@ class Server {
    middlewares() {      
       // CORS
       this.app.use(cors());
-      
       // Parseo del body
       this.app.use(express.json({ limit: '20mb' }));
-
       // Desplegar el directorio público
       this.app.use(express.static(path.resolve(__dirname, '../public')));
-
+      //
       this.app.get('/mensaje', function(req, res) {
          res.json({ mensaje: 'Método GET test' })
       });
-
       //API End Points routers
       this.app.use('/api',require('../routes/apiKeyRoutes'));
       this.app.use('/api/auth',require('../routes/authRoutes'));
       this.app.use('/api/notificacion',require('../routes/notificacionRoutes'));
-
    }
   
    execute() {
       // Inicializar Middlewares
       this.middlewares();
-
       // Inicializar sockets
       this.configurarSockets();
-
       // Inicializar sockets de notificaciones
       this.configurarSocketsNotificaciones();
-
       // Inicializar Server
       this.server.listen(this.port, () => {
          console.log('Server corriendo en puerto:', this.port);

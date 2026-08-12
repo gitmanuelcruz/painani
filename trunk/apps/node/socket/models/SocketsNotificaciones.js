@@ -31,8 +31,10 @@ class SocketsNotificaciones {
                   "icono": payload.icono, "hora": dnotificacion.hora
                });
             }
-            if (payload.refresh !== null && payload.refresh !== undefined && payload.refresh !== '')
+
+            if (payload.refresh !== null && payload.refresh !== undefined && payload.refresh !== '') {
                this.io.emit(payload.refresh, payload);
+            }
          });
       });
    }
