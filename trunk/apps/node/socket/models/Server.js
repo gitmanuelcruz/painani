@@ -46,6 +46,7 @@ class Server {
       this.app.use('/api',require('../routes/apiKeyRoutes'));
       this.app.use('/api/auth',require('../routes/authRoutes'));
       this.app.use('/api/notificacion',require('../routes/notificacionRoutes'));
+      this.app.use('/api/num_ordenes',require('../routes/numOrdenesRoutes'));
    }
   
    execute() {
