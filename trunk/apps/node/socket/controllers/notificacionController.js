@@ -11,6 +11,7 @@ const {
   getEvidenciasNotificacion,
   cancelarOrdenesPorNotificar,
   liberarOficiosParaReasignar,
+  finalizarNotificacionesTercerIntento,
 } = require("../services/notificacionService");
 const { getDateTime } = require("./comun");
 
@@ -131,16 +132,20 @@ const iniciarRuta = async (req, res) => {
 
 const finalizarRutaNotificacion = async (req, res) => {
   const { usuario, idPaquete } = req.body;
+
+  console.log("idapquete",idPaquete);
   const client = await pool.connect();
 
   try {
     await client.query('BEGIN');
     
-    await cerrarRutaNotificacion(usuario, idPaquete);
+    await cerrarRutaNotificacion(client,usuario, idPaquete);
 
-    await cancelarOrdenesPorNotificar(usuario, idPaquete);
+    await cancelarOrdenesPorNotificar(client,usuario, idPaquete);
 
-    await liberarOficiosParaReasignar(usuario, idPaquete);
+    await liberarOficiosParaReasignar(client,usuario, idPaquete);
+
+    await finalizarNotificacionesTercerIntento(client,usuario, idPaquete);
 
     await client.query('COMMIT');
 
