@@ -133,7 +133,6 @@ const iniciarRuta = async (req, res) => {
 const finalizarRutaNotificacion = async (req, res) => {
   const { usuario, idPaquete } = req.body;
 
-  console.log("idapquete",idPaquete);
   const client = await pool.connect();
 
   try {

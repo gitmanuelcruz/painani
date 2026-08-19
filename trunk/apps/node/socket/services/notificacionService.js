@@ -111,7 +111,6 @@ const iniciarRutaNotificacion = async (idPaquete, usuario) => {
 };
 
 const cerrarRutaNotificacion = async (client,usuario, idPaquete) => {
-	console.log("idPaquete cerrarRutaNotificacion ",idPaquete);
   	const sql = `UPDATE paquetes SET fecha_hora_cierre_operacion = now(),
                   	modificado_por = $1
                WHERE id_paquete =$2`;
