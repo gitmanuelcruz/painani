@@ -433,10 +433,39 @@ class MPaquetesRegistro extends Model
 				WHERE pn.id_notificacion = n.id_notificacion
 				AND pn.id_estatus_notificacion IN ('NO_LOCALIZADO', 'NO_ENTREGADO')
 				AND pn.id_paquete = ?";
+		
+		$sql4 ="WITH intentos AS (
+					SELECT id_notificacion
+					FROM paquetes_notificaciones
+					WHERE id_estatus_notificacion IN('NO_ENTREGADO', 'NO_LOCALIZADO')
+					GROUP BY id_notificacion
+					HAVING COUNT(*) >= 3
+				),
+				ultimo_estatus AS (
+					SELECT DISTINCT ON (pn.id_notificacion)
+						pn.id_notificacion,
+						pn.id_estatus_notificacion
+					FROM paquetes_notificaciones pn
+					INNER JOIN intentos i ON i.id_notificacion = pn.id_notificacion
+					ORDER BY pn.id_notificacion,pn.fecha_ultimo_cambio DESC
+				)
+				UPDATE notificaciones n SET 
+					id_estatus_notificacion = ue.id_estatus_notificacion,
+					fecha_hora_notificado = NULL,
+					notificado_por = NULL,
+					observaciones = 'MAS DE 3 INTENTOS',
+					fecha_ultimo_cambio = CURRENT_TIMESTAMP,
+					modificado_por = TRIM(?),
+					ip_modifico = TRIM(?)
+				FROM ultimo_estatus ue
+				INNER JOIN paquetes_notificaciones pn ON pn.id_notificacion = ue.id_notificacion
+				WHERE n.id_notificacion = ue.id_notificacion
+				AND pn.id_paquete = ?";
 
 		$this->db->query($sql ,[$usuario,$ip,$id_paquete]);
 		$this->db->query($sql2,[$usuario,$ip,$id_paquete]);
 		$this->db->query($sql3,[$usuario,$ip,$id_paquete]);
+		$this->db->query($sql4,[$usuario,$ip,$id_paquete]);
 		if ($this->db->transStatus()) {
 			return array(true, 'El proceso se ha realizado correctamente');
 		}
