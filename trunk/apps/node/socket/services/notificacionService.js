@@ -147,17 +147,20 @@ const finalizarNotificacionesTercerIntento = async(client,usuario,idPaquete)=>{
 	const sql = `
         WITH intentos AS (
 			SELECT id_notificacion
-			FROM paquetes_notificaciones
-			WHERE id_estatus_notificacion IN ('NO_ENTREGADO', 'NO_LOCALIZADO')
-			GROUP BY id_notificacion
+			FROM paquetes_notificaciones pn
+			WHERE  pn.id_paquete = $2
+			AND pn.id_estatus_notificacion IN ('NO_ENTREGADO', 'NO_LOCALIZADO')
+			GROUP BY pn.id_notificacion
 			HAVING COUNT(*) >= 3
 		),
 		ultimo_estatus AS (
 			SELECT DISTINCT ON (pn.id_notificacion)
 				pn.id_notificacion,
-				pn.id_estatus_notificacion
+				pn.id_estatus_notificacion,
+				id_motivo
 			FROM paquetes_notificaciones pn
 			INNER JOIN intentos i ON i.id_notificacion = pn.id_notificacion
+			WHERE pn.id_paquete = $2
 			ORDER BY pn.id_notificacion, pn.fecha_ultimo_cambio DESC
 		)
 		UPDATE notificaciones n
@@ -165,11 +168,10 @@ const finalizarNotificacionesTercerIntento = async(client,usuario,idPaquete)=>{
 			id_estatus_notificacion = ue.id_estatus_notificacion,
 			fecha_ultimo_cambio = NOW(),
 			modificado_por = $1,
-			observaciones = 'MAS DE 3 INTENTOS'
+			observaciones = 'MAS DE 3 INTENTOS',
+			id_motivo = ue.id_motivo
 		FROM ultimo_estatus ue
-		INNER JOIN paquetes_notificaciones pn ON pn.id_notificacion = ue.id_notificacion
-		WHERE n.id_notificacion = ue.id_notificacion
-		AND pn.id_paquete = $2`;
+		WHERE n.id_notificacion = ue.id_notificacion`;
 
 	await client.query(sql, [usuario, idPaquete]);
 }
