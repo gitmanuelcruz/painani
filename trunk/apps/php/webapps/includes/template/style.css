@@ -19701,6 +19701,12 @@ button:focus:not(:focus-visible) {
   padding: 0.3em 0.5em 0.15em;
 }
 
+.badge-ajuste {
+  display:inline-block!important;
+  width:100%;
+  white-space:break-spaces;
+}
+
 .text-bg-primary {
   background-color: rgba(var(--primary), 1) !important;
   color: rgba(var(--white), 1) !important;
@@ -28906,6 +28912,7 @@ body[class="ltr dark"] .card.card-bordered .card-body {
 }
 
 .table {
+  table-layout: fixed;
   /*-webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;*/
@@ -28921,15 +28928,23 @@ body[class="ltr dark"] .card.card-bordered .card-body {
 }
 .table tbody tr td {
   padding: 0.8rem 0.75rem;
+  word-break: break-word; /* Rompe palabras largas */
+  overflow-wrap: break-word; /* Alternativa moderna estándar */
 }
 .table tbody tr td:first-child {
   padding-left: 1.25rem;
+  word-break: break-word; /* Rompe palabras largas */
+  overflow-wrap: break-word; /* Alternativa moderna estándar */
 }
 .table tbody tr td:last-child {
   padding-right: 1.25rem;
+  word-break: break-word; /* Rompe palabras largas */
+  overflow-wrap: break-word; /* Alternativa moderna estándar */
 }
 .table.table-sm tr td {
   padding: 0.7rem !important;
+  word-break: break-word; /* Rompe palabras largas */
+  overflow-wrap: break-word; /* Alternativa moderna estándar */
 }
 
 .table-striped > tbody > tr:nth-of-type(odd) > * {

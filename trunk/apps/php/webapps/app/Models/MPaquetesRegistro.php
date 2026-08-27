@@ -27,6 +27,7 @@ class MPaquetesRegistro extends Model
 					COALESCE(pno.total_soporte,0) AS total_soporte,
 					1 AS band,
 					1 AS band_detalle,
+					(CASE WHEN COALESCE(pno.total_no_localizado,0) > 0 THEN 1 ELSE 0 END) AS icon_motivos,
 					(CASE WHEN COALESCE(pno.total_notificado,0) > 0 THEN 1 ELSE 0 END) AS icon_ubicacion,
 					(CASE WHEN COALESCE(pno.total_soporte,0) > 0 THEN 1 ELSE 0 END) AS icon_soporte,
 					(CASE WHEN COALESCE($iconAbrir,0) > 0 AND paq.fecha_hora_apertura_operacion IS NOT NULL THEN 0 ELSE 1 END) AS icon_abrir,
@@ -89,7 +90,7 @@ class MPaquetesRegistro extends Model
 		return $sql;
    }
 	//
-	public function getNotificacionesAsigPag($idPaquete,$notificado) {
+	public function getNotificacionesxPaquetePag($idPaquete,$notificado) {
       $sql ="SELECT
 					pno.id_paquete,
 					pno.id_paquete_notificacion,
@@ -119,6 +120,8 @@ class MPaquetesRegistro extends Model
 					END) AS desc_estatus,
 					pno.latitud,
 					pno.longitud,
+					(CASE WHEN pno.notificado = FALSE AND pno.id_estatus_notificacion IN('NO_LOCALIZADO','NO_ENTREGADO')  THEN 1 ELSE 0 END) AS band_comentario,
+					(CASE WHEN mot.id_motivo IS NOT NULL THEN UPPER(mot.nombre_motivo) ELSE UPPER(pno.comentarios) END) AS desc_comentario,
 					(CASE WHEN pno.notificado = TRUE THEN 1 ELSE 0 END) AS icon_ubicacion,
 					(CASE WHEN COALESCE(sno.total_soportes,0) > 0 THEN 1 ELSE 0 END) AS icon_soportes,
 					'#145dbd' AS color_blue,
@@ -127,6 +130,7 @@ class MPaquetesRegistro extends Model
 				FROM paquetes_notificaciones pno
 				INNER JOIN notificaciones ntf ON pno.id_notificacion = ntf.id_notificacion
 				INNER JOIN estatus_notificacion eno ON pno.id_estatus_notificacion = eno.id_estatus_notificacion
+				LEFT JOIN motivos mot ON pno.id_motivo = mot.id_motivo
 				LEFT JOIN (
 					SELECT
 						id_notificacion,
@@ -137,14 +141,20 @@ class MPaquetesRegistro extends Model
 				) sno ON ntf.id_notificacion = sno.id_notificacion AND pno.id_paquete_notificacion = sno.id_paquete_notificacion
 				WHERE pno.id_paquete = $idPaquete ";
 		if(!empty($notificado)) {
-			$sql .="AND pno.notificado = TRUE ";
+			if((int)$notificado == 1) {
+				$sql .="AND pno.notificado = TRUE ";
+			}
+			else {
+				$sql .="AND pno.notificado = FALSE
+						AND pno.id_estatus_notificacion IN('NO_LOCALIZADO','NO_ENTREGADO') ";
+			}
 		}
 		$sql .="ORDER BY eno.num_orden,ntf.num_oficio,ntf.fecha_oficio,pno.id_paquete_notificacion";
 
 		return $sql;
    }
 	public function getNotificacionesAplicadas($idPaquete,$notificado) {
-		$sql = $this->getNotificacionesAsigPag($idPaquete,$notificado);
+		$sql = $this->getNotificacionesxPaquetePag($idPaquete,$notificado);
 		return $this->db->query($sql);
 	}
 	//
@@ -197,6 +207,16 @@ class MPaquetesRegistro extends Model
 		return $this->db->query($sql,[$idPaquete]);
 	}
 	//
+	public function getDatosPaquetexNotificador($idNotificador,$fechaProgramada) {
+		$sql ="SELECT
+					*
+				FROM paquetes
+				WHERE (fecha_hora_cierre_operacion ISNULL OR fecha_hora_cierre_operacion IS NULL)
+				AND id_usuario_notificador = ?
+				AND fecha_programada::date < TO_DATE(?,'yyyy-mm-dd')";	
+		return $this->db->query($sql,[$idNotificador,$fechaProgramada]);
+	}
+	//
 	public function getDatosNotificacion($idNotificaciones,$idPaquete) {
 		if(empty($idPaquete)) { $idPaquete = 0; }
 		$sql ="SELECT
@@ -226,6 +246,23 @@ class MPaquetesRegistro extends Model
 				WHERE COALESCE(b.notificado,FALSE) = TRUE
 				AND b.id_paquete = ?
 				ORDER BY a.num_oficio";
+
+		return $this->db->query($sql,[$idPaquete]);
+	}
+	//
+	//
+	public function getDatosOficiosxNotificar($idPaquete) {
+		if(empty($idPaquete)) { $idPaquete = 0; }
+		$sql ="SELECT
+					b.id_paquete,
+					a.num_orden,
+					TO_CHAR(a.fecha_oficio,'dd/mm/yyyy') AS foficio
+				FROM paquetes_notificaciones b
+				INNER JOIN notificaciones a ON b.id_notificacion = a.id_notificacion
+				WHERE COALESCE(b.notificado,FALSE) = FALSE
+				AND b.id_estatus_notificacion NOT IN('NO_LOCALIZADO','NO_ENTREGADO')
+				AND b.id_paquete = ?
+				ORDER BY a.num_orden";
 
 		return $this->db->query($sql,[$idPaquete]);
 	}

@@ -99,7 +99,7 @@
 						<th width="7%" class="text-center fw-bold">Cierre</th>
 						<th width="6%" class="text-center fw-bold text-info">Total</th>
 						<th width="6%" class="text-center fw-bold text-success">Notificado</th>
-						<th width="8%" class="text-center fw-bold text-orange">No Localizado</th>
+						<th width="8%" class="text-center fw-bold text-orange">No Entregados</th>
 					</tr>
 				</thead>
 				<tbody></tbody>

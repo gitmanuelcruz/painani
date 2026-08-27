@@ -79,7 +79,23 @@ class PaquetesRegistro extends BaseController
 		if (!empty($this->request->getPost("resultados")))
 			$resultados = $this->request->getPost("resultados");
 
-		$sql = $this->Modelo->getNotificacionesAsigPag($idPaquete,0);
+		$sql = $this->Modelo->getNotificacionesxPaquetePag($idPaquete,0);
+		$results = $this->utilerias->loadJSON($sql,$pagina,$resultados);
+
+		return $this->response->setJSON($results);
+	}
+   //
+   public function notificacionesNoEntregadosPag() {
+      $idPaquete  = $this->request->getPost("id_paquete");
+		$pagina     = 0;
+		$resultados = 0;
+
+		if (!empty($this->request->getPost("pagina")))
+			$pagina = $this->request->getPost("pagina");
+		if (!empty($this->request->getPost("resultados")))
+			$resultados = $this->request->getPost("resultados");
+
+		$sql = $this->Modelo->getNotificacionesxPaquetePag($idPaquete,2);
 		$results = $this->utilerias->loadJSON($sql,$pagina,$resultados);
 
 		return $this->response->setJSON($results);
@@ -198,6 +214,7 @@ class PaquetesRegistro extends BaseController
          $idEstatus = "ASIGNADO";
          $msjExist = "";
          $msjValid = "";
+         $dataPaq = $this->Modelo->getDatosPaquetexNotificador($idUserNotificador,$fechaProgramacion);
          $dataOficios = $this->Modelo->getDatosNotificacion($idsNotificaciones,$idPaquete);
          $dataNotificados = $this->Modelo->getDatosOficiosNotificados($idPaquete);
          $this->db->transBegin();
@@ -246,6 +263,17 @@ class PaquetesRegistro extends BaseController
             $msjValid .= ' </tbody>
                         </table>';
             $result = array(false,$msjValid,1);
+         }
+         //*
+         if(empty($msjValid)) {
+            $msjPaquete = "";
+            if($dataPaq->getNumRows() > 0) {
+               foreach($dataPaq->getResult() as $key) {
+                  $msjPaquete .="<p class='p-font-msg-1-1 fw-bold lead'>ID Paquete: ".$key->id_paquete." - ".date('d-m-Y', strtotime($key->fecha_programada))."</p>";
+               }
+               $msjValid = "No se le puede asignar registro al notificador seleccionado, porque tiene paquete que no ha cerrado: <div class='text-center'>".$msjPaquete."</div>";
+               $result = array(false,$msjValid,1);
+            }
          }
          //
          if(empty($msjValid)) {
@@ -326,11 +354,23 @@ class PaquetesRegistro extends BaseController
          $usuario = $this->session->get("usuario");
          $ip      = $this->session->get("ip");
          $datos = $this->Modelo->getDatosPaquete($idPaquete)->getRow();
+         $datosxNotificar = $this->Modelo->getDatosOficiosxNotificar($idPaquete);
          $msjValid = "";
          $this->db->transBegin();
          //
          if($datos->fecha_hora_cierre_operacion == "") {
-            $result = $this->Modelo->cerrarPaquete($idPaquete,$usuario,$ip);
+            if($datosxNotificar->getNumRows() > 0) {
+               foreach($datosxNotificar->getResult() as $key) {
+                  $msjValid .="<p class='p-font-msg-1-1 fw-bold lead'>".$key->num_orden."</p>"; 
+               }
+               $result = array(
+                  false,
+                  "El paquete con el ID (<b>".$idPaquete."</b>) no se puede cerrar porque tiene n&uacute;meros de ordenes por notificar: <div class='text-center'>".$msjValid."</div>",
+                  1);
+            }
+            else {
+               $result = $this->Modelo->cerrarPaquete($idPaquete,$usuario,$ip);
+            }
          }
          else {
             $result = array(false,"El paquete con el ID (<b>".$idPaquete."</b>) ya se encuentra cerrada para su operaci&oacute;n",1);

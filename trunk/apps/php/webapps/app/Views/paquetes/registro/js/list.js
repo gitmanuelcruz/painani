@@ -1,4 +1,5 @@
 let table = new MTable();
+let tblNotNoEnt = new MTable();
 const nameController = 'PaquetesRegistro';
 const Toast = Swal.mixin({
    toast: true,
@@ -45,6 +46,7 @@ const loadPaquetesPag = () => {
             {"etiqueta":"", "titulo": "Opc. Paquete", "icono": "fa-solid fa-list-ul fa-lg", "tooltip": "Lista de opciones", "tipoicono": "i",
                "menu":[
                   { "campo_bd": "band_detalle", "valor_campo": "1", "icono": "fa-solid fa-circle-info fa-lg", "callback": "detalle", "etiqueta": "Detalle", "tipoicono": "i", "color": "color_blue" },
+                  { "campo_bd": "icon_motivos", "valor_campo": "1", "icono": "fa-solid fa-comments fa-lg", "callback": "verComentariosxPaquete", "etiqueta": "Motivos", "tipoicono": "i", "color": "color_red" },
                   { "campo_bd": "icon_ubicacion", "valor_campo": "1", "icono": "fa-solid fa-map-location-dot fa-lg", "callback": "verUbicacionxPaquete", "etiqueta": "Ubicaciones", "tipoicono": "i", "color": "color_red" },
                   { "campo_bd": "icon_soporte", "valor_campo": "1", "icono": "fa-solid fa-folder-open fa-lg", "callback": "verSoportexPaquete", "etiqueta": "Soportes", "tipoicono": "i", "color": "color_blue" },
                   { "campo_bd": "icon_abrir", "valor_campo": "1", "icono": "fa-regular fa-circle-play fa-lg", "callback": "iniciarPaquete", "etiqueta": "Iniciar", "tipoicono": "i", "color": "color_green" },
@@ -575,4 +577,79 @@ function descargarInfoPaquete(reg) {
       $("#overlayprincipal").hide();
    }
    xhr.send('pid_paquete='+idPaquete);
+}
+// TODO: Proceso de motivos de notificaciones
+const verComentariosxPaquete = (reg) => {
+   let html = '';
+   let botones = '';
+   const titulo = `Motivos del Paquete con ID &raquo; <span class="fw-bold">${reg.id_paquete}</span>`;
+   //
+   html +=  `<div class="row">
+               <div class="col-sm-12">
+                  <div class="card-body">
+                     <ol class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                           <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Fecha Pogramada</div>&nbsp;&nbsp;&nbsp;${reg.fprogramada}</div>
+                           <div class="ms-2 me-auto col-sm-8"><div class="fw-bold">- Notificador</div>&nbsp;&nbsp;&nbsp;${reg.notificador.toUpperCase()}</div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-start">`;
+   if(reg.fapertura != '') {
+      html +=  `           <div class="ms-2 me-auto col-sm-4"><div class="fw-bold">- Fecha Apertura</div>&nbsp;&nbsp;&nbsp;${reg.fapertura}</div>`;
+   }
+   if(reg.fcierre != '') {
+      html +=  `           <div class="ms-2 me-auto col-sm-8"><div class="fw-bold">- Fecha Cierre</div>&nbsp;&nbsp;&nbsp;${reg.fcierre}</div>`;
+   }
+   html +=  `           </li>
+                     </ol>
+                  </div>
+               </div>
+            </div>`;
+   html +=  `<div class="row">
+               <div class="col-sm-12">
+                  <div class="card-body">
+                     <ol class="list-group">
+                        <div class="table-responsive-sm">
+                           <table class="table table-sm table-striped table-hover" id="gridNotifNoEnt" style="width: 100%;">
+                              <thead class="table-secondary">
+                                 <tr class="p-font-msg-08">
+                                    <th width="11%" class="text-start">Num. Orden</th>
+                                    <th width="13%" class="text-center">Fecha Oficio</th>
+                                    <th width="10%" class="text-center">Estatus</th>
+                                    <th width="20%" class="text-start">Motivo</th>
+                                 </tr>
+                              </thead>
+                              <tbody></tbody>
+                           </table>
+                        </div>
+                     </ol>
+                  </div>
+               </div>
+            </div>`;
+
+   botones +=  `<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" id="bt_cerrar_vm_mot_xpaq">
+                  <i class="fa-solid fa-xmark me-2"></i>Cerrar
+               </button>`;
+   modalLG('frmPaquetes', titulo, html, 'formlg_scrollable', botones, 'cerrarVMMotivosxPaq()');
+   loadOficiosNoEntergados(reg.id_paquete);
+   //
+   $("#bt_cerrar_vm_mot_xpaq").on("click", function () {
+      cerrarVMMotivosxPaq();
+   });
+}
+//!
+const cerrarVMMotivosxPaq = () => {
+   tblNotNoEnt.barraDibujada = false;
+   closeModalLG();
+}
+//!
+const loadOficiosNoEntergados = (idPaquete) => {
+	tblNotNoEnt.setTablaHTML("gridNotifNoEnt");
+	tblNotNoEnt.setUrl(contexto+nameController+"/notificacionesNoEntregadosPag");
+	tblNotNoEnt.setRegistrosPagina(10);
+	tblNotNoEnt.setColumnas("desc_num_ofi_orden,foficio,desc_estatus,desc_comentario");
+	tblNotNoEnt.setColTipos("textHTML,text,textHTML,text");
+	tblNotNoEnt.setAlineacion("left,center,center,left");
+   tblNotNoEnt.fontSize = '0.75rem';
+	tblNotNoEnt.setParametros("id_paquete="+idPaquete);
+	tblNotNoEnt.loadJSON();
 }

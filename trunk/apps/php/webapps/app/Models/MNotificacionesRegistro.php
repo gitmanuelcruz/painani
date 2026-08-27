@@ -14,8 +14,8 @@ class MNotificacionesRegistro extends Model
 					ntf.num_orden,
 					ntf.num_oficio,
 					(CASE WHEN pno.id_paquete_notificacion IS NOT NULL
-						THEN CONCAT(ntf.num_oficio,'<br><span class=''badge bg-light-primary text-primary fs-1 fw-bold''>No. Paquete &raquo; ',pno.id_paquete,'</span>')
-						ELSE ntf.num_oficio
+						THEN CONCAT(ntf.num_orden,'<br><span class=''badge bg-light-primary text-primary fs-1 fw-bold''>No. Paquete &raquo; ',pno.id_paquete,'</span>')
+						ELSE ntf.num_orden
 					END) AS desc_num_oficio,
 					ntf.id_insumo,
 					ntf.id_bloque,
@@ -36,7 +36,7 @@ class MNotificacionesRegistro extends Model
 					END) AS desc_fofico,
 					ntf.domicilio AS domicilio,
 					ntf.referencia_ubicacion AS referencia_ubicacion,
-					CONCAT(UPPER(ntf.domicilio),'<br><span class=''badge bg-secondary fs-1 fw-bold''>Ref. &raquo; ',UPPER(ntf.referencia_ubicacion),'</span>') AS desc_domicilio,
+					CONCAT(UPPER(ntf.domicilio),'<br><span class=''badge bg-secondary fs-1 fw-bold badge-ajuste''>Ref. &raquo; ',UPPER(ntf.referencia_ubicacion),'</span>') AS desc_domicilio,
 					ntf.fecha_hora_notificado,
 					TO_CHAR(ntf.fecha_hora_notificado,'dd/mm/yyyy hh24:mi') AS fnotificado,
 					ntf.id_estatus_notificacion,

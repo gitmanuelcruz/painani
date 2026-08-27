@@ -37,11 +37,11 @@ const loadNotificacionesPag = () => {
 	table.setTablaHTML("gridNotificaciones");
 	table.setUrl(contexto+nameController+"/notificacionesPag");
 	table.setRegistrosPagina(10);
-	table.setColumnas("num_orden,desc_num_oficio,desc_fofico,id_insumo,id_bloque,monto_presuntiva,desc_domicilio,desc_estatus,band");
-	table.setColTipos("text,textHTML,textHTML,text,text,numero,textHTML,textHTML,dropdown");
-	table.setAlineacion("left,left,center,center,center,center,left,center,center");
+	table.setColumnas("desc_num_oficio,desc_fofico,desc_domicilio,desc_estatus,band");
+	table.setColTipos("textHTML,textHTML,textHTML,textHTML,dropdown");
+	table.setAlineacion("left,center,left,center,center");
 	let dropdown = {
-      "col9": {
+      "col5": {
          "opciones": [
             {"etiqueta":"", "titulo": "Opc. Notificación", "icono": "fa-solid fa-list-ul fa-lg", "tooltip": "Lista de opciones", "tipoicono": "i",
                "menu":[

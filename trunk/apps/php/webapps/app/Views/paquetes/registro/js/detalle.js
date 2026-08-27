@@ -33,7 +33,7 @@ const detalle = (reg) => {
                            <table class="table table-sm table-striped table-hover" id="gridNotifAsignadas" style="width: 100%;">
                               <thead class="table-secondary">
                                  <tr class="p-font-msg-08">
-                                    <th width="11%" class="text-start">Num. Oficio</th>
+                                    <th width="11%" class="text-start">Num. Orden</th>
                                     <th width="13%" class="text-center">Fecha Oficio</th>
                                     <th width="20%" class="text-start">Domicilio</th>
                                     <th width="10%" class="text-center">Estatus</th>
@@ -75,6 +75,7 @@ const loadOficiosAsignados = (idPaquete) => {
    let iconos = {
       "col5": {
          "opciones": [
+            { "campo_bd": "band_comentario", "valor_campo": "1", "icono": "fa-solid fa-comment-dots fa-lg", "callback": "verComentario", "tooltip": "Motivo", "tipoicono": "i", "color": "color_red" },
             { "campo_bd": "icon_ubicacion", "valor_campo": "1", "icono": "fa-solid fa-map-location-dot fa-lg", "callback": "verUbicacion", "tooltip": "Ubicación", "tipoicono": "i", "color": "color_green" },
             { "campo_bd": "icon_soportes", "valor_campo": "1", "icono": "fa-solid fa-folder-open fa-lg", "callback": "verSoporte", "tooltip": "Soporte", "tipoicono": "i", "color": "color_blue" }
          ]
@@ -84,6 +85,44 @@ const loadOficiosAsignados = (idPaquete) => {
    tblOficiosAsignado.fontSize = '0.75rem';
 	tblOficiosAsignado.setParametros("id_paquete="+idPaquete);
 	tblOficiosAsignado.loadJSON();
+}
+//!
+const verComentario = (reg) => {
+   let html = '';
+   let botones = '';
+   let titulo = `Motivo de la Notificaci&oacute;n`;
+   $("#overlay2").show();
+   //
+   html += `<div class="row">
+               <div class="col-sm-12">
+                  <div class="card-body">
+                     <ol class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                           <div class="ms-2 me-auto col-sm-6"><div class="fw-bold">- Num. Orden</div>&nbsp;&nbsp;&nbsp;${reg.num_orden}</div>
+                           <div class="ms-2 me-auto col-sm-6"><div class="fw-bold">- Fecha Oficio</div>&nbsp;&nbsp;&nbsp;${reg.foficio}</div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                           <div class="ms-2 me-auto col-sm-12"><div class="fw-bold">- Motivo</div>&nbsp;&nbsp;&nbsp;${reg.desc_comentario.toUpperCase()}</div>
+                        </li>
+                     </ol>
+                  </div>
+               </div>
+            </div>`;
+   
+   botones +=  `<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" id="bt_cerrar_vm_comentario">
+                  <i class="fa-solid fa-xmark me-2"></i>Cerrar
+               </button>`;
+
+   modal('frmPaquetes', titulo, html, 'formdefault-center', botones, 'cerrarVMComentario()');
+   //
+   $("#bt_cerrar_vm_comentario").on("click", function () {
+      cerrarVMComentario();
+   });
+}
+//!
+const cerrarVMComentario = () => {
+   closeModal();
+   $("#overlay2").hide();
 }
 //!
 const verSoporte = (reg) => {

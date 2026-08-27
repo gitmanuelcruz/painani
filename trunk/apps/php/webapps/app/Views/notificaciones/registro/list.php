@@ -84,11 +84,7 @@
 				<thead class="table-dark">
 					<tr class="p-font-msg-09">
 						<th width="10%" class="text-start">Num. Orden</th>
-						<th width="10%" class="text-start">Num. Oficio</th>
 						<th width="13%" class="text-center">Fecha Oficio</th>
-						<th width="10%" class="text-center">ID Insumo</th>
-						<th width="10%" class="text-center">ID Bloque</th>
-						<th width="10%" class="text-center">Presuntiva</th>
 						<th width="25%" class="text-start">Domicilio</th>
 						<th width="10%" class="text-center">Estatus</th>
 						<th width="5%"  class="text-center">Acciones</th>
