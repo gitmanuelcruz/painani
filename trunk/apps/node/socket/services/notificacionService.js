@@ -340,8 +340,9 @@ const tienePendientes = async(idPaquete)=>{
 	const resultado = await pool.query(sql,[idPaquete]);
 
 	total = Number(resultado.rows[0].total);
+	const si = (total > 0)  ? true:false;
 
-	return {total,message:`Tiene ${total} Oficios Pendientes de marcar NOTIFICADO ó NO ENTREGADO`};
+	return {total,si,message:`Tiene ${total} Oficios Pendientes de marcar NOTIFICADO ó NO ENTREGADO`};
 };
 
 module.exports = {
