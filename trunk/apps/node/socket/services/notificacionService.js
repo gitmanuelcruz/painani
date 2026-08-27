@@ -339,7 +339,7 @@ const tienePendientes = async(idPaquete)=>{
 	let total = 0;
 	const resultado = await pool.query(sql,[idPaquete]);
 
-	total = resultado.rows[0].total
+	total = Number(resultado.rows[0].total);
 
 	return {total,message:`Tiene ${total} Oficios Pendientes de marcar NOTIFICADO ó NO ENTREGADO`};
 };
