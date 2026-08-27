@@ -174,17 +174,17 @@ const finalizarNotificacionesTercerIntento = async(client,usuario,idPaquete)=>{
 	await client.query(sql, [usuario, idPaquete]);
 }
 
-const setMarcarOficioNotificado = async (usuario, idNotificacion,idStatus,horaNotificacion) => {
-  	const horaFinal = (horaNotificacion && horaNotificacion.trim() !== "") ? horaNotificacion : null;
+const setMarcarOficioNotificado = async (usuario, idNotificacion,idStatus,horaNotificacion,idMotivo) => {
   	const sql = `UPDATE notificaciones SET
 						id_estatus_notificacion = $2,
   						fecha_hora_notificado =  (CASE WHEN $3::time IS NULL THEN now() ELSE (current_date + $3::time) END),
 						notificado_por = $1,
 						fecha_ultimo_cambio = now(),
-						modificado_por = $1
+						modificado_por = $1,
+						id_motivo=$5
 					WHERE id_notificacion = $4`;
 
-  	await pool.query(sql, [usuario,idStatus,horaNotificacion,idNotificacion]);
+  	await pool.query(sql, [usuario,idStatus,horaNotificacion,idNotificacion,idMotivo]);
 };
 
 const setMarcarOficioPaquete = async (
@@ -195,9 +195,9 @@ const setMarcarOficioPaquete = async (
   	comentarios,
   	latitud,
   	longitud,
-  	horaNotificacion
+  	horaNotificacion,
+	idMotivo
 ) => {
-  	const horaFinal = (horaNotificacion && horaNotificacion.trim() !== "") ? horaNotificacion : null;
 
   	const sql = `UPDATE paquetes_notificaciones SET
 						comentarios = $1,
@@ -207,7 +207,8 @@ const setMarcarOficioPaquete = async (
 						modificado_por = $4,
 						latitud=$5,
 						longitud=$6,
-						fecha_ultimo_cambio = now()
+						fecha_ultimo_cambio = now(),
+						id_motivo = $9
                WHERE id_paquete_notificacion = $8`;
 
   	await pool.query(sql, [
@@ -219,6 +220,7 @@ const setMarcarOficioPaquete = async (
     	longitud,
     	horaNotificacion,
     	idPaqueteNotificacion,
+		idMotivo
   	]);
 };
 
@@ -311,6 +313,24 @@ const getEvidenciasNotificacion = async (idPaqueteNotificacion, usuario) => {
   return evidencias;
 };
 
+const catMotivos = async()=>{
+	const sql = `SELECT id_motivo,nombre_motivo FROM motivos ORDER BY 1`;
+
+	let motivos = [];
+
+	const result = await pool.query(sql, []);
+    const filas = result.rows || [];
+
+    motivos = filas.map((fila) => {
+        return {
+            id: fila.id_motivo,
+            descripcion: fila.nombre_motivo
+        };
+    });
+
+    return motivos;		
+}
+
 module.exports = {
 	getMiPaqueteNotificacion,
 	guardarSoporte,
@@ -322,5 +342,6 @@ module.exports = {
 	getEvidenciasNotificacion,
 	cancelarOrdenesPorNotificar,
 	liberarOficiosParaReasignar,
-	finalizarNotificacionesTercerIntento
+	finalizarNotificacionesTercerIntento,
+	catMotivos
 };

@@ -12,6 +12,7 @@ const {
   cancelarOrdenesPorNotificar,
   liberarOficiosParaReasignar,
   finalizarNotificacionesTercerIntento,
+  catMotivos,
 } = require("../services/notificacionService");
 const { getDateTime } = require("./comun");
 
@@ -192,10 +193,13 @@ const marcarOficioPaquete = async (req, res) => {
     comentarios,
     latitud,
     longitud,
-    horaNotificacion
+    horaNotificacion,
+    idMotivo
   } = req.body;
 
   const notificado = idStatus === "NOTIFICADO" ? true : false;
+
+  const motivo = (idMotivo && idMotivo.trim() !== "") ? idMotivo:null;
 
   try {
     await setMarcarOficioPaquete(
@@ -206,12 +210,17 @@ const marcarOficioPaquete = async (req, res) => {
       comentarios,
       latitud,
       longitud,
-      horaNotificacion
+      horaNotificacion,
+      motivo
     );
 
-   // if (notificado) {
-    await setMarcarOficioNotificado(usuario, idNotificacion,idStatus,horaNotificacion);
-   // }
+    await setMarcarOficioNotificado(
+        usuario,
+        idNotificacion,
+        idStatus,
+        horaNotificacion,
+        motivo
+    );
 
     return res
       .status(200)
@@ -262,6 +271,21 @@ const obtenerEvidencias = async (req, res) => {
   }
 };
 
+const getMotivos = async (req, res) => {
+
+  try {
+    const motivos = await catMotivos();
+
+    return res.status(200).json({ ok: true, motivos });
+  } catch (error) {
+    console.log(error.toString());
+
+    return res
+      .status(500)
+      .json({ ok: false, error: error.toString(), message: error.toString() });
+  }
+};
+
 module.exports = {
   getPaquetesNotificacion,
   listadoOficiosNotificar,
@@ -271,5 +295,6 @@ module.exports = {
   finalizarRutaNotificacion,
   marcarOficioNotificado,
   marcarOficioPaquete,
-  obtenerEvidencias
+  obtenerEvidencias,
+  getMotivos
 };
