@@ -28912,7 +28912,6 @@ body[class="ltr dark"] .card.card-bordered .card-body {
 }
 
 .table {
-  table-layout: fixed;
   /*-webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;*/

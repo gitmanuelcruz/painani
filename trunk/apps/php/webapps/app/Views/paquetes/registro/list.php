@@ -87,11 +87,11 @@
 			<table class="table table-sm table-striped table-hover" id="gridPaquetes" style="width: 100%;">
 				<thead class="table-dark">
 					<tr class="p-font-msg-09">
-						<th width="8%" class="text-start"   rowspan="3">ID</th>
-						<th width="20%" class="text-start"  rowspan="3">Notificador</th>
+						<th width="8%"  class="text-start"   rowspan="3">ID</th>
+						<th width="15%" class="text-start"  rowspan="3">Notificador</th>
 						<th width="20%" class="text-center fw-bold" colspan="3">FECHAS<hr class="mb-0 mt-0 text-white"></th>
 						<th width="20%" class="text-center fw-bold" colspan="3">NUM. ORDENES<hr class="mb-0 mt-0 text-white"></th>
-						<th width="1%"  class="text-center" rowspan="3">Acciones</th>
+						<th width="3%"  class="text-center" rowspan="3">Acciones</th>
 					</tr>
 					<tr class="p-font-msg-09">
 						<th width="6%" class="text-center fw-bold">Programada</th>
