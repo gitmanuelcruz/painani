@@ -13,6 +13,7 @@ const {
   liberarOficiosParaReasignar,
   finalizarNotificacionesTercerIntento,
   catMotivos,
+  tienePendientes,
 } = require("../services/notificacionService");
 const { getDateTime } = require("./comun");
 
@@ -286,6 +287,23 @@ const getMotivos = async (req, res) => {
   }
 };
 
+const validaPendientes = async(req,res)=>{
+  const {idPaquete} = req.body;
+
+   try {
+    const pendientes = await tienePendientes(idPaquete);
+
+    return res.status(200).json({ ok: true, pendientes });
+  } catch (error) {
+    console.log(error.toString());
+
+    return res
+      .status(500)
+      .json({ ok: false, error: error.toString(), message: error.toString() });
+  }
+
+}
+
 module.exports = {
   getPaquetesNotificacion,
   listadoOficiosNotificar,
@@ -296,5 +314,6 @@ module.exports = {
   marcarOficioNotificado,
   marcarOficioPaquete,
   obtenerEvidencias,
-  getMotivos
+  getMotivos,
+  validaPendientes
 };

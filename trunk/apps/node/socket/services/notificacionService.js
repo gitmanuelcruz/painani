@@ -331,6 +331,19 @@ const catMotivos = async()=>{
     return motivos;		
 }
 
+const tienePendientes = async(idPaquete)=>{
+	const sql = `SELECT COUNT(*) total
+					FROM paquetes_notificaciones pn 
+					WHERE id_paquete = $1
+					AND id_estatus_notificacion = 'POR_NOTIFICAR'`;
+	let total = 0;
+	const resultado = await pool.query(sql,[idPaquete]);
+
+	total = resultado.rows[0].total
+
+	return {total,message:`Tiene ${total} Oficios Pendientes de marcar NOTIFICADO ó NO ENTREGADO`};
+};
+
 module.exports = {
 	getMiPaqueteNotificacion,
 	guardarSoporte,
@@ -343,5 +356,6 @@ module.exports = {
 	cancelarOrdenesPorNotificar,
 	liberarOficiosParaReasignar,
 	finalizarNotificacionesTercerIntento,
-	catMotivos
+	catMotivos,
+	tienePendientes
 };
