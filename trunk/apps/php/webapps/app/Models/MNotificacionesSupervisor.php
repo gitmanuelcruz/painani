@@ -55,7 +55,7 @@ class MNotificacionesSupervisor extends Model
 					CONCAT(UPPER(ntf.domicilio),' REF. &raquo; ',UPPER(ntf.referencia_ubicacion)) AS desc_domicilio,
 					ntf.fecha_hora_notificado,
 					TO_CHAR(ntf.fecha_hora_notificado,'dd/mm/yyyy hh24:mi') AS fnotificado,
-					(CASE WHEN COALESCE(snt.total_soportes,0) = 0
+					(CASE WHEN COALESCE(snt.total_soportes,0) = 0 AND ntf.id_estatus_notificacion NOT IN('POR_ASIGNAR','ASIGNADO')
 						THEN 'Sin Soporte'
 						ELSE pno.nombre_verificacion
 					END) AS nombre_verificacion,
@@ -166,7 +166,8 @@ class MNotificacionesSupervisor extends Model
 				$sql .="AND pno.id_verificacion = '$idVerficado' ";
 			}
 			else {
-				$sql .="AND (pno.id_verificacion ISNULL OR pno.id_verificacion IS NULL) ";
+				$sql .="AND COALESCE(snt.total_soportes,0) = 0
+						AND ntf.id_estatus_notificacion NOT IN('POR_ASIGNAR','ASIGNADO') ";
 			}
 		}
 		$sql .="ORDER BY eno.num_orden,COALESCE(pno.id_paquete,0),ntf.fecha_oficio,ntf.num_oficio";
