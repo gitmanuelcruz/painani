@@ -333,18 +333,56 @@ const catMotivos = async()=>{
     return motivos;		
 }
 
+
+const faltanEvidencias = async(idPaquete)=>{
+	const sql = `SELECT COUNT(*) total
+				FROM paquetes_notificaciones pn
+				WHERE pn.id_paquete = $1
+				AND (pn.id_motivo IS NULL OR pn.id_motivo <> 4)
+				AND NOT EXISTS (
+					SELECT 1
+					FROM soportes_notificacion sn
+					WHERE sn.id_paquete_notificacion = pn.id_paquete_notificacion
+				)`;
+	let sinEvidencias = 0;
+	const resultado = await pool.query(sql,[idPaquete]);
+
+	sinEvidencias = Number(resultado.rows[0].total);
+	return sinEvidencias;
+}
+
 const tienePendientes = async(idPaquete)=>{
 	const sql = `SELECT COUNT(*) total
 					FROM paquetes_notificaciones pn 
 					WHERE id_paquete = $1
 					AND id_estatus_notificacion = 'POR_NOTIFICAR'`;
 	let total = 0;
+	let sinEvidencias  = 0;
+	let totalPendientes = 0;
 	const resultado = await pool.query(sql,[idPaquete]);
 
 	total = Number(resultado.rows[0].total);
-	const si = (total > 0)  ? true:false;
 
-	return {total,si,message:`Tiene ${total} Oficios Pendientes de marcar NOTIFICADO ó NO ENTREGADO`};
+	let message = 'SIN PENDIENTES';
+	let pendientes = false;
+
+	if(total> 0 ){
+		totalPendientes = total;
+		message=`Tiene ${total} Oficios Pendientes de marcar NOTIFICADO ó NO ENTREGADO`;
+		pendientes = true;
+	}
+	else{
+		sinEvidencias = await faltanEvidencias(idPaquete);
+		if(sinEvidencias > 0 ){
+			totalPendientes = sinEvidencias;
+			message=`Tiene ${sinEvidencias} Oficios Pendientes de AGREGAR EVIDENDENCIAS`;
+			pendientes = true;
+		}
+	}
+
+	console.log(totalPendientes,pendientes,message);
+
+	return {total:totalPendientes,si:pendientes,message};
 };
 
 module.exports = {
