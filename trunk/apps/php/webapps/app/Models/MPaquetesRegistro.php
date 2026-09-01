@@ -474,7 +474,7 @@ class MPaquetesRegistro extends Model
 		$sql4 ="WITH intentos AS (
 					SELECT id_notificacion
 					FROM paquetes_notificaciones
-					WHERE id_estatus_notificacion IN('NO_ENTREGADO', 'NO_LOCALIZADO')
+					WHERE id_estatus_notificacion IN('NO_LOCALIZADO','NO_ENTREGADO')
 					GROUP BY id_notificacion
 					HAVING COUNT(*) >= 3
 				),

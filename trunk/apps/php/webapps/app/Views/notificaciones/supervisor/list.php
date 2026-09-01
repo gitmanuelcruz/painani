@@ -1,0 +1,111 @@
+<?=$this->section('title')?><?php if(!empty($data_user["titulo_gral"])) echo $data_user["titulo_gral"]." - ".$titulo2;?><?=$this->endSection()?>
+<?=$this->section("content")?>
+<div class="page-wrapper">
+	<div class="container-fluid">
+		<div class="row m-1">
+			<div class="col-sm-6">
+				<h4 class="main-title"><?php if(!empty($titulo2)) echo $titulo2;?></h4>
+			</div>
+			<div class="col-sm-6 text-end">
+				<ul class="app-line-breadcrumbs mb-3">
+					<li>
+						<a class="f-s-14 f-w-500" href="javascript:void(0)">
+							<span><i class="f-s-16"></i>Notificaciones</span>
+						</a>
+					</li>
+					<li class="active">
+						<a class="f-s-14 f-w-500" href="javascript:void(0)"><?php if(!empty($titulo)) echo $titulo;?></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="card">
+					<div class="card-header bg-primary h-50">
+						<button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne"
+							aria-expanded="true" aria-controls="flush-collapseOne">
+							Par&aacute;metros de B&uacute;squedas
+						</button>
+					</div>
+					<div class="card-body collapse show" id="flush-collapseOne">
+						<form method="post" class="app-form" id="frmNotificaciones" name="frmNotificaciones" onsubmit="return false">
+							<div class="row mb-1">
+								<div class="col-sm-3">
+									<label class="form-label">Num. Orden</label>
+									<input type="text" class="form-control" id="num_orden" name="num_orden" style="height: 40px;">
+								</div>
+								<div class="col-sm-3">
+									<label class="form-label">Fecha Inicio</label>
+									<input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" style="height: 40px;">
+								</div>
+								<div class="col-sm-3">
+									<label class="form-label">Fecha T&eacute;rmino</label>
+									<input type="date" class="form-control" id="fecha_termino" name="fecha_termino" style="height: 40px;">
+								</div>							
+								<div class="col-sm-3">
+									<label class="form-label">Estatus</label>
+									<select class="form-control select2" id="id_estatus" name="id_estatus" style="width: 100%">
+										<option value="">[Todos]</option>
+										<?php
+										foreach($estatus as $key) {
+											$select = ($key->id == "POR_ASIGNAR") ? "selected":"";
+											echo '<option value="'.$key->id.'" '.$select.'>'.$key->descripcion.'</option>';
+										}
+										?>
+									</select>
+								</div>
+							</div>
+							<div class="row">							
+								<div class="col-sm-3">
+									<label class="form-label">Verificaci&oacute;n Soporte</label>
+									<select class="form-control select2" id="id_verficado" name="id_verficado" style="width: 100%">
+										<option value="">[Todos]</option>
+										<?php
+										foreach($verificados as $key) {
+											echo '<option value="'.$key->id.'">'.$key->descripcion.'</option>';
+										}
+										?>
+									</select>
+								</div>
+							</div>
+						</form>
+						<hr>
+						<div class="row">
+							<div class="col-sm-12 text-end">
+								<button type="button" class="btn btn-sm btn-secondary" id="btnBuscar" btn="btn">
+									<i class="fa-solid fa-magnifying-glass me-2"></i>Buscar
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="table-responsives-sm">
+			<table class="table table-striped table-hover" id="gridNotificaciones" style="width: 100%;">
+				<thead class="table-dark">
+					<tr class="p-font-msg-09">
+						<th width="10%" class="text-start">Num. Orden</th>
+						<th width="13%" class="text-center">Fecha Oficio</th>
+						<th width="15%" class="text-start">Domicilio</th>
+						<th width="15%" class="text-start">Referencia</th>
+						<th width="10%" class="text-center">Verificado</th>
+						<th width="11%" class="text-center">Total Asig.</th>
+						<th width="10%" class="text-center">Estatus</th>
+						<th width="5%"  class="text-center">Acciones</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>	
+</div>
+<br>
+<?=$this->endSection()?>
+<?=$this->section("js")?>
+	<script src="<?php echo base_url();?>app/Views/notificaciones/supervisor/js/list.js?version=<?php echo time(); ?>" type="text/javascript"></script>
+	<script src="<?php echo base_url();?>app/Views/notificaciones/supervisor/js/detalle.js?version=<?php echo time(); ?>" type="text/javascript"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD7gaLNQIvZP_d1rt2Uod-JcwHofGgwA9Y&sensor=true&libraries=geometry"></script>
+<?=$this->endSection()?>
+<?=$this->extend("layout/main")?>
