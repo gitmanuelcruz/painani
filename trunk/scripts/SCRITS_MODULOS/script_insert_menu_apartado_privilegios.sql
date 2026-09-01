@@ -12,6 +12,10 @@ INSERT INTO menus(id_menu,id_menu_padre,codigo_menu,nombre_menu,descripcion_menu
 VALUES(NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_NOTIFICACIONES'),'PRIV_REG_NOTIFICACIONES','Registro','Privilegios de Registro de Notificaciones',
 'PRIVILEGIO','#',NULL,1,10,'PRIV_ESPECIFICOS');
 
+INSERT INTO menus(id_menu,id_menu_padre,codigo_menu,nombre_menu,descripcion_menu,tipo_menu,url_menu,menu_icono,menu_activo,num_orden,id_grupo_menu)
+VALUES(NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_NOTIFICACIONES'),'PRIV_SUPERVISOR_NOTIFICACIONES','Supervisor','Privilegios de Supervisor de Notificaciones',
+'PRIVILEGIO','#',NULL,1,11,'PRIV_ESPECIFICOS');
+
 /**************************PRIVILEGIOS DE PAQUETES*********************************/
 INSERT INTO menus(id_menu,id_menu_padre,codigo_menu,nombre_menu,descripcion_menu,tipo_menu,url_menu,menu_icono,menu_activo,num_orden,id_grupo_menu)
 VALUES(NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_ESPECIFICOS'),'PRIV_PAQUETES','Paquetes','Privilegios de Paquetes',
@@ -48,7 +52,8 @@ VALUES(NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codi
 
 INSERT INTO roles_privilegios (id_rol_privilegio,id_rol,id_menu,solo_lectura,lectura_escritura)
 VALUES
-(NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_REG_NOTIFICACIONES'),0,1)
+(NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_REG_NOTIFICACIONES'),0,1),
+(NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_SUPERVISOR_NOTIFICACIONES'),0,1)
 
 /*************************************************************************************************/
 INSERT INTO roles_privilegios (id_rol_privilegio,id_rol,id_menu,solo_lectura,lectura_escritura)
