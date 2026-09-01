@@ -9,8 +9,8 @@ class MPaquetesRegistro extends Model
 	}
 	//
 	public function getPaquetesPag(
-		$idNumOficio,$fechaProgramada,$fechaApertura,$fechaCierre,$notificador,$iconAbrir,$iconCerrar,$iconEditar,
-		$iconEliminar,$iconInforme) {
+		$idNumOficio,$fechaProgramada,$fechaApertura,$fechaCierre,$notificador,$idTipoFecha,$iconAbrir,$iconCerrar,
+		$iconEditar,$iconEliminar,$iconInforme) {
       $sql ="SELECT
 					paq.id_paquete,
 					paq.id_usuario_notificador AS id_notificador,
@@ -84,6 +84,20 @@ class MPaquetesRegistro extends Model
 		}
 		if(!empty($notificador)) {
 			$sql .="AND parse_text(usu.nombre_completo) LIKE parse_text('%".trim($notificador)."%') ";
+		}
+		if(!empty($idTipoFecha)) {
+			if((int)$idTipoFecha == 1) {
+				$sql .="AND paq.fecha_hora_apertura_operacion::date IS NOT NULL ";
+			}
+			else if((int)$idTipoFecha == 2) {
+				$sql .="AND (paq.fecha_hora_apertura_operacion::date ISNULL OR paq.fecha_hora_apertura_operacion::date IS NULL) ";
+			}
+			else if((int)$idTipoFecha == 3) {
+				$sql .="AND paq.fecha_hora_cierre_operacion::date IS NOT NULL ";
+			}
+			else if((int)$idTipoFecha == 4) {
+				$sql .="AND (paq.fecha_hora_cierre_operacion::date ISNULL OR paq.fecha_hora_cierre_operacion::date IS NULL) ";
+			}
 		}
 		$sql .="ORDER BY paq.fecha_programada,paq.id_paquete";
 
@@ -443,7 +457,13 @@ class MPaquetesRegistro extends Model
 		}
 	}
 	//
+	public function getMotivo($codigo) {
+		$sql ="SELECT * FROM motivos WHERE codigo_motivo = ?";
+		return $this->db->query($sql,[$codigo]);
+	}
+	//
 	public function cerrarPaquete($id_paquete,$usuario,$ip) {
+		$idMotivo = $this->getMotivo("NO_DIO_TIEMPO")->getRow()->id_motivo;
 		$sql ="UPDATE paquetes a SET
 					fecha_hora_cierre_operacion = CURRENT_TIMESTAMP,
 					fecha_ultimo_cambio = CURRENT_TIMESTAMP,
@@ -453,6 +473,7 @@ class MPaquetesRegistro extends Model
 		
 		$sql2 ="UPDATE paquetes_notificaciones SET 
 						id_estatus_notificacion = 'NO_ENTREGADO',
+						id_motivo = ?,
 						fecha_ultimo_cambio = CURRENT_TIMESTAMP,
 						modificado_por = TRIM(?),
 						ip_modifico = TRIM(?)
@@ -500,7 +521,7 @@ class MPaquetesRegistro extends Model
 				AND pn.id_paquete = ?";
 
 		$this->db->query($sql ,[$usuario,$ip,$id_paquete]);
-		$this->db->query($sql2,[$usuario,$ip,$id_paquete]);
+		$this->db->query($sql2,[$idMotivo,$usuario,$ip,$id_paquete]);
 		$this->db->query($sql3,[$usuario,$ip,$id_paquete]);
 		$this->db->query($sql4,[$usuario,$ip,$id_paquete]);
 		if ($this->db->transStatus()) {

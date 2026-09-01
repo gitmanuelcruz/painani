@@ -55,6 +55,16 @@
 									<label class="form-label">Notificador</label>
 									<input type="text" class="form-control" id="txt_nombre_notificador" name="txt_nombre_notificador" style="height: 40px;">
 								</div>
+								<div class="col-sm-3">
+									<label class="form-label">Tipo Fecha Operaci&oacute;n</label>
+									<select class="form-control select2" id="id_tipo_fecha" name="id_tipo_fecha" style="width: 100%">
+										<option value="">[Todos]</option>
+										<option value="1">Con Apertura</option>
+										<option value="2">Sin Apertura</option>
+										<option value="3">Con Cierre</option>
+										<option value="4">Sin Cierre</option>
+									</select>
+								</div>
 							</div>
 						</form>
 						<hr>
@@ -107,6 +117,7 @@
 		</div>
 	</div>	
 </div>
+<br>
 <?=$this->endSection()?>
 <?=$this->section("js")?>
 	<script src="<?php echo base_url();?>app/Views/paquetes/registro/js/list.js?version=<?php echo time(); ?>" type="text/javascript"></script>

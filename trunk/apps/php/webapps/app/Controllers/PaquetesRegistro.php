@@ -47,6 +47,7 @@ class PaquetesRegistro extends BaseController
 		$fechaApertura = $this->request->getPost("txt_fecha_apertura");
       $fechaCierre   = $this->request->getPost("txt_fecha_cierre");
       $notificador   = $this->request->getPost("txt_nombre_notificador");
+      $idTipoFecha   = $this->request->getPost("id_tipo_fecha");
 		$usuario 	   = $this->session->get("usuario");
 		$iconAbrir     = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_INICIAR_PAQUETE","PRIVILEGIO");
       $iconCerrar    = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_CERRAR_PAQUETE","PRIVILEGIO");
@@ -62,8 +63,8 @@ class PaquetesRegistro extends BaseController
 			$resultados = $this->request->getPost("resultados");
 
 		$sql = $this->Modelo->getPaquetesPag(
-         $idNumOficio,$fechaProgramada,$fechaApertura,$fechaCierre,$notificador,$iconAbrir,$iconCerrar,$iconEditar,
-         $iconEliminar,$iconInforme);
+         $idNumOficio,$fechaProgramada,$fechaApertura,$fechaCierre,$notificador,$idTipoFecha,$iconAbrir,
+         $iconCerrar,$iconEditar,$iconEliminar,$iconInforme);
 		$results = $this->utilerias->loadJSON($sql,$pagina,$resultados);
 
 		return $this->response->setJSON($results);
@@ -359,7 +360,7 @@ class PaquetesRegistro extends BaseController
          $this->db->transBegin();
          //
          if($datos->fecha_hora_cierre_operacion == "") {
-            if($datosxNotificar->getNumRows() > 0) {
+            /*if($datosxNotificar->getNumRows() > 0) {
                foreach($datosxNotificar->getResult() as $key) {
                   $msjValid .="<p class='p-font-msg-1-1 fw-bold lead'>".$key->num_orden."</p>"; 
                }
@@ -368,9 +369,9 @@ class PaquetesRegistro extends BaseController
                   "El paquete con el ID (<b>".$idPaquete."</b>) no se puede cerrar porque tiene n&uacute;meros de ordenes por notificar: <div class='text-center'>".$msjValid."</div>",
                   1);
             }
-            else {
+            else {*/
                $result = $this->Modelo->cerrarPaquete($idPaquete,$usuario,$ip);
-            }
+            //}
          }
          else {
             $result = array(false,"El paquete con el ID (<b>".$idPaquete."</b>) ya se encuentra cerrada para su operaci&oacute;n",1);
