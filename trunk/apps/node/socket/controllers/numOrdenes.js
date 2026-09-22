@@ -7,6 +7,7 @@ const getNumOrdenes = async (req,res) => {
                	nc.id_control_version,
                	nn.fecha_oficio,
                	nn.num_orden,
+                  nn.num_orden_insumo,
                	nn.fecha_hora_notificado,
                	nn.id_estatus_notificacion,
                	nc.id_estatus_notificacion_al_corte
@@ -21,6 +22,7 @@ const getNumOrdenes = async (req,res) => {
             "id_control_version": item.id_control_version,
             "id_notificacion": item.id_notificacion,
             "num_orden": item.num_orden.trim(),
+            "num_orden_insumo": item.num_orden_insumo.trim(),
             "fecha_oficio": item.fecha_oficio,
             "fecha_hora_notificado": item.fecha_hora_notificado,
             "id_estatus_notificacion": item.id_estatus_notificacion.trim(),
