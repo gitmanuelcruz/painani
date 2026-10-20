@@ -8,7 +8,8 @@ class MNotificacionesRegistro extends Model
 		$this->db = \Config\Database::connect();
 	}
 	//
-	public function getNotificacionesPag($idNumOficio,$fechaOficio,$idEstatus,$iconEditar,$iconCancelar) {
+	public function getNotificacionesPag(
+		$idNumOficio,$fechaOficio,$idEstatus,$iconEditar,$iconCancelar,$iconEditFecha) {
       $sql ="SELECT
 					ntf.id_notificacion,
 					ntf.num_orden,
@@ -38,6 +39,8 @@ class MNotificacionesRegistro extends Model
 					ntf.referencia_ubicacion AS referencia_ubicacion,
 					CONCAT(UPPER(ntf.domicilio),'<br><span class=''badge bg-secondary fs-1 fw-bold badge-ajuste''>Ref. &raquo; ',UPPER(ntf.referencia_ubicacion),'</span>') AS desc_domicilio,
 					ntf.fecha_hora_notificado,
+					ntf.fecha_hora_notificado::date AS fecha_notificado,
+					TO_CHAR(ntf.fecha_hora_notificado,'hh24:mi') AS hora_notificado,
 					TO_CHAR(ntf.fecha_hora_notificado,'dd/mm/yyyy hh24:mi') AS fnotificado,
 					ntf.id_estatus_notificacion,
 					eno.nombre_estatus_notificacion,
@@ -51,6 +54,7 @@ class MNotificacionesRegistro extends Model
 					(CASE WHEN COALESCE(pnt.total_paquetes,0) > 1 THEN 1 ELSE 0 END) AS icon_historial_paq,
 					(CASE WHEN COALESCE($iconEditar,0) > 0 AND ntf.id_estatus_notificacion = 'POR_ASIGNAR' THEN 1 ELSE 0 END) AS icon_editar,
 					(CASE WHEN COALESCE($iconCancelar,0) > 0 AND ntf.id_estatus_notificacion = 'POR_ASIGNAR' THEN 1 ELSE 0 END) AS icon_cancelar,
+					(CASE WHEN COALESCE($iconEditFecha,0) > 0 AND ntf.id_estatus_notificacion = 'NOTIFICADO' THEN 1 ELSE 0 END) AS icon_edit_fecha,
 					'#145dbd' AS color_blue,
 					'#8e825a' AS color_black,
 					'#66bb6a' AS color_green,
@@ -273,15 +277,15 @@ class MNotificacionesRegistro extends Model
 	}
    //
    public function insertNotificacionesTmp(
-      $consecutivo,$usuario,$num_orden,$num_oficio,$fecha_oficio,$prioridad,$domicilio,$referencia_ubicacion) {
+      $consecutivo,$usuario,$num_orden,$num_oficio,$fecha_oficio,$id_insumo,$prioridad,$domicilio,$referencia_ubicacion) {
       $sql ="INSERT INTO notificaciones_tmp
-                  (id_notificacion_tmp,consecutivo,usuario,num_orden,num_oficio,fecha_oficio,prioridad,
+                  (id_notificacion_tmp,consecutivo,usuario,num_orden,num_oficio,fecha_oficio,id_insumo,prioridad,
 						domicilio,referencia_ubicacion)
                VALUES
-                  (NEXTVAL('seq_notificaciones_tmp'),?,?,?,?,?,?,?,?)";
+                  (NEXTVAL('seq_notificaciones_tmp'),?,?,?,?,?,?,?,?,?)";
 
       $this->db->query($sql,[
-         $consecutivo,$usuario,trim($num_orden),trim($num_oficio),trim($fecha_oficio),$prioridad,
+         $consecutivo,$usuario,trim($num_orden),trim($num_oficio),trim($fecha_oficio),$id_insumo,$prioridad,
 			trim($domicilio),trim($referencia_ubicacion)]);
       if($this->db->transStatus()) {
          return array(true,'El proceso se ha realizado correctamente');
@@ -320,6 +324,33 @@ class MNotificacionesRegistro extends Model
 
       return $sql;
    }
+	// TODO: Proceso de guardar edicion de fecha de orden NOTIFICADO
+	public function updateFechaOrdenNotificado(
+		$idNotificacion,$idPaqueteNotificacion,$fechaHoraNotificado,$usuario,$ip) {
+		$sql ="UPDATE notificaciones SET 
+					fecha_hora_notificado = TO_TIMESTAMP(?,'yyyy-mm-dd hh24:mi:ss'),
+					fecha_ultimo_cambio = CURRENT_TIMESTAMP,
+					modificado_por = TRIM(?),
+					ip_modifico = TRIM(?)
+			   WHERE id_notificacion = ?";
+
+		$sql2 ="UPDATE paquetes_notificaciones SET 
+						fecha_hora_notificacion = TO_TIMESTAMP(?,'yyyy-mm-dd hh24:mi:ss'),
+						fecha_ultimo_cambio = CURRENT_TIMESTAMP,
+						modificado_por = TRIM(?),
+						ip_modifico = TRIM(?)
+				WHERE id_estatus_notificacion = 'NOTIFICADO'
+				AND id_paquete_notificacion = ?";
+
+		$this->db->query($sql,[$fechaHoraNotificado,$usuario,$ip,$idNotificacion]);
+		$this->db->query($sql2,[$fechaHoraNotificado,$usuario,$ip,$idPaqueteNotificacion]);
+		if($this->db->transStatus()) {
+			return array(true, 'El proceso se ha realizado correctamente');
+		}
+		else {
+			return array(false, 'ERROR AL ACTUALIZAR LA FECHA DE NOTIFICACION DE LA ORDEN',0);
+		}
+	}
 	//
 	public function updateCancelacion($id_notificacion,$estatus,$usuario,$ip) {
 		$sql ="UPDATE notificaciones SET 
@@ -331,7 +362,7 @@ class MNotificacionesRegistro extends Model
 
 		$this->db->query($sql,[$estatus,$usuario,$ip,$id_notificacion]);
 		if ($this->db->transStatus()) {
-			return array(true, 'El proceso se ha realizado correctamente');
+			return array(true, 'El proceso se ha realizado correctamente',$id_notificacion);
 		}
 		else {
 			return array(false, 'ERROR AL '.$estatus.' LA NOTIFICACION',0);

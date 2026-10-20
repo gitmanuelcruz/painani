@@ -80,7 +80,7 @@ BEGIN
 	AND a.usuario = p_usuario;
 
 	/*-------------VALIDACION DE ID INSUMO----------------*/
-	/*UPDATE notificaciones_tmp a SET
+	UPDATE notificaciones_tmp a SET
 		observaciones = COALESCE(a.observaciones,'')||'El ID insumo es requerido, '
 	WHERE LENGTH(a.id_insumo) = 0
 	AND a.usuario = p_usuario;
@@ -89,7 +89,19 @@ BEGIN
 		observaciones = COALESCE(a.observaciones,'')||'El ID insumo es invalido debe ser numérico,'
 	WHERE LENGTH(a.id_insumo) > 0
 	AND isNumerico(a.id_insumo) = FALSE
-	AND a.usuario = p_usuario;*/
+	AND a.usuario = p_usuario;
+
+	UPDATE notificaciones_tmp a SET
+		observaciones = COALESCE(a.observaciones,'')||'El ID insumo ('||a.id_insumo||') ya se encuentra registrado, '
+	WHERE LENGTH(a.id_insumo) > 0
+	AND isNumerico(a.id_insumo) = TRUE
+	AND EXISTS (
+		SELECT NULL
+		FROM notificaciones x
+		WHERE x.id_estatus_notificacion <> 'CANCELADO'
+		AND x.id_insumo = UPPER(TRIM(a.id_insumo))::numeric
+	)
+	AND a.usuario = p_usuario;
 
 	/*-------------VALIDACION DE ID BLOQUE----------------*/
 	/*UPDATE notificaciones_tmp a SET

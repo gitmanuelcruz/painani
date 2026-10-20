@@ -14,7 +14,9 @@ VALUES
 (NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_REG_NOTIFICACIONES'),'PRIV_BTN_EDI_NOTIFICACION','Botón para editar registro de notificación',
 'Botón para editar registro de notificación','PRIVILEGIO','#','',1,12,'PRIV_ESPECIFICOS'),
 (NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_REG_NOTIFICACIONES'),'PRIV_BTN_CANL_NOTIFICACION','Botón para cancelar registro de notificación',
-'Botón para cancelar registro de notificación','PRIVILEGIO','#','',1,13,'PRIV_ESPECIFICOS');
+'Botón para cancelar registro de notificación','PRIVILEGIO','#','',1,13,'PRIV_ESPECIFICOS'),
+(NEXTVAL('seq_menus'),(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_REG_NOTIFICACIONES'),'PRIV_BTN_EDIT_FECHAORDEN_NOTIFICACION','Botón para editar la fecha de notificado de la orden',
+'Botón para editar la fecha de notificado de la orden','PRIVILEGIO','#','',1,14,'PRIV_ESPECIFICOS');
 
 /*---Rol Privilegio del Modulo--*/
 INSERT INTO roles_privilegios (id_rol_privilegio,id_rol,id_menu,solo_lectura,lectura_escritura)
@@ -26,4 +28,5 @@ VALUES
 (NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_NVO_NOTIFICACION'),0,1),
 (NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_CARGALAYOUT_NOTIFICACION'),0,1),
 (NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_EDI_NOTIFICACION'),0,1),
-(NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_CANL_NOTIFICACION'),0,1);
+(NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_CANL_NOTIFICACION'),0,1),
+(NEXTVAL('seq_roles_privilegios'), 1,(SELECT id_menu FROM menus WHERE codigo_menu = 'PRIV_BTN_EDIT_FECHAORDEN_NOTIFICACION'),0,1);

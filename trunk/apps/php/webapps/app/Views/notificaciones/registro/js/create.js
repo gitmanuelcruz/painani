@@ -109,7 +109,7 @@ const vmRegistro = (id_notificacion,tipo) => {
 //!
 const cerrar_vm_registro = () => {
    closeModalLG();
-   recargaPaginadoPrincipal()
+   recargaPaginadoPrincipal();
 }
 //!
 const cargaComboRegistro = (async,id_prioridad) => {
@@ -313,6 +313,193 @@ const guardarRegistro = () => {
       complete(xhr, status) {
          $('button[btn="btn"]').prop('disabled',false);
          $("#bt_guardar").html('<i class="fa-solid fa-floppy-disk me-2"></i>Guardar');
+         spinnerPrincipal.stop();
+         $("#overlayprincipal").hide();
+      }
+   });
+}
+// TODO: proceso de editar fecha de notificacion
+const vmEditarFechaOrdenNotificado = (reg) => {
+   $('.tooltip_icon_pag').tooltip('hide');
+	let html = '';
+   let botones = '';
+   const titulo = 'Edici&oacute;n de Fecha Orden Notificado';
+   //
+   html +=  `<form method="post" class="app-form frm-modal-efon" id="frmEditFONot" name="frmEditFONot" novalidate onsubmit="return false">
+               <input type="hidden" id="vm_id_notificacion" name="vm_id_notificacion" value="${reg.id_notificacion}">
+               <input type="hidden" id="vm_id_paquete_notificacion" name="vm_id_paquete_notificacion" value="${reg.id_paquete_notificacion}">
+               <div class="row">
+                  <div class="col-sm-4">
+                     <figure>
+                        <blockquote class="blockquote"><p class="p-font-msg-09 p-font-weight-500">${reg.num_orden}</p></blockquote>
+                        <figcaption class="blockquote-footer p-font-msg-07 fw-bold">Num. Orden</figcaption>
+                     </figure>
+                  </div>
+                  <div class="col-sm-4">
+                     <figure>
+                        <blockquote class="blockquote"><p class="p-font-msg-09 p-font-weight-500">${reg.foficio}</p></blockquote>
+                        <figcaption class="blockquote-footer p-font-msg-07 fw-bold">Fecha Oficio</figcaption>
+                     </figure>
+                  </div>
+                  <div class="col-sm-4">
+                     <figure>
+                        <blockquote class="blockquote"><p class="p-font-msg-09 p-font-weight-500">${reg.nombre_prioridad}</p></blockquote>
+                        <figcaption class="blockquote-footer p-font-msg-07 fw-bold">Prioridad</figcaption>
+                     </figure>
+                  </div>
+               </div>
+               <div class="row" style="margin-top: -10px">
+                  <div class="col-sm-12">
+                     <figure>
+                        <blockquote class="blockquote"><p class="p-font-msg-09 p-font-weight-500">${reg.notificador}</p></blockquote>
+                        <figcaption class="blockquote-footer p-font-msg-07 fw-bold">Notificador</figcaption>
+                     </figure>
+                  </div>
+               </div>
+               <hr class="mt-0">
+               <div class="row">
+                  <div class="col-sm-4">
+							<label class="form-label">Fecha Notificaci&oacute;n</label>
+							<input type="date" class="form-control" id="vm_fecha_notificacion" name="vm_fecha_notificacion" style="height:40px;"
+                        required min="${reg.fecha_oficio}" value="${reg.fecha_notificado}">
+                     <div class="invalid-feedback">Fecha notificaci&oacute;n requerido</div>        
+						</div>
+                  <div class="col-sm-4">
+                     <label class="form-label">Hora Notificaci&oacute;n</label>
+                     <input type="time" class="form-control timepicker" id="vm_hora_notificacion" name="vm_hora_notificacion" maxlength="5"
+                        required style="height: 40px;" value="${reg.hora_notificado}">
+                     <div class="invalid-feedback">Hora notificaci&oacute;n requerido</div>
+            		</div>
+               </div>
+            </form>`;
+
+   botones +=  `<button type="button" class="btn btn-info me-1" btn="btn" id="bt_guardar_edit_fnotificado">
+                  <i class="fa-solid fa-floppy-disk me-2"></i>Guardar
+               </button>`;
+   botones +=  `<button type="button" class="btn btn-danger" data-bs-dismiss="modal" btn="btn" id="bt_cerrar_vm_edit_fnotificado">
+                  <i class="fa-solid fa-xmark me-2"></i>Cerrar
+               </button>`;
+   modalLG('frmNotificaciones', titulo, html, 'formlg_scrollable', botones, 'cerrar_vm_edit_fecha_orden_notificado()');
+   //
+   $("#bt_guardar_edit_fnotificado").on("click", function () {
+      validEditFechaOrden();
+   });
+   //
+   $("#bt_cerrar_vm_edit_fnotificado").on("click", function () {
+      cerrar_vm_edit_fecha_orden_notificado();
+   });
+}
+//!
+const cerrar_vm_edit_fecha_orden_notificado = () => {
+   closeModalLG();
+   recargaPaginadoPrincipal();
+}
+//!
+const validEditFechaOrden = () => {
+   let contador = 0;
+   // TODO: Obtener todos los formularios a los que queremos aplicar estilos de validación
+   let forms = document.querySelectorAll('.frm-modal-efon');
+   // TODO: Bucle sobre ellos y evitar la presentación
+   Array.prototype.slice.call(forms)
+   .forEach(function (form) {
+      if (!form.checkValidity()) {
+         contador++;
+      }
+      form.classList.add('was-validated');
+   });
+   
+   if(contador == 0) {
+      confirmarcionEditFechaOrden();
+   }
+}
+//!
+const confirmarcionEditFechaOrden = () => {
+   Swal.fire({
+      title: 'Confirmaci&oacute;n',
+      html: '<p class="p-font-msg-1-2">\u{BF}Confirma que los datos son correctos?</p>',
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      cancelButtonColor: '#d33',
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Si, confirmar',
+   }).then((result) => {
+      if (result.isConfirmed) {
+         guardarEditFechaOrden();
+      }
+   });
+}
+//!
+const guardarEditFechaOrden = () => {
+   $.ajax({
+      type: 'post',
+      url: contexto+nameController+'/guardarFechaOrdenNotificado',
+      async: true,
+      processData: false,
+      contentType: false,
+      dataType:"JSON",
+      data: new FormData($("#frmEditFONot")[0]),
+      beforeSend(xhr) {
+         $('button[btn="btn"]').prop('disabled', true);
+         $("#overlayprincipal").show();
+         $("#bt_guardar_edit_fnotificado").html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Guardar');
+         targetPrincipal = document.getElementById('frmNotificaciones');
+         spinnerPrincipal = new Spinner().spin(targetPrincipal);
+      },
+      success: function (data) {
+         if (data.respuesta == false) {
+            if(parseInt(data.valid) > 0) {
+               Swal.fire({
+                  title: 'VALIDACIÓN',
+                  html: '<p class="p-font-msg-1-2">'+data.mensaje+'</p>',
+                  icon: 'warning',
+                  showDenyButton: true,
+                  denyButtonText: 'Aceptar',
+                  showConfirmButton: false
+               });
+            }
+            else {
+               Swal.fire({
+                  title: 'HA OCURRIDO UN ERROR!',
+                  html: '<p class="p-font-msg-1-2 text-danger">'+data.mensaje+'</p>',
+                  icon: 'error',
+                  showDenyButton: true,
+                  denyButtonText: 'Aceptar',
+                  showConfirmButton: false
+               });
+            }
+         }
+         else {
+            Swal.fire({
+               title: '¡ P r o c e s o &nbsp;&nbsp; E x i t o s o !',
+               html: '<p class="p-font-msg-1-2">'+data.mensaje+'</p>',
+               icon: 'success',
+               showCancelButton: false,
+               allowOutsideClick: false,
+               allowEscapeKey: false,
+               allowEnterKey: false,
+               confirmButtonColor: '#3085d6',
+               confirmButtonText: 'Aceptar',
+            }).then((result) => {
+               if (result.isConfirmed) {
+                  cerrar_vm_edit_fecha_orden_notificado();
+               }
+            });
+         }
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+         Swal.fire({
+            title: 'HA OCURRIDO UN ERROR!',
+            html: '<p class="p-font-msg text-danger">'+thrownError+'</p>',
+            icon: 'error',
+            showDenyButton: true,
+            showConfirmButton: false,
+            denyButtonText: "Aceptar"
+         });
+      },
+      complete(xhr, status) {
+         $('button[btn="btn"]').prop('disabled',false);
+         $("#bt_guardar_edit_fnotificado").html('<i class="fa-solid fa-floppy-disk me-2"></i>Guardar');
          spinnerPrincipal.stop();
          $("#overlayprincipal").hide();
       }

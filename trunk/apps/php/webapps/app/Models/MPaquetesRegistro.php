@@ -264,7 +264,6 @@ class MPaquetesRegistro extends Model
 		return $this->db->query($sql,[$idPaquete]);
 	}
 	//
-	//
 	public function getDatosOficiosxNotificar($idPaquete) {
 		if(empty($idPaquete)) { $idPaquete = 0; }
 		$sql ="SELECT

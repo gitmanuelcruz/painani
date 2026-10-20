@@ -48,6 +48,7 @@ class NotificacionesRegistro extends BaseController
 		$usuario 	  = $this->session->get("usuario");
 		$iconEditar   = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_EDI_NOTIFICACION","PRIVILEGIO");
 		$iconCancelar = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_CANL_NOTIFICACION","PRIVILEGIO");
+      $iconEditFecha = $this->utilerias->getValidaPrivilegio($usuario,"PRIV_BTN_EDIT_FECHAORDEN_NOTIFICACION","PRIVILEGIO");
 		$pagina       = 0;
 		$resultados   = 0;
 
@@ -57,7 +58,7 @@ class NotificacionesRegistro extends BaseController
 			$resultados = $this->request->getPost("resultados");
 
 		$sql = $this->Modelo->getNotificacionesPag(
-         $idNumOficio,$fechaOficio,$idEstatus,$iconEditar,$iconCancelar);
+         $idNumOficio,$fechaOficio,$idEstatus,$iconEditar,$iconCancelar,$iconEditFecha);
 		$results = $this->utilerias->loadJSON($sql, $pagina, $resultados);
 
 		return $this->response->setJSON($results);
@@ -270,12 +271,13 @@ class NotificacionesRegistro extends BaseController
                   $numOrden    = substr(trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()),0,49);
                   $numOficio   = substr(trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()),0,49);
                   $fechaOficio = substr(trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()),0,15);
-                  $prioridad   = substr(trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()),0,49);
-                  $domicilio   = substr(trim(mb_strtoupper($worksheet->getCellByColumnAndRow(4, $row)->getValue(),'UTF-8')),0,4000);
-                  $referenciaUbicacion = substr(trim(mb_strtoupper($worksheet->getCellByColumnAndRow(5, $row)->getValue(),'UTF-8')),0,4000);
+                  $idInsumo    = substr(trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()),0,49);
+                  $prioridad   = substr(trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()),0,19);
+                  $domicilio   = substr(trim(mb_strtoupper($worksheet->getCellByColumnAndRow(5, $row)->getValue(),'UTF-8')),0,4000);
+                  $referenciaUbicacion = substr(trim(mb_strtoupper($worksheet->getCellByColumnAndRow(6, $row)->getValue(),'UTF-8')),0,4000);
                   //
                   $result = $this->Modelo->insertNotificacionesTmp(
-                     $consecutivo,$usuario,$numOrden,$numOficio,$fechaOficio,$prioridad,$domicilio,$referenciaUbicacion);
+                     $consecutivo,$usuario,$numOrden,$numOficio,$fechaOficio,$idInsumo,$prioridad,$domicilio,$referenciaUbicacion);
                   if(!$result[0]) {
                      $contadorProceso++;
                      $this->db->transRollback();
@@ -337,6 +339,44 @@ class NotificacionesRegistro extends BaseController
       $query = $this->Modelo->getObservNotificacionesOficiosTmp($usuario);
       $results = $this->utilerias->loadJSON($query, $pagina, $resultados);
       return $this->response->setJSON($results);
+   }
+   // TODO: Proceso de guardar edicion de fecha de orden NOTIFICADO
+   public function guardarFechaOrdenNotificado() {
+      set_time_limit(0);
+      if ($this->session->get("logueado") != true) {
+         $response = array('respuesta' => false, 'mensaje' => 'Se terminó la sesión, vuelva a iniciar nuevamente');
+      }
+      else {
+         $idNotificacion = $this->request->getPost("vm_id_notificacion");
+         $idPaqueteNotificacion = $this->request->getPost("vm_id_paquete_notificacion");
+         $fechaNotificado = $this->request->getPost("vm_fecha_notificacion");
+         $horaNotificado  = $this->request->getPost("vm_hora_notificacion");
+         $fechaHoraNotificado = $fechaNotificado." ".$horaNotificado.":00";
+         $usuario = $this->session->get("usuario");
+         $ip      = $this->session->get("ip");
+         $datos = $this->Modelo->getDatosNotificacion($idNotificacion)->getRow();
+         $numOrden = $datos->num_orden;
+         $this->db->transBegin();
+         //
+         if($datos->id_estatus_notificacion == "NOTIFICADO") {
+            $result = $this->Modelo->updateFechaOrdenNotificado(
+               $idNotificacion,$idPaqueteNotificacion,$fechaHoraNotificado,$usuario,$ip);
+         }
+         else {
+            $result = array(false,"El n&uacute;mero de orden (<b>".$numOficio."</b>) no se encuentra NOTIFICADO",1);
+         }
+         //
+         if ($result[0]) {
+            $this->db->transCommit();
+            $response = array('respuesta' => true, 'mensaje' => $result[1]);
+         }
+         else {
+            $this->db->transRollback();
+            $response = array('respuesta' => false, 'mensaje' => $result[1], 'valid' => $result[2]);
+         }
+      }
+
+      return $this->response->setJSON($response);
    }
    // TODO: Proceso de cancelacion
    public function procesoCancelado(){

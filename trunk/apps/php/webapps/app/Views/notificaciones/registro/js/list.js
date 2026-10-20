@@ -47,7 +47,8 @@ const loadNotificacionesPag = () => {
                "menu":[
                  { "campo_bd": "band_detalle", "valor_campo": "1", "icono": "fa-solid fa-circle-info fa-lg", "callback": "detalle", "etiqueta": "Detalle", "tipoicono": "i", "color": "color_blue" },
                  { "campo_bd": "icon_editar", "valor_campo": "1", "icono": "fa-solid fa-pen-to-square fa-lg", "callback": "editarNotificacion", "etiqueta": "Editar", "tipoicono": "i", "color": "color_black" },
-                 { "campo_bd": "icon_cancelar", "valor_campo": "1", "icono": "fa-solid fa-circle-xmark fa-lg", "callback": "cancelarNotificacion", "etiqueta": "Cancelar", "tipoicono": "i", "color": "color_red" }
+                 { "campo_bd": "icon_cancelar", "valor_campo": "1", "icono": "fa-solid fa-circle-xmark fa-lg", "callback": "cancelarNotificacion", "etiqueta": "Cancelar", "tipoicono": "i", "color": "color_red" },
+                 { "campo_bd": "icon_edit_fecha", "valor_campo": "1", "icono": "fa-solid fa-pen-to-square fa-lg", "callback": "editarFechaOrdenNotificado", "etiqueta": "Editar Notificación", "tipoicono": "i", "color": "color_blue" }
                ]
             }
          ]
@@ -211,4 +212,8 @@ const updateCancelar = (id_notificacion) => {
          $("#overlayprincipal").hide();
       }
    });
+}
+// TODO: Proceso de edicion de fecha
+const editarFechaOrdenNotificado = (reg) => {
+   vmEditarFechaOrdenNotificado(reg);
 }
