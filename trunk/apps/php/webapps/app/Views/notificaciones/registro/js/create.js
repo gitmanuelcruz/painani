@@ -33,7 +33,7 @@ const vmRegistro = (id_notificacion,tipo) => {
                   <div class="col-sm-4">
                      <label class="form-label">ID Insumo</label>
                      <input type="text" class="form-control" id="vm_id_insumo" name="vm_id_insumo" maxlength="20"
-                        style="height:40px" onkeypress="return getKeyNumber(event);">
+                        required style="height:40px" onkeypress="return getKeyNumber(event);">
                      <div class="invalid-feedback">ID insumo requerido</div>
                   </div>
                   <div class="col-sm-4">
